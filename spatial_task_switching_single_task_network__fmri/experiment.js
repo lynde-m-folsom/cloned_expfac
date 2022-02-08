@@ -753,6 +753,7 @@ var refreshNode = {
 		task_switches = des_task_switches.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
 		des_task_switches = des_task_switches.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_task_switches
 		stims = createTrialTypes(task_switches)
+		//stims.reverse() //reverse the order of trial types to match designs
 		exp_stage = 'test'
 		
 		return false

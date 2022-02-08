@@ -551,7 +551,7 @@ var refresh_intro_block = {
 		// 	ITIs_resp = ITIs_stim.slice(0) //make a copy of ITIs so that timing_stimulus & timing_response are the same
     // }
     var task_switches = jsPsych.randomization.repeat(task_switches_arr, refresh_length / 4)
-    task_switches.unshift({task_switch: 'na', cue_switch: 'na', go_no_go_type: jsPsych.randomization.repeat(['go','nogo'],1).pop()})
+    task_switches.unshift({task_switch: 'na', cue_switch: 'na', go_no_go_type: jsPsych.randomization.repeat(['go','nogo'],1).pop()}) //changed pop to shift
     var refreshStims = genStims(refresh_length + 1)
     stims = refreshStims
 	} 
@@ -957,6 +957,7 @@ var testNode0 = {
   // task_switches = jsPsych.randomization.repeat(task_switches_arr, numTrialsPerBlock / 4) //TO BE CHANGED OUT W/ DES_EVENTS
   task_switches.unshift({task_switch: 'na', cue_switch: 'na', go_no_go_type: jsPsych.randomization.repeat(['go','nogo'],1).pop()})
   stims = genStims(numTrialsPerBlock + 1)
+  //stims.reverse() //reverse the order of trial types to match designs
   
   var sum_rt = 0
     var sum_responses = 0
@@ -1014,6 +1015,7 @@ var testNode = {
   // task_switches = jsPsych.randomization.repeat(task_switches_arr, numTrialsPerBlock / 4) //TO BE CHANGED OUT W/ DES_EVENTS
   task_switches.unshift({task_switch: 'na', cue_switch: 'na', go_no_go_type: jsPsych.randomization.repeat(['go','nogo'],1).pop()})
   stims = genStims(numTrialsPerBlock + 1)
+  //stims.reverse() //reverse the order of trial types to match designs
   
   var sum_rt = 0
     var sum_responses = 0

@@ -218,7 +218,7 @@ var randomDraw = function(lst) {
 }
 
 var getStim = function() {
-	var trial_type = trial_types.pop()
+	var trial_type = trial_types.shift()
 	var probe_i = randomDraw([1,2,3,4,5,6,7,8,9,10])
 	var target_i = 0
 	var distractor_i = 0

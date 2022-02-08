@@ -134,7 +134,6 @@ function assessPerformance() {
 	var correct = 0
 	var all_trials = 0
 	
-	console.log(experiment_data.length)
 	
 	//record choices participants made
 	var choice_counts = {}
@@ -292,13 +291,13 @@ var getStopStim = function(){
 var getStim = function(){
 
 	if(exp_phase == "practice1"){
-		stim = stims.pop()
+		stim = stims.shift()
 		shape = stim.stim
 		correct_response = stim.correct_response
 		stop_signal_condition = "practice_no_stop"
 		
 	} else if ((exp_phase == "test") || (exp_phase == "practice2")){
-		stim = stims.pop()
+		stim = stims.shift()
 		shape = stim.stim
 		stop_signal_condition = stim.stop_signal_condition
 		correct_response = stim.correct_response
@@ -325,7 +324,7 @@ var getStim = function(){
 
 var getRefreshStim = function(){
 
-	stim = refreshStims.pop()
+	stim = refreshStims.shift()
 	shape = stim.stim
 	stop_signal_condition = stim.stop_signal_condition
 	correct_response = stim.correct_response
@@ -743,7 +742,7 @@ var refreshNode = {
 		first_block_des_events = des_events.slice(0,numTrialsPerBlock)
 		des_events = des_events.slice(numTrialsPerBlock,)
 		stims = updateTrialTypesWithDesigns(stims, first_block_des_events)
-		
+
 		var total_trials = 0
 		
 		var sum_stop_rt = 0;
