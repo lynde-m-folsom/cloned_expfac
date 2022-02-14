@@ -94,8 +94,9 @@ var getTestFeedback = function() {
 }
 
 var getCategorizeFeedback = function(){
-	curr_trial = jsPsych.progress().current_trial_global - 2
+	curr_trial = jsPsych.progress().current_trial_global - 1
 	trial_id = jsPsych.data.getDataByTrialIndex(curr_trial).trial_id
+	
 	if (trial_id == 'refresh_trial'){
 		if (jsPsych.data.getDataByTrialIndex(curr_trial).key_press == jsPsych.data.getDataByTrialIndex(curr_trial).correct_response){
 			
@@ -417,7 +418,7 @@ var choices = [89, 71]
 var exp_stage = 'practice'
 var refresh_length = 4 
 var numTrialsPerBlock = 40
-var numTestBlocks = 3
+var numTestBlocks = 2
 var accuracy_thresh = 0.75
 var rt_thresh = 1000
 var missed_thresh = 0.10
@@ -1031,6 +1032,7 @@ for (i = 0; i < (refresh_length); i++) {
 	refreshTrials.push(refresh_fixation_block);
 	refreshTrials.push(refresh_probe_block);
 	refreshTrials.push(categorize_block);
+
 }
 
 var refreshCount = 0
@@ -1145,7 +1147,6 @@ var testNode0 = {
 		var directed_remembering_total = neg_respond_remember + pos_respond_remember
 		var directed_remembering_percent = directed_remembering_total / respond_remember_total 
 
-		console.log(directed_remembering_percent)
 		if (directed_remembering_percent >= 0.75){
 			test_feedback_text = 'According to the pattern of your responses, we believe that you are treating this task as a directed remembering task.  Please remember that <i>this is a directed forgetting task</i>.</p>'+
 								 '<p class = block-text>When you are presented with the cue TOP, you should <i> forget the top letters</i> and <i>remember the bottom letters.</i></p>'+
