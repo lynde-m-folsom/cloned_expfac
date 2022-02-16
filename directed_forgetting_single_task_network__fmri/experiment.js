@@ -1279,32 +1279,33 @@ var testNode = {
 			test_feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
 			test_feedback_text += "</p><p class = block-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
 			
+			if (testCount == numTestBlocks){
+				test_feedback_text +=
+						'</p><p class = block-text>Done with this test.'
+				return false
+			} else {
 		
-			if (accuracy < accuracy_thresh){
-				test_feedback_text +=
-						'</p><p class = block-text>Your accuracy is too low.  Remember: <br>' + getPromptTaskList()
-			}
-			if (missed_responses > missed_thresh){
-				test_feedback_text +=
-						'</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
-			}
+				if (accuracy < accuracy_thresh){
+					test_feedback_text +=
+							'</p><p class = block-text>Your accuracy is too low.  Remember: <br>' + getPromptTaskList()
+				}
+				if (missed_responses > missed_thresh){
+					test_feedback_text +=
+							'</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
+				}
 
 	      	if (ave_rt > rt_thresh){
 	        	feedback_text += 
 	            	'</p><p class = block-text>You have been responding too slowly.'
 	      	}
-			  
 
-			if (testCount == numTestBlocks){
-				test_feedback_text +=
-						'</p><p class = block-text>Done with this test.'
-				return false
-		}
+	  			return true
+			}
 	}
 
 }
 /* create experiment definition array */
-var directed_forgetting_single_task_network__fmri_experiment = [];
+directed_forgetting_single_task_network__fmri_experiment = [];
 
 directed_forgetting_single_task_network__fmri_experiment.push(design_setup_block)
 directed_forgetting_single_task_network__fmri_experiment.push(motor_setup_block)
@@ -1326,3 +1327,4 @@ directed_forgetting_single_task_network__fmri_experiment.push(testNode)
 directed_forgetting_single_task_network__fmri_experiment.push(test_feedback_block)
 
 directed_forgetting_single_task_network__fmri_experiment.push(end_block);
+
