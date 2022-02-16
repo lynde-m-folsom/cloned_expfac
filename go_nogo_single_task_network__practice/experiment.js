@@ -8,15 +8,12 @@ function getMotorPerm() {
 }
 
 var getStim = function(){
-	console.log(stim.stimulus);
 	return stim.stimulus
 }
 
 function getGlobal() { 
 	stim = block_stims.pop()
-	console.log(stim);
 	correct_response = stim.data.correct_response
-	console.log(correct_response);
 	return '<div class = centerbox><div class = fixation>+</div></div>'
 }
 
@@ -237,7 +234,6 @@ function createPracticeTrials(length) {
   }
   ];
 	stimuli = jsPsych.randomization.repeat(practice_stimuli, length / practice_stimuli.length); 
-	console.log(stimuli);
 	return stimuli 
 }
 
@@ -304,8 +300,7 @@ var motor_setup_block = {
 		  ]
 	  ], on_finish: function(data) {
 		  motor_perm=parseInt(data.responses.slice(7, 10))
-		  block_stims = createPracticeTrials(practice_length)
-		  console.log(block_stims); 
+		  block_stims = createPracticeTrials(practice_length) 
 	  }
 }
 
@@ -364,8 +359,6 @@ var end_block = {
 
 
 var refreshTrials = []
-console.log(refreshTrials);
-console.log(refreshTrials.length);
 refreshTrials.push(refresh_feedback_block)
 for (var i = 0; i < refresh_len + 1; i++){
   
@@ -409,15 +402,12 @@ for (var i = 0; i < refresh_len + 1; i++){
 	refreshTrials.push(refresh_block)
 }
 
-console.log('start');
 var refreshCount = 0
 var refreshNode = {
 	timeline: refreshTrials,
 	loop_function: function(data){
 		  
 		block_stims = createPracticeTrials(refresh_len)
-		console.log(block_stims);
-		console.log(block_stims.length);
 
 		refreshCount += 1
 		current_trial = 0
@@ -455,8 +445,6 @@ var refreshNode = {
 		var accuracy = correct / total_trials
 		var missed_responses = missed_response / total_go_trials
 
-		console.log(accuracy);
-		console.log(accuracy_thresh);
 	  
 		feedback_text = "<br>Please take this time to read your feedback and to take a short break! "
   
