@@ -1,24 +1,49 @@
 /* ************************************ */
 /*       Define Helper Functions        */
 /* ************************************ */
+// This version was finalized by Jaime Rios, Matilde Vaghi, and Ross Blaor on 28th February 2022
+// Amended from original version to fix small bug identified.
+// In the previous version in each block two extra ITIs buffer were added and N/A condition was assigned.
+// This procedure was implemented regardless of delay condition. In the case of 1back two N/A ITIs buffer
+// were added, and then one of them replaced with a random match or mismatch. This caused the experiment to
+// deviate from the specified match and mismatch probabilities defined a priori.
+// It is now working so that 1 ITI buffer is created for 1back and 2 ITIs buffer are created for 2back
+// this are added at the beginning of the block when it is not possible to say if it was a match or a mismatch.
+// the code presents for each block a number of trials corresponding to ntrials + 1 for 1back and ntrials +2 for 2back
 
-//FUNCTIONS FOR GETTING FMRI SEQUENCES
+/* ************************************ */
+/*       Get Design       */
+/* ************************************ */
 function getdesignITIs(design_num) {
 	x = fetch(pathDesignSource+'design_'+design_num+'/ITIs_clean.txt').then(res => res.text()).then(res => res).then(text => text.split(/\r?\n/));
 	return x
-} 
+}
 function getdesignEvents(design_num) {
 	x = fetch(pathDesignSource+'design_'+design_num+'/events_clean.txt').then(res => res.text()).then(res => res).then(text => text.split(/\r?\n/));
 	return x
-}  
+}
 
-function insertBufferITIs(design_ITIs) {
+/* ************************************ */
+/*       Buffer ITI                     */
+/* ************************************ */
+// This function adds extra ITIs to be able to insert extra trials at the beginning of the block
+// when it is not possible to say whether it is a match or a mismatch. The number of extra trials
+// it is dependent on delay condition. In this case it is hard-coded for 1back and 2back
+
+function insertBufferITIs(design_ITIs, delays) {
 	var buffer_ITIs = genITIs()
 	var out_ITIs = []
+	delay_seq = delays.slice()
 	while(design_ITIs.length > 0) {
-		out_ITIs = out_ITIs.concat(buffer_ITIs.slice(0,2)) //get 2 buffer ITIs to start each block
-		buffer_ITIs = buffer_ITIs.slice(2,) //remove the just used buffer ITIs from the buffer ITI array
-		
+		block_delay = delay_seq.pop()
+		if (block_delay == 2) {
+			out_ITIs = out_ITIs.concat(buffer_ITIs.slice(0,2)) //get 2 buffer ITIs to start each block
+			buffer_ITIs = buffer_ITIs.slice(2,) //remove the just used buffer ITIs from the buffer ITI array
+		} else if (block_delay == 1) {
+			out_ITIs = out_ITIs.concat(buffer_ITIs.slice(0,1)) //get 1 buffer ITIs to start each block
+			buffer_ITIs = buffer_ITIs.slice(1,) //remove the just used buffer ITIs from the buffer ITI array
+		}
+
 		curr_block_ITIs = design_ITIs.slice(0,numTrialsPerBlock) //get this current block's ITIs
 		design_ITIs = design_ITIs.slice(numTrialsPerBlock,) //remove this current block's ITIs from des_ITIs
 
@@ -27,25 +52,31 @@ function insertBufferITIs(design_ITIs) {
 	return out_ITIs
 }
 
+/* ************************************ */
+/*      used by insertBufferITIs
+/* ************************************ */
 //Get ITIs from exponential distribution - used as backup
-function genITIs() { 
+function genITIs() {
 	mean_iti = 0.5 //mean and standard deviation of 0.5 secs
 	min_thresh = 0
 	max_thresh = 4
 
 	lambda = 1/mean_iti
 	iti_array = []
-	for (i=0; i < exp_len + 3*numTestBlocks ; i++) { //add 3 ITIs per test block to make sure there are enough
+	for (i=0; i < exp_len + 2*numTestBlocks ; i++) { //add 2 ITIs per test block to make sure there are enough
 		curr_iti = - Math.log(Math.random()) / lambda;
+
 		while (curr_iti > max_thresh || curr_iti < min_thresh) {
 			curr_iti = - Math.log(Math.random()) / lambda;
 		}
 		iti_array.push(curr_iti*1000) //convert ITIs from seconds to milliseconds
-
 	}
 	return(iti_array)
 }
 
+/* ************************************ */
+/*      added for fmri compaibility
+/* ************************************ */
 function getITI_stim() { //added for fMRI compatibility
 	var currITI = ITIs_stim.shift()
 	if (currITI == 0.0) { //THIS IS JUST FOR CONVENIENCE BEFORE NEW DESIGNS ARE REGENERATED
@@ -54,6 +85,9 @@ function getITI_stim() { //added for fMRI compatibility
 	return currITI
 }
 
+/* ************************************ */
+/*      added for fmri compaibility
+/* ************************************ */
 function getITI_resp() { //added for fMRI compatibility
 	var currITI = ITIs_resp.shift()
 	if (currITI == 0.0) { //THIS IS JUST FOR CONVENIENCE BEFORE NEW DESIGNS ARE REGENERATED
@@ -62,13 +96,16 @@ function getITI_resp() { //added for fMRI compatibility
 	return currITI
 }
 
-//added for motor counterbalancing
+/* ************************************ */
+/*      added for motor counterbalancing
+/* ************************************ */
 function getMotorPerm() {
 	return motor_perm
 }
 
-// var possible_responses = [['index finger', 89],['middle finger', 71]]
-
+/* ************************************ */
+/*     Possible responses
+/* ************************************ */
 function getPossibleResponses() {
 	if (getMotorPerm()==0) {
 		return possible_responses
@@ -77,23 +114,25 @@ function getPossibleResponses() {
 	}
 }
 
-// var prompt_text_list = '<ul style="text-align:left;">'+
-// 						'<li>Match the current letter to the letter that appeared some number of trials ago</li>' +
-// 						'<li>If they match, press your '+possible_responses[0][0]+'</li>' +
-// 					    '<li>If they mismatch, press your '+possible_responses[1][0]+'</li>' +
-// 					  '</ul>'
-
-// var prompt_text = '<div class = prompt_box>'+
-// 					  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">Match the current letter to the letter that appeared 1 trial ago</p>' +
-// 					  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">If they match, press your '+possible_responses[0][0]+'</p>' +
-// 					  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">If they mismatch, press your '+possible_responses[1][0]+'</p>' +
-// 				  '</div>'
-
+/* ************************************ */
+/*     Feedback
+/* ************************************ */
 function getPromptTextList() {
+	return '<style="text-align:left;">'+
+	//'<li>Match the current letter to the letter that appeared some number of trials ago</li>' + // some number of trials ago
+	'Match = '  +getPossibleResponses()[0][0]+'<br>' +
+	'Mismatch =  '+getPossibleResponses()[1][0]
+
+
+}
+
+// Prompt text for Practice, in this version the practice is with 2 trials and the variable for it defined as delay = 2 around line 480
+// The text originally said 'some trials ago' but it was confusing for the subject
+function getPromptTextListPractice() {
 	return '<ul style="text-align:left;">'+
-	'<li>Match the current letter to the letter that appeared some number of trials ago</li>' +
-	'<li>If they match, press your '+getPossibleResponses()[0][0]+'</li>' +
-	'<li>If they mismatch, press your '+getPossibleResponses()[1][0]+'</li>' +
+	'<li>Match the current letter to the letter that appeared 2 trials ago</li>' + // some number of trials ago
+	'<li>Match =  '  +getPossibleResponses()[0][0]+'</li>' +
+	'<li>Mismatch = '+getPossibleResponses()[1][0]+'</li>' +
   '</ul>'
 
 }
@@ -106,10 +145,10 @@ function getPromptText() {
 '</div>'
 }
 
-
+// Time out message for the practice
 function getTimeoutMessage() {
 	return '<div class = upperbox><div class = center-text>Respond Faster!</div></div>' +
-	getPromptTextList()
+	getPromptTextListPractice() //getPromptTextList
   }
 
 //feedback functions added for in-person version
@@ -117,24 +156,19 @@ var getRefreshFeedback = function() {
 	if (getRefreshTrialID()=='instructions') {
 		return '<div class = instructbox>'+
 		'<p class = instruct-text>In this task, you will see a letter on every trial.</p>'+
-		'<p class = instruct-text>You will be asked to match the current letter to the letter that appeared either 1, 2, or 3 trials ago depending on the delay given to you for that block.</p>'+
-		'<p class = instruct-text><strong>Press your '+getPossibleResponses()[0][0]+' if the letters match, and your '+getPossibleResponses()[1][0]+' if they mismatch.</strong></p>'+
+		'<p class = instruct-text>You will be asked to match the current letter to the letter that appeared either 1 or 2 trials ago depending on the delay given to you for that block.</p>'+
+		'<p class = instruct-text><strong>Press your '+getPossibleResponses()[0][0]+' if the letters match, and your '+ getPossibleResponses()[1][0]+' if they mismatch.</strong></p>'+
 		'<p class = instruct-text>Your delay (the number of trials ago which you must match the current letter to) will change from block to block. You will be given the delay at the start of every block of trials.</p>'+
 		'<p class = instruct-text>Capitalization does not matter, so "T" matches with "t".</p> '+
-		'<p class = instruct-text><strong><i>Your delay for this upcoming practice round is 2</i>.</strong></p> '+
-		'<p class = instruct-text>During practice, you will see a reminder of the rules.  <i> This will be removed for the test</i>. </p>'+ 
-		'<p class = instruct-text>To let the experimenters know when you are ready to begin, please press any button. </p>'+
+		'<p class = instruct-text><strong><i>Your delay for this upcoming practice round is 2 </i>.</strong></p> '+
+		'<p class = instruct-text>During practice, you will see a reminder of the rules.  <i> This will be removed for the test</i>. </p>'+
+		'<p class = instruct-text>Please press any button to let the experimenters know when you are ready to begin. </p>'+
 		'</div>'
 
 	} else {
 		return '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' + refresh_feedback_text + '</font></p></div></div>'
 	}
 }
-
-//feedback functions added for in-person version
-// var getRefreshFeedback = function() {
-// 	return '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' + refresh_feedback_text + '</font></p></div></div>'
-// }
 
 var getRefreshTrialID = function() {
 	return refresh_trial_id
@@ -147,7 +181,7 @@ var getRefreshFeedbackTiming = function() {
 var getRefreshResponseEnds = function() {
 	return refresh_response_ends
 }
-//
+
 
 function getDisplayElement() {
     $('<div class = display_stage_background></div>').appendTo('body')
@@ -158,8 +192,9 @@ function addID() {
   jsPsych.data.addDataToLastTrial({exp_id: 'n_back_single_task_network__fmri'})
 }
 
-
-
+/* ************************************ */
+/*    Assess Performance
+/* ************************************ */
 function assessPerformance() {
 	var experiment_data = jsPsych.data.getTrialsOfType('poldrack-single-stim')
 	var missed_count = 0
@@ -167,8 +202,8 @@ function assessPerformance() {
 	var rt_array = []
 	var rt = 0
 	var correct = 0
-	
-		//record choices participants made
+
+	//record choices participants made
 	var choice_counts = {}
 	choice_counts[-1] = 0
 	choice_counts[71] = 0
@@ -187,7 +222,7 @@ function assessPerformance() {
 			} else {
 				rt_array.push(rt)
 			}
-			
+
 			if (key == experiment_data[i].correct_response){
 				correct += 1
 			}
@@ -198,7 +233,7 @@ function assessPerformance() {
 	var avg_rt = -1
 	if (rt_array.length !== 0) {
 		avg_rt = math.median(rt_array)
-	} 
+	}
 	//calculate whether response distribution is okay
 	var responses_ok = true
 	Object.keys(choice_counts).forEach(function(key, index) {
@@ -231,15 +266,15 @@ var randomDraw = function(lst) {
 	return lst[index]
 };
 
-
+/* ************************************ */
+/*     Create the trial type            */
+/* ************************************ */
 var createTrialTypes = function(numTrialsPerBlock, delay){
 	first_stims = []
-	for (var i = 0; i < 2; i++){ //dropped to 2 because we have a max of 2-back
-		if (i < delay){
-			n_back_condition = 'N/A'
-		} else {
-			n_back_condition = n_back_conditions[Math.floor(Math.random() * 5)]
-		}
+	for (var i = 0; i < delay; i++){ //loop to insert the first N/A trials. Either one or two depending on block
+
+		n_back_condition = 'N/A' // add N/A for the initial trial, number of N/A added should correspond to the amount of delay you have on a given block
+
 		probe = randomDraw(letters)
 		correct_response = getPossibleResponses()[1][1]
 		if (n_back_condition == 'match'){
@@ -249,25 +284,24 @@ var createTrialTypes = function(numTrialsPerBlock, delay){
 			probe = randomDraw('bBdDgGtTvV'.split("").filter(function(y) {return $.inArray(y, [first_stims[i - delay].probe.toLowerCase(), first_stims[i - delay].probe.toUpperCase()]) == -1}))
 			correct_response = getPossibleResponses()[1][1]
 		}
-		
-		
+
 		first_stim = {
 			n_back_condition: n_back_condition,
 			probe: probe,
 			correct_response: correct_response,
 			delay: delay
-		}	
-		first_stims.push(first_stim)	
+		}
+		first_stims.push(first_stim)
 	}
-	
+
 	stims = []
 	if (numTrialsPerBlock == practice_len) { // for practice blocks, generate the stimuli randomly
 		//ASSUMES PRACTICE_LEN != EXP_LEN/NUMTESTBLOCKS
 		for(var numIterations = 0; numIterations < numTrialsPerBlock/n_back_conditions.length; numIterations++){
 			for (var numNBackConds = 0; numNBackConds < n_back_conditions.length; numNBackConds++){
-				
+
 				n_back_condition = n_back_conditions[numNBackConds]
-				
+
 				stim = {
 					n_back_condition: n_back_condition
 					}
@@ -277,24 +311,24 @@ var createTrialTypes = function(numTrialsPerBlock, delay){
 		stims = jsPsych.randomization.repeat(stims,1)
 	} else { //if it's a test trial, grab the event types from the design
 		curr_des_events = des_events.slice(0, numTrialsPerBlock) //grab this block's event
-		des_events = des_events.slice(numTrialsPerBlock,)
+		des_events = des_events.slice(numTrialsPerBlock,) // not sure why this is needed
 		for (var idx = 0; idx < numTrialsPerBlock; idx++) {
 			n_back_condition = curr_des_events[idx]
 			stim = {
 				n_back_condition: n_back_condition
 				}
-			stims.push(stim)
+			stims.push(stim) // add stim to stims
 		}
 	}
 
 
-	stims = first_stims.concat(stims)
-	
+	stims = first_stims.concat(stims) // concatenate the N/A with expertimental ones
+
 	stim_len = stims.length
-	
-	new_stims = []
+	new_stims = [] // not sure why this is needed but new stims is what is returned by create Trial Type
 	for (i = 0; i < stim_len; i++){
-		if (i < 2){ //SHIFTED BECAUSE MAX DELAY == 2 NOW
+		if (i < delay) { //SHIFTED BECAUSE MAX DELAY == 2 NOW
+
 			stim = stims.shift()
 			n_back_condition = stim.n_back_condition
 			probe = stim.probe
@@ -303,45 +337,50 @@ var createTrialTypes = function(numTrialsPerBlock, delay){
 		} else {
 			stim = stims.shift()
 			n_back_condition = stim.n_back_condition
-		
+
 			if (n_back_condition == "match"){
 				probe = randomDraw([new_stims[i - delay].probe.toUpperCase(), new_stims[i - delay].probe.toLowerCase()])
 				correct_response = getPossibleResponses()[0][1]
 			} else if (n_back_condition == "mismatch"){
 				probe = randomDraw('bBdDgGtTvV'.split("").filter(function(y) {return $.inArray(y, [new_stims[i - delay].probe.toLowerCase(), new_stims[i - delay].probe.toUpperCase()]) == -1}))
 				correct_response = getPossibleResponses()[1][1]
-		
-			}			
+
+			}
 		}
-		
+
 		stim = {
 			n_back_condition: n_back_condition,
 			probe: probe,
 			correct_response: correct_response,
 			delay: delay
 		}
-		
 		new_stims.push(stim)
 	}
+
 	return new_stims
 }
 
+/* ************************************ */
+/*   Get Stims												 */
+/* ************************************ */
 
-var getStim = function(){	
+var getStim = function(){
 	stim = stims.shift()
 	n_back_condition = stim.n_back_condition
 	probe = stim.probe
 	correct_response = stim.correct_response
 	delay = stim.delay
-	
+
 	if (probe == probe.toUpperCase()) {
 	 letter_case = 'uppercase'
 	} else if (probe == probe.toLowerCase()) {
 	 letter_case = 'lowercase'
 	}
-	
-	return task_boards[0]+ preFileType  + letter_case + '_' + probe.toUpperCase() + fileTypePNG + task_boards[1]	
+
+	return task_boards[0]+ preFileType  + letter_case + '_' + probe.toUpperCase() + fileTypePNG + task_boards[1]
 }
+
+
 
 var getResponse =  function(){
 	return correct_response
@@ -351,14 +390,14 @@ var appendData = function(){
 	curr_trial = jsPsych.progress().current_trial_global
 	trial_id = jsPsych.data.getDataByTrialIndex(curr_trial).trial_id
 	current_trial+=1
-	
-	
+
+
 	if (trial_id == 'practice_trial'){
 		current_block = refreshCount
 	} else if (trial_id == 'test_trial'){
 		current_block = testCount
 	}
-		
+
 	jsPsych.data.addDataToLastTrial({
 		n_back_condition: n_back_condition,
 		probe: probe,
@@ -368,18 +407,33 @@ var appendData = function(){
 		current_block: current_block,
 		letter_case: letter_case
 	})
-		
+
 	if (jsPsych.data.getDataByTrialIndex(curr_trial).key_press == correct_response){
 		jsPsych.data.addDataToLastTrial({
 			correct_trial: 1,
 		})
-	
+
 	} else if (jsPsych.data.getDataByTrialIndex(curr_trial).key_press != correct_response){
 		jsPsych.data.addDataToLastTrial({
 			correct_trial: 0,
 		})
-	
-	}			
+
+	}
+}
+
+var createDelay = function(){
+	var array1_delay = jsPsych.randomization.repeat([1], numTestBlocks / 2)
+	var array2_delay = jsPsych.randomization.repeat([2], numTestBlocks / 2)
+
+	chance = Math.round(Math.random()) + 1
+	if (chance == 1){
+		temp = $.map(array2_delay, function(v, i) { return [v, array1_delay[i]]; });
+		return temp
+	} else if (chance == 2){
+		temp = $.map(array1_delay, function(v, i) { return [v, array2_delay[i]]; });
+		return temp
+	}
+
 }
 
 /* ************************************ */
@@ -394,17 +448,20 @@ var credit_var = 0
 
 
 var practice_len = 10 // must be divisible by 5
-var exp_len = 320 //150 // must be divisible by 5 --9:30
-var numTrialsPerBlock = 80 // must be divisible by 5 and we need to have a multiple of 2 blocks (2,4,6) in order to have equal delays across blocks
-var numTestBlocks = exp_len / numTrialsPerBlock //should be divisble by 2 ^^
+var exp_len = 288 //150 // must be divisible by 5 --9:30
+var numTrialsPerBlock = 16 // must be divisible by 5 and we need to have a multiple of 2 blocks (2,4,6) in order to have equal delays across blocks
+var numTestBlocks = exp_len / numTrialsPerBlock//should be divisble by 2 ^^
 
 var accuracy_thresh = 0.75
 var rt_thresh = 1000
 var missed_thresh = 0.10
 
-var delays = jsPsych.randomization.repeat([1, 2], numTestBlocks / 2) //jsPsych.randomization.repeat([1, 2, 3], numTestBlocks / 3)
+//var array1_delay = jsPsych.randomization.repeat([1], numTestBlocks / 2)
+//var array2_delay = jsPsych.randomization.repeat([2], numTestBlocks / 2)
+var delays = createDelay()
 
-var delay = 2 //1
+
+var delay = 2 //1            // delay to be used for practice
 
 var pathSource = "/static/experiments/n_back_single_task_network__fmri/images/"
 var fileTypePNG = ".png'></img>"
@@ -413,9 +470,9 @@ var preFileType = "<img class = center src='/static/experiments/n_back_single_ta
 
 var n_back_conditions = jsPsych.randomization.repeat(['mismatch','mismatch','match','mismatch','mismatch'],1)
 var possible_responses = [['index finger', 89],['middle finger', 71]]
-							 
+
 var letters = 'bBdDgGtTvV'.split("")
-							 
+
 
 var current_trial = 0
 var current_block = 0
@@ -449,16 +506,15 @@ var motor_perm = 0
 /*          Define Game Boards          */
 /* ************************************ */
 
-var task_boards = ['<div class = bigbox><div class = centerbox><div class = gng_number><div class = cue-text>','</div></div></div></div>']		
+var task_boards = ['<div class = bigbox><div class = centerbox><div class = gng_number><div class = cue-text>','</div></div></div></div>']
 
 // var stims = createTrialTypes(practice_len, delay)
 var stims = []
+var stim_len =[]
 
 /* ************************************ */
 /*        Set up jsPsych blocks         */
 /* ************************************ */
-
-
 var end_block = {
 	type: 'poldrack-text',
 	data: {
@@ -489,14 +545,14 @@ var refresh_feedback_block = {
 	response_ends_trial: getRefreshResponseEnds,
 	on_finish: function() {
 		refresh_trial_id = "practice-no-stop-feedback"
-		refresh_feedback_timing = 10000
+		refresh_feedback_timing = 4000 // it was 10000
 		refresh_response_ends = false
 		// if (ITIs_stim.length===0) { //if ITIs haven't been generated, generate them!
 		// 	ITIs_stim = genITIs()
 		// 	ITIs_resp = ITIs_stim.slice(0) //make a copy of ITIs so that timing_stimulus & timing_response are the same
 		// }
 
-	} 
+	}
 
 };
 
@@ -510,7 +566,7 @@ var refresh_fixation_block = {
 	},
 	timing_response: 500, //500
 	timing_post_trial: 0,
-	prompt: getPromptTextList
+	prompt: getPromptTextListPractice // getPromptTextList
 }
 
 var ITI_fixation_block = {
@@ -528,8 +584,9 @@ var ITI_fixation_block = {
 
 
 
-var feedback_text = 
-	'Welcome to the experiment. This experiment will take around 5 minutes. Press <i>enter</i> to begin.'
+var feedback_text =
+	'Welcome to the experiment. This experiment will take around 12 minutes. Press <i>enter</i> to begin.'
+
 var feedback_block = {
 	type: 'poldrack-single-stim',
 	data: {
@@ -539,8 +596,8 @@ var feedback_block = {
 	stimulus: getFeedback,
 	timing_post_trial: 0,
 	is_html: true,
-	timing_response: 10000,
-	response_ends_trial: false, 
+	timing_response: 4000,// it was 10000
+	response_ends_trial: false,
 
 };
 
@@ -564,8 +621,8 @@ var design_setup_block = {
 	], on_finish: async function(data) {
 		design_perm =parseInt(data.responses.slice(7, 10))
 		des_ITIs = await getdesignITIs(design_perm)
-		des_ITIs = des_ITIs.map(Number)
-		des_ITIs = insertBufferITIs(des_ITIs)
+		des_ITIs = des_ITIs.map(Number)//array of strings become array of numbers
+		des_ITIs = insertBufferITIs(des_ITIs, delays)
 		ITIs_stim = des_ITIs.slice(0)
 		ITIs_resp = des_ITIs.slice(0)
 		des_events = await getdesignEvents(design_perm)
@@ -584,7 +641,7 @@ var motor_setup_block = {
 	], on_finish: function(data) {
 		motor_perm=parseInt(data.responses.slice(7, 10))
 		stims = createTrialTypes(practice_len, delay)
-		
+
 	}
 }
 
@@ -610,7 +667,7 @@ for (i = 0; i < practice_len + 2; i++) {	//was changed from + 3 as delays went f
 		show_stim_with_feedback: false,
 		timing_post_trial: 0,
 		on_finish: appendData,
-		prompt: getPromptTextList,
+		prompt: getPromptTextListPractice,//getPromptText List
 		fixation_default: true
 	}
 	refreshTrials.push(refresh_fixation_block)
@@ -626,7 +683,7 @@ var refreshNode = {
 		var correct = 0
 		var total_trials = 0
 		var mismatch_press = 0
-	
+
 		for (var i = 0; i < data.length; i++){
 			if (data[i].trial_id == "practice_trial"){
 				total_trials+=1
@@ -635,26 +692,26 @@ var refreshNode = {
 					sum_responses += 1
 					if (data[i].key_press == data[i].correct_response){
 						correct += 1
-		
+
 					}
 				}
-				
+
 				if (data[i].key_press == getPossibleResponses()[1][1]){
 					mismatch_press += 1
 				}
-		
+
 			}
-	
+
 		}
-	
+
 		var accuracy = correct / total_trials
 		var missed_responses = (total_trials - sum_responses) / total_trials
 		var ave_rt = sum_rt / sum_responses
 		var mismatch_press_percentage = mismatch_press / total_trials
-	
-		refresh_feedback_text = "<br><p class = instruct-text>Please take this time to read your feedback and to take a short break." // Press enter to continue"
 
-		
+		refresh_feedback_text = "<br><p class = instruct-text>Take a short break." // Press enter to continue"
+
+
 		if (accuracy < accuracy_thresh){
 			if (missed_responses > missed_thresh){
 				refresh_feedback_text +=
@@ -662,121 +719,175 @@ var refreshNode = {
 			}
 
 	      	if (ave_rt > rt_thresh){
-	        	refresh_feedback_text += 
+	        	refresh_feedback_text +=
 	            	'</p><p class = instruct-text>You have been responding too slowly.'
 	      	}
-			
+
 			if (mismatch_press_percentage >= 0.90){
 				refresh_feedback_text +=
 						'</p><p class = instruct-text>Please do not simply press your "'+getPossibleResponses()[1][0]+'" to every stimulus. Please try to identify the matches and press your "'+getPossibleResponses()[0][0]+'" when they occur.'
-			}	
-
-		}
-
-		refresh_feedback_text +='</p><p class = instruct-text>Done with this practice. The test session will begin shortly.' 
-		delay = delays.pop()
-		stims = createTrialTypes(numTrialsPerBlock, delay)
-		feedback_text = "Your delay for this block is "+delay+". Please match the current letter to the letter that appeared "+delay+" trial(s) ago."
-		return false
-		
-	}
-}
-
-
-
-
-
-var testTrials = []
-testTrials.push(feedback_block)
-for (i = 0; i < numTrialsPerBlock + 2; i++) { //was changed from + 3 as delays went from 1:3 to 1:2
-	
-	var test_block = {
-		type: 'poldrack-single-stim',
-		stimulus: getStim,
-		is_html: true,
-		data: {
-			"trial_id": "test_trial",
-		},
-		choices: [getPossibleResponses()[0][1],getPossibleResponses()[1][1]],
-		timing_stim: 1000, //1000
-		timing_response: 2000, //2000
-		timing_post_trial: 0,
-		response_ends_trial: false,
-		on_finish: appendData,
-		fixation_default: true
-	}
-	testTrials.push(ITI_fixation_block)
-	testTrials.push(test_block)
-}
-
-var testCount = 0
-var testNode = {
-	timeline: testTrials,
-	loop_function: function(data) {
-	testCount += 1
-	current_trial = 0
-	
-	var sum_rt = 0
-		var sum_responses = 0
-		var correct = 0
-		var total_trials = 0
-		var mismatch_press = 0
-
-		for (var i = 0; i < data.length; i++){
-			if (data[i].trial_id == "test_trial"){
-				total_trials+=1
-				if (data[i].rt != -1){
-					sum_rt += data[i].rt
-					sum_responses += 1
-					if (data[i].key_press == data[i].correct_response){
-						correct += 1
-					}
-				}
-				
-				if (data[i].key_press == getPossibleResponses()[1][1]){
-					mismatch_press += 1
-				}
-			} 
-		}
-	
-		var accuracy = correct / total_trials
-		var missed_responses = (total_trials - sum_responses) / total_trials
-		var ave_rt = sum_rt / sum_responses
-		var mismatch_press_percentage = mismatch_press / total_trials
-	
-		feedback_text = "<br><p class = instruct-text>Please take this time to read your feedback and to take a short break!"
-		feedback_text += "</p><p class = instruct-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
-		
-		if (accuracy < accuracy_thresh){
-			feedback_text +=
-					'</p><p class = instruct-text>Your accuracy is too low.  Remember: <br>' + getPromptTextList() 
-		}
-		if (missed_responses > missed_thresh){
-			feedback_text +=
-					'</p><p class = instruct-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
-		}
-
-      	if (ave_rt > rt_thresh){
-        	feedback_text += 
-            	'</p><p class = instruct-text>You have been responding too slowly.'
-      	}
-		
-		if (mismatch_press_percentage >= 0.90){
-				feedback_text +=
-						'</p><p class = instruct-text>Please do not simply press your "'+getPossibleResponses()[1][0]+'" to every stimulus. Please try to identify the matches and press your "'+getPossibleResponses()[0][0]+'" when they occur.'
 			}
-	
-		if (testCount == numTestBlocks){
-			feedback_text +=
-					'</p><p class = instruct-text>Done with this test.<br> If you have been completing tasks continuously for an hour or more, please take a 15-minute break before starting again.'
-			return false
-		} else {
-			delay = delays.pop()
-			stims = createTrialTypes(numTrialsPerBlock, delay)
-			feedback_text += "</p><p class = instruct-text><i>For the next round of trials, your delay is "+delay+"</i>."
-			return true
+
 		}
+
+		refresh_feedback_text +='</p><p class = instruct-text>Done with this practice. The test session will begin shortly.'
+		delay = delays.pop() // at the end of practice get first delay
+    stims = createTrialTypes(numTrialsPerBlock, delay)
+    feedback_text = "<strong><i><font color='black'> Delay for the next round of trials is: "+delay+".<br> Match the current letter to the letter that appeared "+delay+" trial(s) ago.</i></font></strong>"
+    //feedback_text += '</p><p class = instruct-text> <br>' + getPromptTextList()
+
+		return false
+
 	}
+}
+
+
+var counter = 1
+function gen_testTrials_1back() {
+  var testTrials_1Back = []
+  testTrials_1Back.push(feedback_block)
+  for (i = 0; i < numTrialsPerBlock + 1; i++) {//was changed from + 3 as delays went from 1:3 to 1:2 HERE THE NUMBER OF ITERATION NEEDS TO BE NTRIAL + DELAY!
+
+    var test_block = {
+      type: 'poldrack-single-stim',
+      stimulus: getStim,
+      is_html: true,
+      data: {
+        "trial_id": "test_trial",
+      },
+      choices: [getPossibleResponses()[0][1],getPossibleResponses()[1][1]],
+      timing_stim: 1000, //1000
+      timing_response: 2000, //2000
+      timing_post_trial: 0,
+      response_ends_trial: false,
+      on_finish: appendData,
+      fixation_default: true
+    }
+    testTrials_1Back.push(ITI_fixation_block)
+    testTrials_1Back.push(test_block)
+  }
+  return testTrials_1Back
+}
+
+
+function gen_testTrials_2back() {
+  var testTrials_2Back = []
+  testTrials_2Back.push(feedback_block)
+  for (i = 0; i < numTrialsPerBlock + 2; i++) {//was changed from + 3 as delays went from 1:3 to 1:2 HERE THE NUMBER OF ITERATION NEEDS TO BE NTRIAL + DELAY!
+
+    var test_block = {
+      type: 'poldrack-single-stim',
+      stimulus: getStim,
+      is_html: true,
+      data: {
+        "trial_id": "test_trial",
+      },
+      choices: [getPossibleResponses()[0][1],getPossibleResponses()[1][1]],
+      timing_stim: 1000, //1000
+      timing_response: 2000, //2000
+      timing_post_trial: 0,
+      response_ends_trial: false,
+      on_finish: appendData,
+      fixation_default: true
+    }
+    testTrials_2Back.push(ITI_fixation_block)
+    testTrials_2Back.push(test_block)
+  }
+  return testTrials_2Back 
+}
+
+// Function to get the correct timeline depending on block delay
+var getTestTrials =  function(delay){
+  if (delay ==1){
+    testTrials = gen_testTrials_1back()
+  } else if(delay == 2) {
+    testTrials = gen_testTrials_2back()
+  }
+  return testTrials
+}
+
+testTrials=[]
+var testCount = 0
+
+function generateTestNode(delay) {
+
+  var testNode = {}
+  testNode = {
+    timeline: getTestTrials(delay),
+    //testTrials, // create testTrials using a function with delay
+    loop_function: function(data) {
+      testCount += 1
+      current_trial = 0
+      var sum_rt = 0
+      var sum_responses = 0
+      var correct = 0
+      var total_trials = 0
+      var mismatch_press = 0
+
+      for (var i = 0; i < data.length; i++){
+        if (data[i].trial_id == "test_trial"){
+          total_trials+=1
+          if (data[i].rt != -1){
+            sum_rt += data[i].rt
+            sum_responses += 1
+            if (data[i].key_press == data[i].correct_response){
+              correct += 1
+            }
+          }
+          if (data[i].key_press == getPossibleResponses()[1][1]){
+            mismatch_press += 1
+          }
+        }
+      }
+
+      var accuracy = correct / total_trials
+      var missed_responses = (total_trials - sum_responses) / total_trials
+      var ave_rt = sum_rt / sum_responses
+      var mismatch_press_percentage = mismatch_press / total_trials
+    
+    //	feedback_text = "<br><p class = instruct-text>Short break!"
+    //feedback_text += "</p><p class = instruct-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
+
+    delay = delays.pop()
+    if (!delay){
+      feedback_text =
+          '</p><p class = instruct-text>Done with this test.<br>'
+      return false
+    } else {
+      counter+=1
+      stims = createTrialTypes(numTrialsPerBlock, delay)
+
+      //feedback_text += "</p><p class = instruct-text><strong><i><font color='black'>For the next round of trials, your delay is "+delay+"</i>.</font></strong>"
+      feedback_text = "<strong><i><font color='black'>Your delay for the next round of trials is "+delay+".</i></font></strong>"
+      //feedback_text += '</p><p class = instruct-text> <br>' + getPromptTextList()
+
+      return false
+    }
+
+      if (missed_responses > missed_thresh){
+        feedback_text +=
+            '</p><p class = instruct-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
+      }
+
+          if (ave_rt > rt_thresh){
+            feedback_text +=
+                '</p><p class = instruct-text>You have been responding too slowly.'
+          }
+
+      if (mismatch_press_percentage >= 0.90){
+          feedback_text +=
+              '</p><p class = instruct-text>Please do not simply press your "'+getPossibleResponses()[1][0]+'" to every stimulus. Please try to identify the matches and press your "'+getPossibleResponses()[0][0]+'" when they occur.'
+        }
+
+      if (testCount == numTestBlocks){
+        return false
+      } else {
+        //feedback_text += "</p><p class = instruct-text><strong><i><font color='black'>For the next round of trials, your delay is prova"//+delay+"</i>.</font></strong>"
+        return true
+      }
+    }
+  }
+  return testNode
 }
 
 
@@ -786,18 +897,22 @@ var testNode = {
 
 var n_back_single_task_network__fmri_experiment = []
 
-n_back_single_task_network__fmri_experiment.push(design_setup_block); //exp_input
+n_back_single_task_network__fmri_experiment.push(design_setup_block); //exp_input, here the ITIs get defined
 n_back_single_task_network__fmri_experiment.push(motor_setup_block); //exp_input
 test_keys(n_back_single_task_network__fmri_experiment, [possible_responses[0][1],possible_responses[1][1]])
 
 
-//in scanner practice
 n_back_single_task_network__fmri_experiment.push(refreshNode);
 n_back_single_task_network__fmri_experiment.push(refresh_feedback_block);
 
 //in scanner test
 cni_bore_setup(n_back_single_task_network__fmri_experiment)
-n_back_single_task_network__fmri_experiment.push(testNode);
-n_back_single_task_network__fmri_experiment.push(feedback_block);
+//n_back_single_task_network__fmri_experiment.push(testNode);
+
+delays.slice().reverse().forEach(d => {
+  n_back_single_task_network__fmri_experiment.push(generateTestNode(d))
+})
+
+n_back_single_task_network__fmri_experiment.push(feedback_block); // pause between blocks
 
 n_back_single_task_network__fmri_experiment.push(end_block);
