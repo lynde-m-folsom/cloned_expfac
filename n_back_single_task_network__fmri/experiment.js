@@ -733,7 +733,7 @@ var refreshNode = {
 		refresh_feedback_text +='</p><p class = instruct-text>Done with this practice. The test session will begin shortly.'
 		delay = delays.pop() // at the end of practice get first delay
     stims = createTrialTypes(numTrialsPerBlock, delay)
-    feedback_text = "<strong><i><font color='black' size=+10> Delay for next round of trials:  "+delay+"<br> Match the current letter to the letter that appeared "+delay+" trial(s) ago.</i></font></strong>"
+    feedback_text = "<strong><i><font color='black' size=+10> Delay for next round of trials:  "+delay+"</i></font></strong>"
     //feedback_text += '</p><p class = instruct-text> <br>' + getPromptTextList()
 
 		return false
