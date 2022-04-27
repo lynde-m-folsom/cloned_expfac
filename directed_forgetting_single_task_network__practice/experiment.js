@@ -5,10 +5,9 @@ function addID() {
   jsPsych.data.addDataToLastTrial({exp_id: 'directed_forgetting_single_task_network__practice'})
 }
 
-var motor_perm = 0
-
 //added for motor counterbalancing
 function getMotorPerm() {
+	console.log(motor_perm)
 	return motor_perm
 }
 
@@ -330,9 +329,6 @@ function getChoices() {
 	}
 }
 
-var possible_responses = [['index finger', 37],['middle finger', 39]]
-
-
 function getPossibleResponses() {
 	if (getMotorPerm()==0) {
 		return possible_responses
@@ -356,15 +352,29 @@ function getTimeoutMessage() {
 	getPromptTaskList()
   }
 
-var getRefreshFeedback = function() {
-	if (getRefreshTrialID()=='instructions') {
-		return '<div class = instructbox>'+
-		'<p class = instruct-text>In this task, you will see a gray shape on the right of the screen and a black shape on the left of the screen.</p>'+
-		'<p class = instruct-text><strong>Your task is to press your '+getPossibleResponses()[0][0] +' if they are the same shape and your '+getPossibleResponses()[1][0]+' if they are different.</strong></p>'+
-		'<p class = instruct-text>On some trials a white shape will also be presented on the left. You should ignore the white shape. Your task is only to respond based on whether the gray and black shapes are the same.</p>'+
-		'<p class = instruct-text>During practice, you will see a reminder of the rules.  <i> This will be removed for the test</i>. </p>'+ 
-		'<p class = instruct-text>To let the experimenters know when you are ready to begin, please press any button. </p>'+
-		'</div>'
+function getRefreshFeedback() {
+	if (exp_id='instructions') {
+		return 	'<div class = centerbox>'+
+		'<p class = block-text>In this experiment, on each trial you will be presented with '+
+		''+numLetters+' letters. You must memorize all '+numLetters+' letters. </p>'+
+	
+		'<p class = block-text>After the presentation of '+numLetters+' letters, there will be a short delay. You will then be presented with a cue, '+
+		'either <b>TOP</b> or <b>BOT</b>. This will instruct you to <b>forget</b> the '+
+		''+numLetters/2+' letters located at either the top or bottom (respectively) of the screen.</p>' + 
+		
+		'<p class = block-text>So if you get the cue <b>TOP</b>, please <b>forget</b> the top '+numLetters/2+' letters.</p>'+
+	
+		'<p class = block-text>'+
+			'The '+numLetters/2+' remaining letters that you must remember are called your <b>memory set</b>. You should remember '+
+			'these '+numLetters/2+' letters while forgetting the other '+numLetters/2+'.</p>'+
+
+		'<p class = block-text>You will then be presented with a single '+
+		'letter. Respond with your '+ getPossibleResponses()[0][0] + ' if it is in the memory set, and your ' + getPossibleResponses()[1][0]+
+		' if it was not in the memory set.</p>'+
+			
+		'<p class = block-text>We will start practice when you finish instructions. Please make sure you understand the instructions before moving on. During practice, you will receive a reminder of the rules.  <b>This reminder will be taken out for test</b>.</p>'+
+		'<p class = block-text> Please press any button to let the experimenters know when you are ready to begin practice. </p>' + 
+	'</div>'
 	} else {
 		return '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' + refresh_feedback_text + '</font></p></div></div>'
 	}
@@ -374,12 +384,14 @@ var getRefreshFeedback = function() {
 /* Define experimental variables */
 /* ************************************ */
 // generic task variables
+var possible_responses = [['index finger', 37],['middle finger', 39]]
 var attention_check_thresh = 0.65
 var sumInstructTime = 0 //ms
 var instructTimeThresh = 0 ///in seconds
 var credit_var = 0
 
 // task specific variables
+var motor_perm = 0
 var choices = [37, 39]
 var exp_stage = 'practice'
 var practice_length = 24
@@ -468,38 +480,6 @@ var feedback_instruct_block = {
 	timing_post_trial: 0,
 	timing_response: 180000
 };
-/// This ensures that the subject does not read through the instructions too quickly.  If they do it too quickly, then we will go over the loop again.
-var instructions_block = {
-	type: 'poldrack-instructions',
-	data: {
-		trial_id: 'instruction'
-	},
-	pages: [
-		'<div class = centerbox>'+
-			'<p class = block-text>In this experiment, on each trial you will be presented with '+
-			''+numLetters+' letters. You must memorize all '+numLetters+' letters. </p>'+
-		
-			'<p class = block-text>After the presentation of '+numLetters+' letters, there will be a short delay. You will then be presented with a cue, '+
-			'either <b>TOP</b> or <b>BOT</b>. This will instruct you to <b>forget</b> the '+
-			''+numLetters/2+' letters located at either the top or bottom (respectively) of the screen.</b>' + 
-			
-			'<p class = block-text>So if you get the cue <b>TOP</b>, please <b>forget</b> the top '+numLetters/2+' letters.</p>'+
-		
-			'<p class = block-text>'+
-				'The '+numLetters/2+' remaining letters that you must remember are called your <b>memory set</b>. You should remember '+
-				'these '+numLetters/2+' letters while forgetting the other '+numLetters/2+'.</p>'+
-	
-			'<p class = block-text>You will then be presented with a single '+
-			'letter. Respond with the '+ getPossibleResponses()[0][0] + 'key if it is in the memory set, and the ' + getPossibleResponses()[0][1]+
-			'key if it was not in the memory set.</p>'+
-				
-			'<p class = block-text>We will start practice when you finish instructions. Please make sure you understand the instructions before moving on. During practice, you will receive a reminder of the rules.  <b>This reminder will be taken out for test</b>.</p>'+
-		'</div>',
-	],
-	allow_keys: false,
-	show_clickable_nav: true,
-	timing_post_trial: 1000
-};
 
 var design_setup_block = {
 	type: 'survey-text',
@@ -532,31 +512,27 @@ var motor_setup_block = {
 		]
 	], on_finish: function(data) {
 		motor_perm=parseInt(data.responses.slice(7, 10))
+		console.log(motor_perm)
 		stims = createTrialTypes(practice_length, numLetters)
 		
 	}
 }
 
-// var instruction_node = {
-// 	timeline: [instructions_block],
-// 	/* This function defines stopping criteria */
-// 	loop_function: function(data) {
-// 		for (i = 0; i < data.length; i++) {
-// 			if ((data[i].trial_type == 'poldrack-instructions') && (data[i].rt != -1)) {
-// 				rt = data[i].rt
-// 				sumInstructTime = sumInstructTime + rt
-// 			}
-// 		}
-// 		if (sumInstructTime <= instructTimeThresh * 1000) {
-// 			feedback_instruct_text =
-// 				'Read through instructions too quickly.  Please take your time and make sure you understand the instructions.  Press <i>enter</i> to continue.'
-// 			return true
-// 		} else if (sumInstructTime > instructTimeThresh * 1000) {
-// 			feedback_instruct_text = 'Done with instructions. Press <i>enter</i> to continue.'
-// 			return false
-// 		}
-// 	}
-// }
+/// This ensures that the subject does not read through the instructions too quickly.  If they do it too quickly, then we will go over the loop again.
+var instructions_block = {
+	type: 'poldrack-single-stim',
+	data: {
+		trial_id: 'instructions'
+	},
+	stimulus: getRefreshFeedback,
+	allow_keys: false,
+	show_clickable_nav: true,
+	timing_post_trial: 0,
+	is_html: true,
+	timing_response: -1, //10 seconds for feedback
+	timing_stim: -1,
+	response_ends_trial: true,
+};
 
 var start_practice_block = {
 	type: 'poldrack-instructions',
@@ -943,401 +919,6 @@ var practiceNode = {
 	}
 	
 }
-
-// var refreshTrials = []
-// refreshTrials.push(instructions_block)
-// for (i = 0; i < (refresh_length); i++) {
-// 	var refresh_start_fixation_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: '<div class = centerbox><div class = fixation><span style="color:white">+</span></div></div>',
-// 		is_html: true,
-// 		choices: 'none',
-// 		data: {
-// 			trial_id: "refresh_fixation"
-// 		},
-// 		timing_post_trial: 0,
-// 		timing_stim: 500, //500
-// 		timing_response: 500, //500
-// 		prompt: getPromptTaskList,
-// 		on_finish: function() {
-// 			jsPsych.data.addDataToLastTrial({
-// 				exp_stage: exp_stage,
-// 				current_trial: current_trial
-// 			})
-// 		}
-// 	}
-
-// 	var refresh_fixation_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: '<div class = centerbox><div class = fixation><span style="color:white">+</span></div></div>',
-// 		is_html: true,
-// 		choices: 'none',
-// 		data: {
-// 			trial_id: "refresh_fixation"
-// 		},
-// 		timing_post_trial: 0,
-// 		timing_stim: 2000, //2000
-// 		prompt: getPromptTaskList,
-// 		timing_response: 2000, //2000
-// 		on_finish: function() {
-// 			jsPsych.data.addDataToLastTrial({
-// 				exp_stage: exp_stage,
-// 				current_trial: current_trial
-// 			})
-// 		}
-// 	}
-
-// 	var refresh_ITI_fixation_block = {
-// 		type: 'poldrack-single-stim',
-// 		is_html: true,
-// 		choices: 'none',
-// 		data: {
-// 			trial_id: "refresh_ITI_fixation"
-// 		},
-// 		timing_post_trial: 0,
-// 		timing_stim: 1000, //1000
-// 		prompt: getPromptTaskList,
-// 		timing_response: 1000, //1000
-// 		on_finish: function() {
-// 			jsPsych.data.addDataToLastTrial({
-// 				exp_stage: exp_stage,
-// 				current_trial: current_trial
-// 			})
-// 			current_trial = current_trial + 1
-// 		}
-// 	}
-
-// 	var refresh_training_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: getLettersHTML,
-// 		is_html: true,
-// 		data: {
-// 			trial_id: "refresh_stim"
-// 		},
-// 		choices: 'none',
-// 		prompt: getPromptTaskList,
-// 		timing_post_trial: 0,
-// 		timing_stim: 2000, //2000
-// 		timing_response: 2000 //2000
-// 	};
-
-
-
-// 	var refresh_cue_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: getCueHTML,
-// 		is_html: true,
-// 		data: {
-// 			trial_id: "refresh_cue",
-// 		},
-// 		choices: 'none',
-// 		prompt: getPromptTaskList,
-// 		timing_post_trial: 0,
-// 		timing_stim: 1000, //1000
-// 		timing_response: 1000 //1000
-// 	};
-	
-// 	var categorize_block = {
-// 		type: 'poldrack-single-stim',
-// 		data: {
-// 			trial_id: "refresh-stop-feedback"
-// 		},
-// 		choices: 'none',
-// 		stimulus: getCategorizeFeedback,
-// 		timing_post_trial: 0,
-// 		is_html: true,
-// 		timing_stim: 500, //500
-// 		timing_response: 500, //500
-// 		promot: getPromptTaskList,
-// 		response_ends_trial: false, 
-
-// 	};
-	
-// 	refreshTrials.push(refresh_start_fixation_block);
-// 	refreshTrials.push(refresh_training_block);
-// 	refreshTrials.push(refresh_cue_block);
-// 	refreshTrials.push(refresh_fixation_block);
-// 	refreshTrials.push(refresh_probe_block);
-// 	refreshTrials.push(refresh_ITI_fixation_block);
-// 	refreshTrials.push(categorize_block);
-// }
-
-
-// var refreshCount = 0
-// var refreshNode = {
-// 	timeline: refreshTrials,
-// 	loop_function: function(data){
-// 		refreshCount += 1
-// 		stims = createTrialTypes(refresh_length,numLetters)
-	
-// 		var sum_rt = 0
-// 		var sum_responses = 0
-// 		var correct = 0
-// 		var total_trials = 0
-	
-// 		for (var i = 0; i < data.length; i++){
-// 			if (data[i].trial_id == 'refresh_trial'){
-// 				total_trials+=1
-// 				if (data[i].rt != -1){
-// 					sum_rt += data[i].rt
-// 					sum_responses += 1
-// 					if (data[i].key_press == data[i].correct_response){
-// 						correct += 1
-		
-// 					}
-// 				}
-		
-// 			}
-	
-// 		}
-	
-// 		var accuracy = correct / total_trials
-// 		var missed_responses = (total_trials - sum_responses) / total_trials
-// 		var ave_rt = sum_rt / sum_responses
-	
-// 		feedback_text = "<br>Please take this time to read your feedback and to take a short break! "
-// 		stims = createTrialTypes(numTrialsPerBlock,numLetters)
-
-// 		if (accuracy > accuracy_thresh){
-// 			feedback_text +=
-// 					'</p><p class = block-text>Done with this practice.' 
-	
-// 		} else if (accuracy < accuracy_thresh){
-// 			feedback_text +=
-// 					'</p><p class = block-text> Remember: <br>' + getPromptTaskList()
-					
-// 			if (missed_responses > missed_thresh){
-// 				feedback_text +=
-// 						'</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
-// 			}
-
-// 	      	if (ave_rt > rt_thresh){
-// 	        	feedback_text += 
-// 	            	'</p><p class = block-text>You have been responding too slowly.'
-// 	      	}
-
-		
-// 			// if (refreshCount == refresh_thresh){
-// 			// 	feedback_text +=
-// 			// 		'</p><p class = block-text>Done with this practice.' 
-// 			// 		stims = createTrialTypes(numTrialsPerBlock,numLetters)
-// 			// 		return false
-// 			// }
-			
-			
-// 			return false
-		
-// 		}
-	
-// 	}
-	
-// }
-
-// var testTrials0 = []
-// //testTrials.push(test_feedback_block)
-// for (i = 0; i < numTrialsPerBlock; i++) { //numTrialsPerBlock
-// 	testTrials0.push(start_fixation_block);
-// 	testTrials0.push(training_block);
-// 	testTrials0.push(cue_block);
-// 	testTrials0.push(fixation_block);
-// 	testTrials0.push(probe_block);
-// 	testTrials0.push(ITI_fixation_block);
-// }
-
-// var testCount = 0
-// var testNode0 = {
-// 	timeline: testTrials0,
-// 	loop_function: function(data) {
-// 		stims = createTrialTypes(numTrialsPerBlock,numLetters)
-// 		testCount += 1
-// 		current_trial = 0 
-		
-// 		//below are counters to see if the subject is treating this task as a directed remembering as opposed to a directed forgetting task
-// 		var respond_remember_total = 0
-// 		var neg_respond_remember = 0
-// 		var pos_respond_remember = 0
-	
-// 		for (var i = 0; i < data.length; i++) {
-// 			if (data[i].trial_id == 'test_trial') {
-// 				if(data[i].probe_type == 'neg'){
-// 					respond_remember_total += 1
-// 					if(data[i].key_press == choices[0]){
-// 						neg_respond_remember += 1
-// 					}
-// 				}else if (data[i].probe_type == 'pos'){
-// 					respond_remember_total += 1
-// 					if(data[i].key_press == choices[1]){
-// 						pos_respond_remember += 1
-// 					}
-// 				}
-			
-// 			}
-// 		}
-	
-	
-// 		var directed_remembering_total = neg_respond_remember + pos_respond_remember
-// 		var directed_remembering_percent = directed_remembering_total / respond_remember_total 
-
-// 		console.log(directed_remembering_percent)
-// 		if (directed_remembering_percent >= 0.75){
-// 			test_feedback_text = 'According to the pattern of your responses, we believe that you are treating this task as a directed remembering task.  Please remember that <i>this is a directed forgetting task</i>.</p>'+
-// 								 '<p class = block-text>When you are presented with the cue TOP, you should <i> forget the top letters</i> and <i>remember the bottom letters.</i></p>'+
-// 								 '<p class = block-text>When you are presented with the cue BOT, you should <i> forget the bottom letters</i> and <i>remember the top letters.</i></p>'+
-// 								 '<p class = block-text>Press the <i>left</i> arrow key if the probe letter <i> is in the memory set</i>, and the <i>right</i> if it is <i>not in the memory set</i>.</p>'+
-// 								 '<p class = block-text>Press enter to continue.'	
-// 		} 
-// 			var sum_rt = 0
-// 			var sum_responses = 0
-// 			var correct = 0
-// 			var total_trials = 0
-	
-// 			for (i = 0; i < data.length; i++){
-// 				if (data[i].trial_id == "test_trial"){
-// 					total_trials+=1
-// 					if (data[i].rt != -1){
-// 						sum_rt += data[i].rt
-// 						sum_responses += 1
-// 						if (data[i].key_press == data[i].correct_response){
-// 							correct += 1
-		
-// 						}
-// 					}
-		
-// 				}
-	
-// 			}
-		
-// 			var accuracy = correct / total_trials
-// 			var missed_responses = (total_trials - sum_responses) / total_trials
-// 			var ave_rt = sum_rt / sum_responses
-	
-// 			test_feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
-// 			test_feedback_text += "</p><p class = block-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
-			
-		
-// 			if (accuracy < accuracy_thresh){
-// 				test_feedback_text +=
-// 						'</p><p class = block-text>Your accuracy is too low.  Remember: <br>' + getPromptTaskList()
-// 			}
-// 			if (missed_responses > missed_thresh){
-// 				test_feedback_text +=
-// 						'</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
-// 			}
-
-// 	      	if (ave_rt > rt_thresh){
-// 	        	feedback_text += 
-// 	            	'</p><p class = block-text>You have been responding too slowly.'
-// 	      	}			
-		
-// 	}
-
-// }
-
-// var testTrials = []
-// testTrials.push(test_feedback_block)
-// for (i = 0; i < numTrialsPerBlock; i++) { //numTrialsPerBlock
-// 	testTrials.push(start_fixation_block);
-// 	testTrials.push(training_block);
-// 	testTrials.push(cue_block);
-// 	testTrials.push(fixation_block);
-// 	testTrials.push(probe_block);
-// 	testTrials.push(ITI_fixation_block);
-// }
-
-// var testNode = {
-// 	timeline: testTrials,
-// 	loop_function: function(data) {
-// 		stims = createTrialTypes(numTrialsPerBlock,numLetters)
-// 		testCount += 1
-// 		current_trial = 0 
-		
-// 		//below are counters to see if the subject is treating this task as a directed remembering as opposed to a directed forgetting task
-// 		var respond_remember_total = 0
-// 		var neg_respond_remember = 0
-// 		var pos_respond_remember = 0
-	
-// 		for (var i = 0; i < data.length; i++) {
-// 			if (data[i].trial_id == 'test_trial') {
-// 				if(data[i].probe_type == 'neg'){
-// 					respond_remember_total += 1
-// 					if(data[i].key_press == choices[0]){
-// 						neg_respond_remember += 1
-// 					}
-// 				}else if (data[i].probe_type == 'pos'){
-// 					respond_remember_total += 1
-// 					if(data[i].key_press == choices[1]){
-// 						pos_respond_remember += 1
-// 					}
-// 				}
-			
-// 			}
-// 		}
-	
-	
-// 		var directed_remembering_total = neg_respond_remember + pos_respond_remember
-// 		var directed_remembering_percent = directed_remembering_total / respond_remember_total 
-
-// 		console.log(directed_remembering_percent)
-// 		if (directed_remembering_percent >= 0.75){
-// 			test_feedback_text = 'According to the pattern of your responses, we believe that you are treating this task as a directed remembering task.  Please remember that <i>this is a directed forgetting task</i>.</p>'+
-// 								 '<p class = block-text>When you are presented with the cue TOP, you should <i> forget the top letters</i> and <i>remember the bottom letters.</i></p>'+
-// 								 '<p class = block-text>When you are presented with the cue BOT, you should <i> forget the bottom letters</i> and <i>remember the top letters.</i></p>'+
-// 								 '<p class = block-text>Press the <i>left</i> arrow key if the probe letter <i> is in the memory set</i>, and the <i>right</i> if it is <i>not in the memory set</i>.</p>'+
-// 								 '<p class = block-text>Press enter to continue.'	
-// 		} 
-// 			var sum_rt = 0
-// 			var sum_responses = 0
-// 			var correct = 0
-// 			var total_trials = 0
-	
-// 			for (i = 0; i < data.length; i++){
-// 				if (data[i].trial_id == "test_trial"){
-// 					total_trials+=1
-// 					if (data[i].rt != -1){
-// 						sum_rt += data[i].rt
-// 						sum_responses += 1
-// 						if (data[i].key_press == data[i].correct_response){
-// 							correct += 1
-		
-// 						}
-// 					}
-		
-// 				}
-	
-// 			}
-		
-// 			var accuracy = correct / total_trials
-// 			var missed_responses = (total_trials - sum_responses) / total_trials
-// 			var ave_rt = sum_rt / sum_responses
-	
-// 			test_feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
-// 			test_feedback_text += "</p><p class = block-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
-			
-		
-// 			if (accuracy < accuracy_thresh){
-// 				test_feedback_text +=
-// 						'</p><p class = block-text>Your accuracy is too low.  Remember: <br>' + getPromptTaskList()
-// 			}
-// 			if (missed_responses > missed_thresh){
-// 				test_feedback_text +=
-// 						'</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
-// 			}
-
-// 	      	if (ave_rt > rt_thresh){
-// 	        	feedback_text += 
-// 	            	'</p><p class = block-text>You have been responding too slowly.'
-// 	      	}
-			  
-
-// 			if (testCount == numTestBlocks){
-// 				test_feedback_text +=
-// 						'</p><p class = block-text>Done with this test.s'
-// 				return false
-// 			}
-		
-// 	}
-
-// }
 
 
 // /* create experiment definition array */
