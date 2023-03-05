@@ -1179,7 +1179,7 @@ var testNode0 = {
 			var missed_responses = (total_trials - sum_responses) / total_trials
 			var ave_rt = sum_rt / sum_responses
 	
-			test_feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
+			test_feedback_text = "<br>Please take this time to read your feedback and to take a short break!"
 			test_feedback_text += "</p><p class = block-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
 			
 		
