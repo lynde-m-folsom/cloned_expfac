@@ -546,7 +546,7 @@ var refresh_events = ['go_pos', 'go_pos', 'go_pos', 'go_pos',
 
 
 var feedback_text = 
-	'Welcome to the experiment. This experiment will take about 30 minutes. Press <i>enter</i> to begin.'
+	'Welcome to the experiment.'
 
 // var practice_feedback_block = {
 // 	type: 'poldrack-single-stim',
@@ -604,7 +604,7 @@ var end_block = {
 		trial_id: "end",
 	},
 	timing_response: 10000,
-	text: '<div class = centerbox><p class = center-block-text>Thanks for completing this task!</p><p class = center-block-text>Press <i>enter</i> to continue.</p></div>',
+	text: '<div class = centerbox><p class = center-block-text>Thanks for completing this task!</p><p class = center-block-text></p></div>',
 	cont_key: [32],
 	timing_post_trial: 0,
 	on_finish: function(){
@@ -1276,6 +1276,9 @@ var testNode0 = {
 		var missed_responses = (go_trials - sum_go_responses) / go_trials
 		var ave_rt = go_rt / sum_go_responses
 		var stop_acc = stop_correct / stop_trials
+
+    console.log('stop acc: ' + stop_acc)
+    console.log('stop correct: ' + stop_correct)
 	
 		feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
 		feedback_text += "</p><p class = instruct-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
@@ -1295,13 +1298,13 @@ var testNode0 = {
             	'</p><p class = instruct-text>You have been responding too slowly.'
       	}
 		
-		if (stop_correct > maxStopCorrect){
+		if (stop_acc > maxStopCorrect){
 			feedback_text +=
 			'</p><p class = instruct-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
 		
 		}
 		
-		if (stop_correct < minStopCorrect){
+		if (stop_acc < minStopCorrect){
 			feedback_text +=
 			'</p><p class = instruct-text>You have not been stopping your response when stars are present.  Please try your best to stop your response if you see a star.'
 		
@@ -1376,6 +1379,9 @@ var testNode = {
 		var missed_responses = (go_trials - sum_go_responses) / go_trials
 		var ave_rt = go_rt / sum_go_responses
 		var stop_acc = stop_correct / stop_trials
+
+    console.log('stop acc: ' + stop_acc)
+    console.log('stop correct: ' + stop_correct)
 	
 		feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
 		feedback_text += "</p><p class = instruct-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
@@ -1395,13 +1401,13 @@ var testNode = {
             	'</p><p class = instruct-text>You have been responding too slowly.'
       	}
 		
-		if (stop_correct > maxStopCorrect){
+		if (stop_acc > maxStopCorrect){
 			feedback_text +=
 			'</p><p class = instruct-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
 		
 		}
 		
-		if (stop_correct < minStopCorrect){
+		if (stop_acc < minStopCorrect){
 			feedback_text +=
 			'</p><p class = instruct-text>You have not been stopping your response when stars are present.  Please try your best to stop your response if you see a star.'
 		
@@ -1409,7 +1415,7 @@ var testNode = {
 	
 		if (testCount == numTestBlocks){
 			feedback_text +=
-					'</p><p class = instruct-text>Done with this test. Press Enter to continue.<br> If you have been completing tasks continuously for an hour or more, please take a 15-minute break before starting again.'
+					'</p><p class = instruct-text>Done with this test.<br>'
 			return false
 		} else {
 			stims = createTrialTypes(numTrialsPerBlock, des_events)
