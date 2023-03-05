@@ -73,7 +73,7 @@ var getPracticeFeedback = function() {
 	if (getPracticeTrialID()=='instructions') {
 		return '<div class = instructbox>'+
 		'<p class = instruct-text>In this task, you will see a letter on every trial.</p>'+
-		'<p class = instruct-text>You will be asked to match the current letter to the letter that appeared either 1, 2, or 3 trials ago depending on the delay given to you for that block.</p>'+
+		'<p class = instruct-text>You will be asked to match the current letter to the letter that appeared either 1 or 2 trials ago depending on the delay given to you for that block.</p>'+
 		'<p class = instruct-text><strong>Press your '+getPossibleResponses()[0][0]+' if the letters match, and your '+getPossibleResponses()[1][0]+' if they mismatch.</strong></p>'+
 		'<p class = instruct-text>Your delay (the number of trials ago which you must match the current letter to) will change from block to block. You will be given the delay at the start of every block of trials.</p>'+
 		'<p class = instruct-text>Capitalization does not matter, so "T" matches with "t".</p> '+
