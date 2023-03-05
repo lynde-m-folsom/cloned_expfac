@@ -579,7 +579,7 @@ var motor_setup_block = {
 
 
 var feedback_text = 
-'Welcome to the experiment. This experiment will take around 5 minutes. Press <i>enter</i> to begin.'
+'Welcome to the experiment. '
 
 var refresh_feedback_block = {
 	type: 'poldrack-single-stim',
@@ -984,7 +984,7 @@ var testNode = {
 	
 		if (testCount == numTestBlocks){
 			feedback_text +=
-					'</p><p class = instruct-text>Done with this test. To let the experimenters know when you are ready to continue, please press any button.'
+					'</p><p class = instruct-text>Done with this test. '
 			return false
 		} else {
 		
