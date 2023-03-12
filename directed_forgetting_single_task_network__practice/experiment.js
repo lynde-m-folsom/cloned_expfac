@@ -825,7 +825,7 @@ var practiceNode = {
 
 		if (accuracy > accuracy_thresh){
 			feedback_text +=
-					'</p><p class = block-text>Done with this practice. Press Enter to continue.' 
+					'</p><p class = block-text>Done with this practice. Press space to end.' 
 			stims = createTrialTypes(numTrialsPerBlock,numLetters)
 			return false
 	
