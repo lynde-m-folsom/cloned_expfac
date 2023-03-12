@@ -11,17 +11,6 @@ function getMotorPerm() {
 	return motor_perm
 }
 
-//FUNCTIONS FOR GETTING FMRI SEQUENCES
-function getdesignITIs(design_num) {
-	x = fetch(pathDesignSource+'design_'+design_num+'/ITIs_clean.txt').then(res => res.text()).then(res => res).then(text => text.split(/\r?\n/));
-	return x
-} 
-function getdesignEvents(design_num) {
-	x = fetch(pathDesignSource+'design_'+design_num+'/events_clean.txt').then(res => res.text()).then(res => res).then(text => text.split(/\r?\n/));
-	return x
-}  
-
-
 function assessPerformance() {
 	/* Function to calculate the "credit_var", which is a boolean used to
 	credit individual experiments in expfactory. */
@@ -95,9 +84,6 @@ var getFeedback = function() {
 	return '<div class = bigbox><div class = picture_box><p class = block-text>' + feedback_text + '</p></div></div>'
 }
 
-var getTestFeedback = function() {
-	return '<div class = bigbox><div class = picture_box><p class = block-text>' + test_feedback_text + '</p></div></div>'
-}
 
 var getCategorizeFeedback = function(){
 	curr_trial = jsPsych.progress().current_trial_global - 2
@@ -252,13 +238,6 @@ var getCorrectResponse = function(probeType){
 	}
 }
 
-
-var resetTrial = function() {
-	current_trial = 0
-	exp_stage = 'test'
-}
-
-
 var createTrialTypes = function (numTrialsPerBlock,numLetters){
 	var probeTypeArray = jsPsych.randomization.repeat(probes, numTrialsPerBlock / probes.length)
 	var used_letters = []
@@ -353,7 +332,7 @@ function getTimeoutMessage() {
   }
 
 function getRefreshFeedback() {
-	if (exp_id='instructions') {
+	if (getPracticeTrialID()=='instructions') {
 		return 	'<div class = centerbox>'+
 		'<p class = block-text>In this experiment, on each trial you will be presented with '+
 		''+numLetters+' letters. You must memorize all '+numLetters+' letters. </p>'+
@@ -373,11 +352,15 @@ function getRefreshFeedback() {
 		' if it was not in the memory set.</p>'+
 			
 		'<p class = block-text>We will start practice when you finish instructions. Please make sure you understand the instructions before moving on. During practice, you will receive a reminder of the rules.  <b>This reminder will be taken out for test</b>.</p>'+
-		'<p class = block-text> Please press any button to let the experimenters know when you are ready to begin practice. </p>' + 
+		'<p class = block-text> Please press space to start. </p>' + 
 	'</div>'
 	} else {
-		return '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' + refresh_feedback_text + '</font></p></div></div>'
+		return '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' + feedback_text + '</font></p></div></div>'
 	}
+}
+
+var getPracticeTrialID = function() {
+	return practice_trial_id
 }
 
 /* ************************************ */
@@ -447,7 +430,10 @@ jsPsych.pluginAPI.preloadImages(images);
 
 var stims = createTrialTypes(practice_length,numLetters)
 ITIs_stim = []
-ITIs_resp = [] 
+ITIs_resp = []
+var practice_trial_id = "instructions"
+var feedback_text = 'Welcome to the experiment.'
+
 
 /* ************************************ */
 /* Set up jsPsych blocks */
@@ -522,16 +508,20 @@ var motor_setup_block = {
 var instructions_block = {
 	type: 'poldrack-single-stim',
 	data: {
-		trial_id: 'instructions'
+		trial_id: getPracticeTrialID 
 	},
+  choices: [32],
 	stimulus: getRefreshFeedback,
-	allow_keys: false,
-	show_clickable_nav: true,
 	timing_post_trial: 0,
 	is_html: true,
 	timing_response: -1, //10 seconds for feedback
 	timing_stim: -1,
 	response_ends_trial: true,
+  on_finish: function() {
+		practice_trial_id = "practice-no-stop-feedback"
+		practice_feedback_timing = 10000
+		practice_response_ends = false
+	} 
 };
 
 var start_practice_block = {
@@ -650,20 +640,6 @@ var probe_block = {
 	on_finish: appendProbeData
 };
 
-var intro_test_block = {
-	type: 'poldrack-text',
-	timing_response: 180000,
-	data: {
-		trial_id: "intro_test",
-		exp_stage: "test"
-	},
-	text: '<div class = centerbox><p class = block-text>We will now begin the experiment.  For these trials, you will no longer get feedback.</p><p class = block-text> Remember, the cue (TOP or BOT) tells you which letters to <i>forget</i>. At the end of the trial respond with the <i> M</i> key if the letter presented is in the memory set, and the <i> Z </i> key if it is not in the memory set.</p><p class = block-text> ',
-	cont_key: [32],
-	timing_post_trial: 1000,
-	on_finish: resetTrial,
-};
-
-
 var practice_probe_block = {
 	type: 'poldrack-single-stim',
 	stimulus: getProbeHTML,
@@ -679,24 +655,6 @@ var practice_probe_block = {
 	on_finish: appendProbeData
 };
 
-
-var refresh_probe_block = {
-	type: 'poldrack-single-stim',
-	stimulus: getProbeHTML,
-	choices: choices,
-	data: {trial_id: "refresh_trial", 
-		   exp_stage: "refresh"
-		   },
-	timing_stim: 1000, //1000
-	timing_response: 1000, //1000
-	timing_post_trial: 0,
-	is_html: true,
-	prompt: getPromptTaskList,
-	on_finish: appendProbeData
-};
-
-var feedback_text = 
-	'Welcome to the experiment.'
 var feedback_block = {
 	type: 'poldrack-single-stim',
 	data: {
@@ -709,22 +667,6 @@ var feedback_block = {
 	timing_response: 10000,
 	response_ends_trial: true, 
 
-};
-
-var test_feedback_text = 
-	'We will now start a test run.'
-	
-var test_feedback_block = {
-	type: 'poldrack-single-stim',
-	data: {
-		trial_id: "test_feedback"
-	},
-	choices: 'none',
-	stimulus: getTestFeedback,
-	timing_post_trial: 0,
-	is_html: true,
-	timing_response: 10000,
-	response_ends_trial: false, // HJ CHANGE 
 };
 
 var practiceTrials = []
@@ -879,7 +821,7 @@ var practiceNode = {
 		var missed_responses = (total_trials - sum_responses) / total_trials
 		var ave_rt = sum_rt / sum_responses
 	
-		feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
+		feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press space to continue"
 
 		if (accuracy > accuracy_thresh){
 			feedback_text +=
@@ -910,7 +852,7 @@ var practiceNode = {
 			}
 			
 			feedback_text +=
-				'</p><p class = block-text>Redoing this practice. Press Enter to continue.' 
+				'</p><p class = block-text>Redoing this practice. Press space to continue.' 
 			
 			return true
 		
@@ -928,7 +870,5 @@ directed_forgetting_single_task_network__practice_experiment.push(motor_setup_bl
 
 directed_forgetting_single_task_network__practice_experiment.push(practiceNode)
 directed_forgetting_single_task_network__practice_experiment.push(feedback_block)
-//test_keys(directed_forgetting_single_task_network__fmri_experiment, [getChoices()[1], getChoices()[0]])
-
 
 directed_forgetting_single_task_network__practice_experiment.push(end_block);
