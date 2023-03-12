@@ -105,10 +105,6 @@ var getPracticeFeedback = function() {
 		return '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' + practice_feedback_text + '</font></p></div></div>'
   }
 }
-// //feedback functions added for practice version
-// var getPracticeFeedback = function() { 
-// 	return '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' + practice_feedback_text + '</font></p></div></div>'
-// }
 
 var getPracticeTrialID = function() {
 	return practice_trial_id
@@ -415,18 +411,6 @@ var current_trial = 0
 var CTI = 150 //cue-target-interval or cue's length (7/29, changed from 300 to 150; less time to process the cue should increase cue switch costs and task switch costs)
 var exp_stage = 'practice' // defines the exp_stage, switched by start_test_block
 
-// var task_list = '<ul><li><strong><i>Parity</i> or <i>Odd-Even</i>: Press your ' + response_keys.key_name[
-//     0] + ' key if even and your ' + response_keys.key_name[1] + ' key if odd.' +
-//   '</li><li><i>Magnitude</i> or <i>High-Low</i>: Press your ' + response_keys.key_name[
-//     0] + ' key if the number is greater than 5 and your ' + response_keys.key_name[1] +
-//   ' key if less than 5.</strong></li></ul>'
-
-// var prompt_task_list = '<ul style="text-align:left"><li><i>Parity</i> or <i>Odd-Even</i>: ' + response_keys.key_name[0] +
-//   ' if even and ' + response_keys.key_name[1] + ' if odd.' +
-//   '</li><li><i>Magnitude</i> or <i>High-Low</i>: ' + response_keys.key_name[0] +
-//   ' if >5 and ' + response_keys.key_name[1] + ' if <5.</li></ul>'
-
-
 //PRE LOAD IMAGES HERE
 var pathSource = "/static/experiments/cued_task_switching_single_task_network__practice/images/"
 var numbersPreload = ['1','2','3','4','6','7','8','9']
@@ -442,21 +426,11 @@ jsPsych.pluginAPI.preloadImages(images);
 var ITIs_stim = []
 var ITIs_resp = []
 
-//practice feedback variables
-// var practice_feedback_text = '<div class = instructbox><p class = instruct-text>In this task, you will have to respond to a sequence of numbers by pressing your middle and index fingers. How you respond to the numbers will depend on the current task, which can change every trial.</p>'+
-// '<p class = instruct-text>On some trials you will have to indicate whether the number is odd or even, and on other trials you will indicate whether the number is higher or lower than 5. Each trial will start with a cue telling you which task to do on that trial.</p>' +
-// '<p class = instruct-text>The cue before the number will be a word indicating the task. There will be four different cues indicating two different tasks. The cues and tasks are described below:</p>' +
-// task_list +
-// '<p class = instruct-text>During practice, you will see a reminder of the rules.  <i> This will be removed for the test</i>. </p>'+ 
-// '<p class = instruct-text>When you are ready to begin, please press the spacebar. </p>'+
-// '</div>'
+
 var practice_trial_id = "instructions"
 var practice_feedback_timing = -1
 var practice_response_ends = true
 
-// var practiceStims = genStims(practice_length + 1)
-// var testStims = genStims(numTrialsPerBlock + 1)
-// var stims = practiceStims
 
 var practiceStims = []
 var testStims = []
