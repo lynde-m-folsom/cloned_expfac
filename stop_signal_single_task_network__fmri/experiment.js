@@ -831,7 +831,7 @@ var refreshNode = {
 		
 			if (stop_signal_respond === minStopCorrectPractice){
 				refresh_feedback_text +=
-				'</p><p class = instruct-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
+				'</p><p class = instruct-text>Do not slow down and wait for the star to appear. Please respond as quickly and accurately as possible when a star does not appear.'
 		
 			}
 			
@@ -844,7 +844,6 @@ var refreshNode = {
 }
 
 var testTrials0 = []
-// testTrials.push(test_feedback_block)
 for (i = 0; i < numTrialsPerBlock; i++) {
 
 	var test_block = {
@@ -996,11 +995,9 @@ var testNode0 = {
 		
 		if (stop_signal_respond < minStopCorrect){
 			feedback_text +=
-			'</p><p class = instruct-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
+			'</p><p class = instruct-text>Do not slow down and wait for the star to appear. Please respond as quickly and accurately as possible when a star does not appear.'
 		
 		}
-			
-			
 			
 		return false;
 		
@@ -1069,7 +1066,7 @@ var testNode = {
 		feedback_text += "</p><p class = instruct-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
 		
 		if (testCount == numTestBlocks) {
-			feedback_text += '</p><p class = instruct-text>Done with this test.' //If you have been completing tasks continuously for an hour or more, please take a 15-minute break before starting again.'
+			feedback_text += '</p><p class = instruct-text>Done with this test.' 
 			
 			return false;
 		} else {
@@ -1103,7 +1100,7 @@ var testNode = {
 		
 			if (stop_signal_respond < minStopCorrect){
 				feedback_text +=
-				'</p><p class = instruct-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
+				'</p><p class = instruct-text>Do not slow down and wait for the star to appear. Please respond as quickly and accurately as possible when a star does not appear.'
 		
 			}		
 			
