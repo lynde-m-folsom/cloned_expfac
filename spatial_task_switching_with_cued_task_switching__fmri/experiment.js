@@ -144,14 +144,14 @@ function getCurrTask() {
 function getPossibleResponses(){
 	mperm = getMotorPerm()
 	if (mperm%2==0) {
-		stim1 = [['middle finger', 39],['index finger', 37]]
+		stim1 = [['middle finger', 71],['index finger', 89]]
 	} else {
-		stim1 = [['index finger', 37], ['middle finger', 39]]
+		stim1 = [['index finger', 89], ['middle finger', 71]]
 	}
 	if (mperm<2){
-		stim2 = [['middle finger', 39],['index finger', 37]]
+		stim2 = [['middle finger', 71],['index finger', 89]]
 	} else {
-		stim2 = [['index finger', 37], ['middle finger', 39]]
+		stim2 = [['index finger', 89], ['middle finger', 71]]
 	}
 	return [stim1, stim2]
 }
@@ -622,7 +622,7 @@ var run_attention_checks = false
 
 var practice_len = 16 // must be divisible by 16
 var refresh_len = 8
-var exp_len = 240 //320 must be divisible by 16
+var exp_len = 288 //320 must be divisible by 16
 var numTrialsPerBlock = 48 // 64 must be divisible by 16
 var numTestBlocks = exp_len / numTrialsPerBlock
 var CTI = 150
@@ -682,6 +682,7 @@ var getPromptText = function(){
 				  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">Top 2 quadrants: Judge cued number on '+predictable_dimensions_list[0].dim+'</p>' +
 					'<p class = center-block-text style = "font-size:16px; line-height:80%%;">'+predictable_dimensions_list[0].values[0]+': ' + getPossibleResponses()[0][0][0] + ' | ' + predictable_dimensions_list[0].values[1]+': ' + getPossibleResponses()[0][1][0] + '</p>' +
 					'<p>&nbsp</p>' +
+          '<p>&nbsp</p>' +
 					'<p class = center-block-text style = "font-size:16px; line-height:80%%;">Bottom 2 quadrants: Judge cued number on '+predictable_dimensions_list[1].dim+'</p>' +
 					'<p class = center-block-text style = "font-size:16px; line-height:80%%;">'+predictable_dimensions_list[1].values[0]+': ' + getPossibleResponses()[1][0][0] + ' | ' + predictable_dimensions_list[1].values[1]+': ' + getPossibleResponses()[1][1][0] + '</p>' +
 					'<p class = center-block-text style = "font-size:16px; line-height:80%%;">Cue was <i>left</i> or <i>first</i>, judge left number</p>' +
@@ -953,7 +954,7 @@ var practiceNode = {
 		}
 
 		if (ave_rt > rt_thresh){
-			refresh_feedback_textack_text += 
+			refresh_feedback_text += 
 				'</p><p class = instruct-text>You have been responding too slowly.'
 		}
 	
@@ -1136,9 +1137,9 @@ var testNode = {
 	loop_function: function(data) {
 		testCount += 1
 		console.log('testcount'+testCount)
-		task_switches = des_task_switches.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
-		des_task_switches = des_task_switches.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_task_switches
-		stims = createTrialTypes(task_switches)
+    //task_switches = des_task_switches.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
+    //des_task_switches = des_task_switches.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_task_switches
+    //stims = createTrialTypes(task_switches)
 		current_trial = 0 
 		
 		var sum_rt = 0
@@ -1187,7 +1188,11 @@ var testNode = {
 					'</p><p class = block-text>Done with this test.'
 			return false
 		} else {
-		
+		  
+      task_switches = des_task_switches.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
+		  des_task_switches = des_task_switches.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_task_switches
+		  stims = createTrialTypes(task_switches)
+
 			return true
 		}
 	}
