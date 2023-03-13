@@ -1137,9 +1137,9 @@ var testNode = {
 	loop_function: function(data) {
 		testCount += 1
 		console.log('testcount'+testCount)
-		task_switches = des_task_switches.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
-		des_task_switches = des_task_switches.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_task_switches
-		stims = createTrialTypes(task_switches)
+    //task_switches = des_task_switches.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
+    //des_task_switches = des_task_switches.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_task_switches
+    //stims = createTrialTypes(task_switches)
 		current_trial = 0 
 		
 		var sum_rt = 0
@@ -1188,7 +1188,11 @@ var testNode = {
 					'</p><p class = block-text>Done with this test.'
 			return false
 		} else {
-		
+		  
+      task_switches = des_task_switches.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
+		  des_task_switches = des_task_switches.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_task_switches
+		  stims = createTrialTypes(task_switches)
+
 			return true
 		}
 	}
