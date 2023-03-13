@@ -622,7 +622,7 @@ var run_attention_checks = false
 
 var practice_len = 16 // must be divisible by 16
 var refresh_len = 8
-var exp_len = 240 //320 must be divisible by 16
+var exp_len = 288 //320 must be divisible by 16
 var numTrialsPerBlock = 48 // 64 must be divisible by 16
 var numTestBlocks = exp_len / numTrialsPerBlock
 var CTI = 150
@@ -682,6 +682,7 @@ var getPromptText = function(){
 				  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">Top 2 quadrants: Judge cued number on '+predictable_dimensions_list[0].dim+'</p>' +
 					'<p class = center-block-text style = "font-size:16px; line-height:80%%;">'+predictable_dimensions_list[0].values[0]+': ' + getPossibleResponses()[0][0][0] + ' | ' + predictable_dimensions_list[0].values[1]+': ' + getPossibleResponses()[0][1][0] + '</p>' +
 					'<p>&nbsp</p>' +
+          '<p>&nbsp</p>' +
 					'<p class = center-block-text style = "font-size:16px; line-height:80%%;">Bottom 2 quadrants: Judge cued number on '+predictable_dimensions_list[1].dim+'</p>' +
 					'<p class = center-block-text style = "font-size:16px; line-height:80%%;">'+predictable_dimensions_list[1].values[0]+': ' + getPossibleResponses()[1][0][0] + ' | ' + predictable_dimensions_list[1].values[1]+': ' + getPossibleResponses()[1][1][0] + '</p>' +
 					'<p class = center-block-text style = "font-size:16px; line-height:80%%;">Cue was <i>left</i> or <i>first</i>, judge left number</p>' +
