@@ -846,7 +846,7 @@ var practiceNode = {
 		
 			if (practiceCount == practice_thresh){
 				feedback_text +=
-					'</p><p class = block-text>Done with this practice.' 
+					'</p><p class = block-text>Done with this practice. Press space to continue.'' 
 					stims = createTrialTypes(numTrialsPerBlock,numLetters)
 					return false
 			}

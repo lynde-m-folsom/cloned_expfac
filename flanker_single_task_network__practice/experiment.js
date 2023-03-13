@@ -11,49 +11,11 @@ function getStimTrials() {
     return trial_stim
 }
 
-function getStimTrials_1() { 
-	return trial_stim_1
-}
-
 function getGlobal() { 
 	correct_response = trial_stim.correct_response
 	fixation = '<div class = centerbox><div class = fixation>+</div></div>'
 	return fixation
 }
-
-function updateTrialsWithDesigns(test_stimuli) { 
-	var stims = [] 
-	incongruent_trials = [] 
-	congruent_trials = []
-	for (var idx = 0; idx < test_stimuli.length-1; idx++) { 
-		if (test_stimuli[idx].data['flanker_condition'] == 'incongruent')
-			incongruent_trials.push(test_stimuli[idx]) } 
-		if (test_stimuli[idx].data['flanker_condition'] == 'congruent') { 
-			congruent_trials.push(test_stimuli[idx]) } 
-	curr_des_events = des_events.slice(0, numTrialsPerBlock) //grab this block's event
-	for (var idx = 0; idx < curr_des_events.length; idx++) {
-		flanker_condition = curr_des_events[idx]
-		if (flanker_condition == 'incongruent') {
-			stim = incongruent_trials[Math.floor(Math.random() * incongruent_trials.length)];
-		}
-		if (flanker_condition == 'congruent')  { 
-			stim = congruent_trials[Math.floor(Math.random() * congruent_trials.length)];
-		 } 
-			stims.push(stim)
-		}
-
-	return stims
-	}
-
-//FUNCTIONS FOR GETTING FMRI SEQUENCES
-function getdesignITIs(design_num) {
-	x = fetch(pathDesignSource+'design_'+design_num+'/ITIs_clean.txt').then(res => res.text()).then(res => res).then(text => text.split(/\r?\n/));
-	return x
-} 
-function getdesignEvents(design_num) {
-	x = fetch(pathDesignSource+'design_'+design_num+'/events_clean.txt').then(res => res.text()).then(res => res).then(text => text.split(/\r?\n/));
-	return x
-}  
 
 var possible_responses = [['index finger', 37],['middle finger', 39]]
 
@@ -70,7 +32,7 @@ function getPossibleResponses() {
 }
 
 function addID() {
-  jsPsych.data.addDataToLastTrial({exp_id: 'flanker_single_task_network__fmri'})
+  jsPsych.data.addDataToLastTrial({exp_id: 'flanker_single_task_network__practice'})
 }
 
 //Functions added for in-person sessions
@@ -210,6 +172,7 @@ var getRefreshFeedback = function() {
 		'<p class = block-text> If the middle letter is F, press the ' + getPossibleResponses()[1][0] + ' button. </p>' + 
 		'<p class = block-text> If the middle letter is H, press the '+  getPossibleResponses()[0][0] + ' button. </p> ' + 
 		'<p class = block-text>After each response you will get feedback about whether you were correct or not. We will start with a short practice set.</p>'+
+    '<p class = block-text>Press space to start.</p>'+
 		'</div>'
 
 	} else {
@@ -311,40 +274,27 @@ function returnStimuliOptions() {
 
 
 
-var refresh_thresh = 3
 var accuracy_thresh = 0.75
 var rt_thresh = 1000
 var missed_response_thresh = 0.10
 var practice_thresh = 3 // 3 blocks of 12 trials
 var choices = [37, 39]
-
+var current_trial = 0
 
 var fileTypePNG = '.png"></img>'
-var preFileType = '<img class = center src="/static/experiments/flanker_single_task_network__fmri/images/'
+var preFileType = '<img class = center src="/static/experiments/flanker_single_task_network__practice/images/'
 var flanker_boards = [['<div class = bigbox><div class = centerbox><div class = flankerLeft_2><div class = cue-text>'],['</div></div><div class = flankerLeft_1><div class = cue-text>'],['</div></div><div class = flankerMiddle><div class = cue-text>'],['</div></div><div class = flankerRight_1><div class = cue-text>'],['</div></div><div class = flankerRight_2><div class = cue-text>'],['</div></div></div></div>']]					   
 
 var practice_len = 16// must be divisible by 4
-var exp_len = 144 // must be divisible by 4, 100 in original
-var numTrialsPerBlock = 36 //must be divisible by 4
+var exp_len = 48 // must be divisible by 4, 100 in original
+var numTrialsPerBlock = 16 //must be divisible by 4
 var numTestBlocks = exp_len / numTrialsPerBlock
 
-//var practice_trials = jsPsych.randomization.repeat(test_stimuli, practice_len / 4, true);
 var practice_trials = [] 
-// var test_trials = jsPsych.randomization.repeat(test_stimuli, numTrialsPerBlock / 4, true);
-// var practice_trials = createTrials(practice_len)
 var practice_response_array = [];
-var test_trials = [] 
-// }
-
-// var test_response_array = [];
-// for (i = 0; i < test_trials.data.length; i++) {
-// 	test_response_array.push(test_trials.data[i].correct_response)
-// }
-
 				  
 //PRE LOAD IMAGES HERE
-var pathSource = "/static/experiments/flanker_single_task_network__fmri/images/"
-var pathDesignSource = "/static/experiments/flanker_single_task_network__fmri/designs/" //ADDED FOR fMRI SEQUENCES
+var pathSource = "/static/experiments/flanker_single_task_network__practice/images/"
 var images = []
 
 //ADDED FOR SCANNING
@@ -366,7 +316,7 @@ jsPsych.pluginAPI.preloadImages(images);
 /* ************************************ */
 
 var appendData = function(){
-	curr_trial = jsPsych.progress().current_trial_global
+	curr_trial = jsPsych.progress().current_trial_global - 1
 	trial_id = jsPsych.data.getDataByTrialIndex(curr_trial).trial_id
 	current_trial+=1
 	
@@ -437,13 +387,12 @@ var refresh_feedback_block = {
 	choices: [32],
 	timing_post_trial: 0,
 	is_html: true,
-	timing_response: getRefreshFeedbackTiming, //10 seconds for feedback
-	timing_stim: getRefreshFeedbackTiming,
+	timing_response: -1, //10 seconds for feedback
+	timing_stim: -1,
 	response_ends_trial: getRefreshResponseEnds,
 	on_finish: function() {
 		refresh_trial_id = "practice_feedback"
-		refresh_feedback_timing = 10000
-		refresh_response_ends = false
+		refresh_response_ends = true 
 	} 
 
 };
@@ -534,7 +483,7 @@ for (i = 0; i < practice_len; i++) {
 			jsPsych.data.addDataToLastTrial({correct_trial: correct_trial,
 											 trial_id: 'practice_trial',
 											 current_block: current_block,
-											 current_trial: i,
+											 current_trial: current_trial++,
 											 })
 		}
 	}
@@ -545,8 +494,9 @@ for (i = 0; i < practice_len; i++) {
 
 var refreshNode = {
 	timeline: refreshTrials,
-	loop_function: function(data) {	
-		
+	loop_function: function(data) {
+
+    practiceCount += 1
 		var sum_rt = 0
 		var sum_responses = 0
 		var correct = 0
@@ -554,6 +504,8 @@ var refreshNode = {
 		
 		options = returnStimuliOptions();
 		trial_stim = jsPsych.randomization.repeat(options, numTrialsPerBlock / 4, true);
+    console.log(options);
+    console.log(trial_stim);
 		for (i = 0; i < trial_stim.data.length; i++) {
 			practice_response_array.push(trial_stim.data[i].correct_response)
 		}
@@ -577,28 +529,37 @@ var refreshNode = {
 		var missed_responses = (total_trials - sum_responses) / total_trials
 		var ave_rt = sum_rt / sum_responses
 	
-		refresh_feedback_text = "<br><p class = block-text>Please take this time to read your feedback and to take a short break!</br></p>"
-		if (accuracy > accuracy_thresh){
-			
-			refresh_feedback_text += '</p><p class = block-text>Done with this practice. The test session will begin shortly.' 
-			//test_trials = jsPsych.randomization.repeat(test_stimuli, numTrialsPerBlock / 4, true);
+		refresh_feedback_text = "<p class = block-text>Please take this time to read your feedback and to take a short break!</p>"
+		if (accuracy > accuracy_thresh){	
+			refresh_feedback_text += '</p><p class = block-text>Done with this practice. Press space to end' 
 			return false; 
 
 		} if (accuracy < accuracy_thresh){
+
 			refresh_feedback_text += '<p class = block-text>Remember:' + getPromptTextList()
+
 			if (missed_responses > missed_response_thresh){
 				refresh_feedback_text +=
 						'</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
 			}
 
-	      	if (ave_rt > rt_thresh){
-	        	refresh_feedback_text += 
-	            	'</p><p class = block-text>You have been responding too slowly.'
-			  }
+	    if (ave_rt > rt_thresh){
+	        refresh_feedback_text += 
+	            '</p><p class = block-text>You have been responding too slowly.'
+			}
+
+      if (practiceCount == practice_thresh){
+				refresh_feedback_text +=
+					'</p><p class = block-text>Done with this practice.' 
+					return false
+			}
+
+      refresh_feedback_text +=
+				'</p><p class = block-text>Redoing this practice. Press space to continue.' 
+			
+			return true
 		
 		
-			  exp_phase = 'test'
-	
 		}
 		
 	}
@@ -608,11 +569,11 @@ var refreshNode = {
 
 
 //Set up experiment
-flanker_single_task_network__fmri_experiment = []
+flanker_single_task_network__practice_experiment = []
 
-flanker_single_task_network__fmri_experiment.push(motor_setup_block)
+flanker_single_task_network__practice_experiment.push(motor_setup_block)
 
 
-flanker_single_task_network__fmri_experiment.push(refreshNode)
-flanker_single_task_network__fmri_experiment.push(refresh_feedback_block)
-
+flanker_single_task_network__practice_experiment.push(refreshNode)
+flanker_single_task_network__practice_experiment.push(refresh_feedback_block)
+flanker_single_task_network__practice_experiment.push(end_block)
