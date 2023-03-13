@@ -188,22 +188,31 @@ function getAllIndexesList(arr,val){
 
 function getCuedCueCondition(text){
 	cued = text.split("_")[0]
-
-	if (cued.includes("cstay")){
+	console.log('text: '+text)
+	console.log('cued: ' + cued)
+	if (cued=="cuedtstaycstay"){
 		return "stay"
 	}
-	else if (cued.includes("cswitch")){
+	else if (cued=="cuedtswitchcswitch"){
+		return "switch"
+	}
+	else if (cued=="cuedtstaycswitch"){
 		return "switch"
 	}
 }
 
 function getCuedTaskCondition(text){
 	cued = text.split("_")[0]
-	if (cued.includes("tstay")){
+	console.log('text: '+text)
+	console.log('cued: ' + cued)
+	if (cued=="cuedtstaycstay"){
 		return "stay"
 	}
-	else if (cued.includes("tswitch")){
+	else if (cued=="cuedtswitchcswitch"){
 		return "switch"
+	}
+	else if (cued=="cuedtstaycswitch"){
+		return "stay"
 	}
 }
 
@@ -241,8 +250,8 @@ var getFixation = function(){
 	correct_response = stim.correct_response
 	whichQuadrant = stim.whichQuadrant
 	
-	cued_condition = stim.cued_condition
-	cued_switch_condition = stim.cued_switch_condition
+	cued_cue_condition = stim.cued_cue_condition
+	cued_task_condition = stim.cued_task_condition
 	curr_task = stim.curr_task
 	curr_cue = stim.curr_cue
 	predictable_condition = stim.predictable_condition
@@ -414,8 +423,8 @@ var createTrialTypes = function(task_switches, numTrialsPerBlock){
 		whichQuadrant: whichQuadStart,
 		predictable_condition: 'N/A',
 		predictable_dimension: predictable_dimension,
-		cued_condition: 'N/A',
-		cued_switch_condition: 'N/A',
+		cued_cue_condition: 'N/A',
+		cued_task_condition: 'N/A',
 		curr_task: curr_task,
 		curr_cue: curr_cue,
 		left_number: left_number,
@@ -429,29 +438,24 @@ var createTrialTypes = function(task_switches, numTrialsPerBlock){
 	stims.push(first_stim)
 	
 	oldQuad = whichQuadStart
-	console.log('whichQuadStart: ' + whichQuadStart)
 	for (var ii = 0; ii < task_switches.length; ii++){
-		console.log('count'+ii)
-		console.log('oldQuad' + oldQuad)
 		quadIdx = getQuad(oldQuad, task_switches[ii]) //changed for spatial task
-		console.log('quadIdx' + quadIdx)
 		task_switch = task_switches[ii]
 		cued_cue_condition = getCuedCueCondition(task_switch)
 		cued_task_condition = getCuedTaskCondition(task_switch)
 		predictable_dimension = predictable_dimensions[quadIdx - 1]
 		predictable_condition = predictable_cond_array[ii%2]
-		
+		console.log(cued_cue_condition)
 		last_task = curr_task
-		if (cued_cue_condition == "switch"){ // if switch tasks, pick a random cue and switch to other task
-			cued_task_condition = 'switch'
+		if (cued_task_condition == "switch"){ // if switch tasks, pick a random cue and switch to other task
+			cued_cue_condition = 'switch'
 			curr_task = randomDraw(['left','right'].filter(function(y) {return $.inArray(y, [last_task]) == -1}))
 			curr_cue = tasks[curr_task].cues[Math.floor(Math.random() * 2)]
-		} else if (cued_cue_condition == "stay"){ // if stay tasks, if cued_switch condition is switch, then switch to other cue, stay if not.
-			if (cued_task_condition == 'switch'){
+		} else if (cued_task_condition == "stay"){ // if stay tasks, if cued_switch condition is switch, then switch to other cue, stay if not.
+			if (cued_cue_condition == 'switch'){
 			last_cue = curr_cue
 			curr_cue = randomDraw(tasks[curr_task].cues.filter(function(y) {return $.inArray(y, [last_cue]) == -1}))
 			}
-	
 		}
 	
 		if (curr_task == 'left'){
@@ -487,8 +491,8 @@ var createTrialTypes = function(task_switches, numTrialsPerBlock){
 			whichQuadrant: quadIdx,
 			predictable_condition: predictable_condition,
 			predictable_dimension: predictable_dimension,
-			cued_condition: cued_cue_condition,
-			cued_switch_condition: cued_task_condition,
+			cued_cue_condition: cued_cue_condition,
+			cued_task_condition: cued_task_condition,
 			curr_task: curr_task,
 			curr_cue: curr_cue,
 			left_number: left_number,
@@ -500,6 +504,7 @@ var createTrialTypes = function(task_switches, numTrialsPerBlock){
 			correct_response: correct_response
 			}
 		
+		console.log(stim)
 		stims.push(stim)
 
 		oldQuad = quadIdx //changed for sptial task		
@@ -544,8 +549,8 @@ var appendData = function(){
 		predictable_condition: predictable_condition,
 		predictable_dimension: predictable_dimension,
 		task_switch: task_switch,
-		task_condition: cued_condition,
-		cue_condition: cued_switch_condition,
+		task_condition: cued_task_condition,
+		cue_condition: cued_cue_condition,
 		curr_task: curr_task,
 		curr_cue: curr_cue,
 		left_number: left_number,
