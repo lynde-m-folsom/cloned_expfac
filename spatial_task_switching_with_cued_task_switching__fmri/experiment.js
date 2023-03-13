@@ -144,14 +144,14 @@ function getCurrTask() {
 function getPossibleResponses(){
 	mperm = getMotorPerm()
 	if (mperm%2==0) {
-		stim1 = [['middle finger', 39],['index finger', 37]]
+		stim1 = [['middle finger', 71],['index finger', 89]]
 	} else {
-		stim1 = [['index finger', 37], ['middle finger', 39]]
+		stim1 = [['index finger', 89], ['middle finger', 71]]
 	}
 	if (mperm<2){
-		stim2 = [['middle finger', 39],['index finger', 37]]
+		stim2 = [['middle finger', 71],['index finger', 89]]
 	} else {
-		stim2 = [['index finger', 37], ['middle finger', 39]]
+		stim2 = [['index finger', 89], ['middle finger', 71]]
 	}
 	return [stim1, stim2]
 }
@@ -953,7 +953,7 @@ var practiceNode = {
 		}
 
 		if (ave_rt > rt_thresh){
-			refresh_feedback_textack_text += 
+			refresh_feedback_text += 
 				'</p><p class = instruct-text>You have been responding too slowly.'
 		}
 	
