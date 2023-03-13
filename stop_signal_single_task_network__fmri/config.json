@@ -14,12 +14,12 @@
                 "static/js/jspsych/poldrack_plugins/jspsych-poldrack-categorize.js",
                 "static/js/jspsych/poldrack_plugins/jspsych-stop-signal.js",
                 "static/js/jspsych/plugins/jspsych-survey-text.js",
-                "static/js/utils/poldrack_fmri_utils.js", 
+                "static/js/utils/poldrack_fmri_utils.js",
                 "experiment.js",
                 "static/css/jspsych.css",
                 "static/css/default_style.css",
                 "style.css"
-                
+
 
                ],
         "exp_id": "stop_signal_single_task_network__fmri",
@@ -30,8 +30,9 @@
                          "McKenzie Hagen",
                          "Russell Poldrack",
                          "Henry Jones",
-                         "Tony Bui"
-                        ], 
+                         "Tony Bui",
+                         "Jaime Ali Holguin Rios"
+                        ],
         "time":30,
         "reference": "http://psycnet.apa.org/journals/xlm/37/2/392/",
         "notes": "Condition refers to whether the trial is practice or high_freq/low_freq (the two test conditions) as well as whether it was a go or SS trial",
@@ -46,7 +47,7 @@
                                         {"fullscreen": true,
                                         "display_element": "getDisplayElement",
                                         "on_trial_finish": "addID('stop_signal_single_task_network__fmri')"}
-                       			} 
-    
+                       			}
+
    }
 ]

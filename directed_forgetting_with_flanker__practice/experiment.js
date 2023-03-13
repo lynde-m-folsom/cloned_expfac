@@ -12,8 +12,6 @@ function getMotorPerm() {
 var getPracticeTrialID = function() {
 	return practice_trial_id
 }
-var practice_trial_id = "instructions"
-
 
 function assessPerformance() {
 	/* Function to calculate the "credit_var", which is a boolean used to
@@ -71,12 +69,6 @@ function assessPerformance() {
 									 final_avg_rt: avg_rt,
 									 final_responses_ok: responses_ok,
 									 final_accuracy: accuracy})
-}
-
-
-var getInstructFeedback = function() {
-	return '<div class = centerbox><p class = center-block-text>' + feedback_instruct_text +
-		'</p></div>'
 }
 
 var getFeedback = function() {
@@ -405,13 +397,12 @@ var sumInstructTime = 0 //ms
 var instructTimeThresh = 0 ///in seconds
 var motor_perm = 0
 // new vars
-var practice_len = 16  // must be divisible by 8
+var practice_len = 16 // must be divisible by 8
 var exp_len = 144 // must be divisible by 8
 var numTrialsPerBlock = 48; // divisible by directed_cond_array * flanker_conditions
 var numTestBlocks = exp_len / numTrialsPerBlock
 var choices = [37, 39]
 
-var refresh_len = 4
 var practice_thresh = 3
 var accuracy_thresh = 0.75
 var rt_thresh = 1000
@@ -431,7 +422,7 @@ var stimArray = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'
 	
 var fileTypePNG = '.png"></img>'
 var preFileType = '<img class = center src="/static/experiments/directed_forgetting_with_flanker__practice/images/'			 
-
+var practice_trial_id = "instructions"
 
 var stims = []
 
@@ -486,40 +477,39 @@ var end_block = {
  
 };
 
-var feedback_text = 'Welcome to the experiment. This experiment will take around 30 minutes. Press <i>enter</i> to begin.'
+var feedback_text = 'Welcome to the experiment. Press <i>enter</i> to begin.'
 
 var practice_feedback_block = {
 	type: 'poldrack-single-stim',
-	stimulus: getPracticeFeedback,
+	stimulus: getFeedback,
 	data: {
-		trial_id: getPracticeTrialID
+		trial_id: 'practice_feedback' 
 	},
 	choices: [32],
-
 	timing_post_trial: 0,
 	is_html: true,
 	timing_response: -1, //10 seconds for feedback
-	timing_stim: -1,
 	response_ends_trial: true,
-	on_finish: function() {
-		practice_trial_id = "practice-no-stop-feedback"
-	} 
-
 };
+
 var feedback_block = {
 	type: 'poldrack-single-stim',
 	data: {
-		trial_id: "feedback_block"
+		trial_id: getPracticeTrialID 
 	},
 	choices: [32],
 	stimulus: getPracticeFeedback,
 	timing_post_trial: 0,
 	is_html: true,
-	timing_response: 100000,
-	response_ends_trial: true, 
-
+	timing_response: -1,
+  timing_stim: -1,
+	response_ends_trial: true,
+  on_finish: function() {
+    practice_trial_id = "practice-no-stop-feedback"
+		practice_feedback_timing = 10000
+		practice_response_ends = false
+  }
 };
-	
 
 var practiceTrials = []
 practiceTrials.push(feedback_block)
@@ -668,11 +658,11 @@ var practiceNode = {
 		var missed_responses = (total_trials - sum_responses) / total_trials
 		var ave_rt = sum_rt / sum_responses
 	
-		feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
+		feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press space to continue"
 
 		if (accuracy > accuracy_thresh){
 			feedback_text +=
-					'</p><p class = block-text>Done with this practice. Press Enter to continue.' 
+					'</p><p class = block-text>Done with this practice. Press space to end.' 
 			return false
 	
 		} else if (accuracy < accuracy_thresh){
@@ -691,12 +681,12 @@ var practiceNode = {
 		
 			if (practiceCount == practice_thresh){
 				feedback_text +=
-					'</p><p class = block-text>Done with this practice.' 
+					'</p><p class = block-text>Done with this practice. Press space to end.' 
 					return false
 			}
 			
 			feedback_text +=
-				'</p><p class = block-text>Redoing this practice. Press Enter to continue.' 
+				'</p><p class = block-text>Redoing this practice. Press space to continue.' 
 			stims = createTrialTypes(practice_len)
 
 			return true

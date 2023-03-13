@@ -191,48 +191,6 @@ var randomDraw = function(lst) {
   return lst[Math.floor(Math.random() * (lst.length))]
 }
 							 
-// var createRefreshTrialTypes = function(numTrialsPerBlock){
-// 	stop_signal_trial_types = ['go','go','stop']
-// 	flanker_trial_types = ['congruent','incongruent']
-// 	flanker_letters = ['H','F']
-	
-// 	var stims = []
-// 	for(var numIterations = 0; numIterations < numTrialsPerBlock/(flanker_trial_types.length*stop_signal_trial_types.length); numIterations++){
-// 		for (var numFlankerConds = 0; numFlankerConds < flanker_trial_types.length; numFlankerConds++){
-// 			for (var numstop_signalConds = 0; numstop_signalConds < stop_signal_trial_types.length; numstop_signalConds++){
-			
-// 				flanker_condition = flanker_trial_types[numFlankerConds]
-// 				stop_signal_condition = stop_signal_trial_types[numstop_signalConds]
-// 				center_idx = Math.floor(Math.random() * 2) // will be 0 (H) or 1 (F)
-
-// 				if (stop_signal_condition =='stop'){
-// 					correct_response = -1
-// 				} else {
-// 					correct_response = getPossibleResponses()[center_idx][1]
-// 				}
-
-// 				if (flanker_condition == 'incongruent'){
-// 					flanker_idx = center_idx ^ 1 //XOR flips 1s to 0s and vice versa
-// 				} else {
-// 					flanker_idx = center_idx
-// 				}
-			
-// 				stim = {
-// 					stop_signal_condition: stop_signal_condition,
-// 					flanker_condition: flanker_condition,
-// 					correct_response: correct_response,
-// 					center_letter: flanker_letters[center_idx],
-// 					flanker_letter: flanker_letters[flanker_idx]
-// 					}
-// 				stims.push(stim)	
-				
-// 			}
-// 		}
-// 	}
-// 	stims = jsPsych.randomization.repeat(stims,1)
-// 	return stims	
-// }
-
 var createTrialTypes = function(numTrialsPerBlock, des_events){
 	flanker_letters = ['H','F']
 
@@ -451,19 +409,6 @@ var refresh_events = ['go_congruent', 'go_congruent', 'go_incongruent', 'go_inco
 
 var feedback_text = 
 	'Welcome to the experiment. This experiment will take around 10 minutes. Press <i>space</i> to begin.'
-// var practice_feedback_block = {
-// 	type: 'poldrack-single-stim',
-// 	data: {
-// 		trial_id: "feedback_block"
-// 	},
-// 	choices: [32],
-// 	stimulus: getPracticeFeedback,
-// 	timing_post_trial: 0,
-// 	is_html: true,
-// 	timing_response: 180000,
-// 	response_ends_trial: true, 
-
-// };
 
 var refresh_feedback_block = {
 	type: 'poldrack-single-stim',
@@ -598,180 +543,6 @@ var SSD_incongruent_setup_block = {
 		SSD_incongruent = Math.max(100, Math.min(400,SSD))
 	}
 }
-
-// var practiceTrials = []
-// practiceTrials.push(feedback_block)
-// practiceTrials.push(instructions_block)
-// for (i = 0; i < practice_len; i++) {
-// 	var fixation_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: '<div class = centerbox><div class = fixation>+</div></div>',
-// 		is_html: true,
-// 		choices: 'none',
-// 		data: {
-// 			trial_id: "practice_fixation"
-// 		},
-// 		timing_response: 500, //500
-// 		timing_post_trial: 0,
-// 		prompt: prompt_text
-// 	}
-	
-// 	var practice_block = {
-// 		type: 'stop-signal',
-// 		stimulus: getStim,
-// 		SS_stimulus: getStopStim,
-// 		SS_trial_type: getSSType, //getSSType,
-// 		data: {
-// 			"trial_id": "practice_trial"
-// 		},
-// 		is_html: true,
-// 		choices: [possible_responses[0][1],possible_responses[1][1]],
-// 		timing_stim: 1000,
-// 		timing_response: 2000, //2000
-// 		response_ends_trial: false,
-// 		SSD: getSSD,
-// 		timing_SS: 500, //500
-// 		timing_post_trial: 0,
-// 		on_finish: appendData,
-// 		prompt: prompt_text,
-// 		on_start: function(){
-// 			stoppingTracker = []
-// 			stoppingTimeTracker = []
-// 		}
-// 	}
-	
-// 	var categorize_block = {
-// 		type: 'poldrack-single-stim',
-// 		data: {
-// 			trial_id: "practice-stop-feedback"
-// 		},
-// 		choices: 'none',
-// 		stimulus: getCategorizeFeedback,
-// 		timing_post_trial: 0,
-// 		is_html: true,
-// 		timing_stim: 500,
-// 		timing_response: 500, //500
-// 		response_ends_trial: false,
-
-// 	};
-// 	practiceTrials.push(fixation_block)
-// 	practiceTrials.push(practice_block)
-// 	practiceTrials.push(categorize_block)
-// }
-
-
-// var practiceCount = 0
-// var practiceNode = {
-// 	timeline: practiceTrials,
-// 	loop_function: function(data){
-// 		practiceCount += 1
-// 		stims = createTrialTypes(numTrialsPerBlock)
-// 		current_trial = 0
-	
-// 		var total_trials = 0
-// 		var sum_responses = 0
-// 		var total_sum_rt = 0
-		
-// 		var go_trials = 0
-// 		var go_correct = 0
-// 		var go_rt = 0
-// 		var sum_go_responses = 0
-		
-// 		var stop_trials = 0
-// 		var stop_correct = 0
-// 		var stop_rt = 0
-// 		var sum_stop_responses = 0
-		
-	
-// 		for (var i = 0; i < data.length; i++){
-// 			if ((data[i].trial_id == "practice_trial") && (data[i].stop_signal_condition == 'go')){
-// 				total_trials+=1
-// 				go_trials+=1
-// 				if (data[i].rt != -1){
-// 					total_sum_rt += data[i].rt
-// 					go_rt += data[i].rt
-// 					sum_go_responses += 1
-// 					if (data[i].key_press == data[i].correct_response){
-// 						go_correct += 1
-		
-// 					}
-// 				}
-		
-// 			} else if ((data[i].trial_id == "practice_trial") && (data[i].stop_signal_condition == 'stop')){
-// 				total_trials+=1
-// 				stop_trials+=1
-// 				if (data[i].rt != -1){
-// 					total_sum_rt += data[i].rt
-// 					stop_rt += data[i].rt
-// 					sum_stop_responses += 1
-// 				}
-// 				if (data[i].key_press == -1){
-// 					stop_correct += 1
-	
-// 				}
-				
-			
-// 			}
-	
-// 		}
-	
-// 		var accuracy = go_correct / go_trials
-// 		var missed_responses = (go_trials - sum_go_responses) / go_trials
-// 		var ave_rt = go_rt / sum_go_responses
-// 		var stop_acc = stop_correct / stop_trials
-	
-// 		feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue."
-// 		if (practiceCount == practice_thresh){
-// 			feedback_text +=
-// 				'</p><p class = block-text>Done with this practice.' 
-// 				stims = createTrialTypes(numTrialsPerBlock)
-// 				return false
-// 		}
-		
-// 		if ((accuracy > accuracy_thresh) && (stop_acc < maxStopCorrectPractice) && (stop_acc > minStopCorrectPractice)){
-// 			feedback_text +=
-// 					'</p><p class = block-text>Done with this practice. Press Enter to continue.' 
-// 			stims = createTrialTypes(numTrialsPerBlock)
-// 			return false
-	
-// 		} else {
-// 			if (accuracy < accuracy_thresh){
-// 			feedback_text +=
-// 					'</p><p class = block-text>We are going to try practice again to see if you can achieve higher accuracy.  Remember: <br>' + prompt_text 
-// 			}
-// 			if (missed_responses > missed_thresh){
-// 			feedback_text +=
-// 					'</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
-// 			}
-
-// 	      	if (ave_rt > rt_thresh){
-// 	        	feedback_text += 
-// 	            	'</p><p class = block-text>You have been responding too slowly.'
-// 	      	}
-			
-// 			if (stop_acc === maxStopCorrectPractice){
-// 			feedback_text +=
-// 				'</p><p class = block-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
-			
-// 			}
-			
-// 			if (stop_acc === minStopCorrectPractice){
-// 			feedback_text +=
-// 				'</p><p class = block-text>You have not been stopping your response when stars are present.  Please try your best to stop your response if you see a star.'
-			
-// 			}
-		
-			
-// 			feedback_text +=
-// 				'</p><p class = block-text>Redoing this practice. Press Enter to continue.' 
-// 			stims = createTrialTypes(practice_len)
-// 			return true
-		
-// 		}
-	
-// 	}
-	
-// }
 
 var refreshTrials = []
 refreshTrials.push(refresh_feedback_block)
@@ -915,7 +686,7 @@ var refreshNode = {
 		
 		if (stop_acc === maxStopCorrectPractice){
 			refresh_feedback_text +=
-			'</p><p class = instruct-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
+			'</p><p class = instruct-text>Do not slow down and wait for the star to appear. Please respond as quickly and accurately as possible when a star does not appear.'
 		
 		}
 		
@@ -1040,7 +811,7 @@ var testNode0 = {
 		
 		if (stop_acc > maxStopCorrect){
 			feedback_text +=
-			'</p><p class = instruct-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
+			'</p><p class = instruct-text>Do not slow down and wait for the star to appear. Please respond as quickly and accurately as possible when a star does not appear.'
 		
 		}
 		
@@ -1164,7 +935,7 @@ var testNode = {
 		
 		if (stop_acc > maxStopCorrect){
 			feedback_text +=
-			'</p><p class = instruct-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
+			'</p><p class = instruct-text>Do not slow down and wait for the star to appear. Please respond as quickly and accurately as possible when a star does not appear.'
 		
 		}
 		
@@ -1195,10 +966,6 @@ stop_signal_with_flanker__fmri_experiment.push(design_setup_block) //exp_input
 stop_signal_with_flanker__fmri_experiment.push(motor_setup_block) //exp_input
 stop_signal_with_flanker__fmri_experiment.push(SSD_congruent_setup_block) //exp_input
 stop_signal_with_flanker__fmri_experiment.push(SSD_incongruent_setup_block) //exp_input
-
-
-// stop_signal_with_flanker__fmri_experiment.push(practiceNode)
-// stop_signal_with_flanker__fmri_experiment.push(feedback_block)
 
 test_keys(stop_signal_with_flanker__fmri_experiment, [possible_responses[0][1], possible_responses[1][1]])
 stop_signal_with_flanker__fmri_experiment.push(refreshNode)

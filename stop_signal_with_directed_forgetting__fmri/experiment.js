@@ -195,20 +195,6 @@ var createTrialTypes = function(numTrialsPerBlock, des_events){
 		event_str = des_events.shift()
 		event_pieces = event_str.split('_') // order is stop_df
 		
-		// if (event_str.includes('stop')){
-		// 	stop_signal_condition = 'stop'
-		// } else {
-		// 	stop_signal_condition = 'go'
-		// }
-
-		// if (event_str.includes('pos')){
-		// 	directed_condition = 'pos'
-		// } else if (event_str.includes('neg')) {
-		// 	directed_condition = 'neg'
-		// } else {
-		// 	directed_condition = 'con'
-		// }
-		
 		stim = {
 			stop_signal_condition: event_pieces[0],
 			directed_condition: event_pieces[1]
@@ -496,20 +482,6 @@ var getPromptTextList = function(){
 			'<li>Do not respond if a star appears around the probe!</li>' +
 			'</ul>'
 }
-
-// var prompt_text_list = '<ul style = "text-align:left">'+
-// 						'<li>Please respond if the probe was in the memory set.</li>'+
-// 						'<li>In memory set: ' + getPossibleResponses()[0][0] + '</li>' +
-// 						'<li>Not in memory set: ' + getPossibleResponses()[1][0] + '</li>' +
-// 						'<li>Do not respond if a star appears around the probe!</li>' +
-// 					   '</ul>'
-
-// var prompt_text = '<div class = prompt_box>'+
-// '<p class = center-block-text style = "font-size:16px; line-height:80%%;">Please respond if the probe was in the memory set.</p>' +
-// '<p class = center-block-text style = "font-size:16px; line-height:80%%;">In memory set: ' + getPossibleResponses()[0][0] + '</p>' +
-// '<p class = center-block-text style = "font-size:16px; line-height:80%%;">Not in memory set: ' + getPossibleResponses()[1][0] + '</p>' +
-// '<p class = center-block-text style = "font-size:16px; line-height:80%%;">Do not respond if a star appears around the probe!</p>' +
-// '</div>'
 				  
 var pathSource = "/static/experiments/stop_signal_with_directed_forgetting__fmri/images/"
 var pathDesignSource = "/static/experiments/stop_signal_with_directed_forgetting__fmri/designs/" //ADDED FOR fMRI SEQUENCES
@@ -546,21 +518,8 @@ var refresh_events = ['go_pos', 'go_pos', 'go_pos', 'go_pos',
 
 
 var feedback_text = 
-	'Welcome to the experiment. This experiment will take about 30 minutes. Press <i>enter</i> to begin.'
+	'Welcome to the experiment.'
 
-// var practice_feedback_block = {
-// 	type: 'poldrack-single-stim',
-// 	data: {
-// 		trial_id: "feedback_block"
-// 	},
-// 	choices: [32],
-// 	stimulus: getFeedback,
-// 	timing_post_trial: 0,
-// 	is_html: true,
-// 	timing_response: 180000,
-// 	response_ends_trial: true, 
-
-// };
 var refresh_feedback_block = {
 	type: 'poldrack-single-stim',
 	stimulus: getRefreshFeedback,
@@ -604,7 +563,7 @@ var end_block = {
 		trial_id: "end",
 	},
 	timing_response: 10000,
-	text: '<div class = centerbox><p class = center-block-text>Thanks for completing this task!</p><p class = center-block-text>Press <i>enter</i> to continue.</p></div>',
+	text: '<div class = centerbox><p class = center-block-text>Thanks for completing this task!</p><p class = center-block-text></p></div>',
 	cont_key: [32],
 	timing_post_trial: 0,
 	on_finish: function(){
@@ -745,246 +704,7 @@ var SSD_setup_block = {
 	}
 }
 
-
-
-// var practiceTrials = []
-// practiceTrials.push(feedback_block)
-// practiceTrials.push(instructions_block)
-// for (i = 0; i < practice_len; i++) { 
-// 	var practice_start_fixation_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: '<div class = centerbox><div class = fixation><span style="color:white">+</span></div></div>',
-// 		is_html: true,
-// 		choices: 'none',
-// 		data: {
-// 			trial_id: "practice_fixation"
-// 		},
-// 		timing_post_trial: 0,
-// 		timing_stim: 500, //500
-// 		timing_response: 500, //500
-// 		prompt: prompt_text,
-// 		on_finish: function(){
-// 			stim = getNextStim()
-// 		}
-// 	}
-
-// 	var practice_fixation_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: '<div class = centerbox><div class = fixation><span style="color:white">+</span></div></div>',
-// 		is_html: true,
-// 		choices: 'none',
-// 		data: {
-// 			trial_id: "practice_fixation"
-// 		},
-// 		timing_post_trial: 0,
-// 		prompt: prompt_text,
-// 		timing_stim: 2000, //2000
-// 		timing_response: 2000 //2000
-// 	}
-
-// 	var practice_ITI_fixation_block = {
-// 		type: 'poldrack-single-stim',
-// 		is_html: true,
-// 		choices: [possible_responses[0][1],possible_responses[1][1]],
-// 		data: {
-// 			trial_id: "practice_ITI_fixation"
-// 		},
-// 		timing_post_trial: 0,
-// 		prompt: prompt_text,
-// 		timing_stim: 1000, //1000
-// 		timing_response: 1000 //1000
-// 	}
-
-// 	var practice_cue_directed_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: getDirectedCueStim,
-// 		is_html: true,
-// 		data: {
-// 			trial_id: "practice_cue",
-// 		},
-// 		choices: false,
-// 		timing_post_trial: 0,
-// 		timing_stim: 1000, //1000
-// 		timing_response: 1000, //1000
-// 		prompt: prompt_text,
-// 	};
-
-
-// 	var practice_training_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: getTrainingStim,
-// 		is_html: true,
-// 		data: {
-// 			trial_id: "practice_stim"
-// 		},
-// 		choices: 'none',
-// 		timing_post_trial: 0,
-// 		prompt: prompt_text,
-// 		timing_stim: 2000, //2000
-// 		timing_response: 2000 //2000
-// 	};
-
-
-// 	var practice_probe_block = {
-// 		type: 'stop-signal',
-// 		stimulus: getProbeStim,
-// 		SS_stimulus: getStopStim,
-// 		SS_trial_type: getSSType, //getSSType,
-// 		data: {
-// 			"trial_id": "practice_trial"
-// 		},
-// 		is_html: true,
-// 		choices: [possible_responses[0][1],possible_responses[1][1]],
-// 		timing_stim: 1000,
-// 		timing_response: 1000, //2000
-// 		response_ends_trial: false,
-// 		SSD: getSSD,
-// 		timing_SS: 500, //500
-// 		timing_post_trial: 0,
-// 		on_finish: appendData,
-// 		prompt: prompt_text,
-// 		on_start: function(){
-// 			stoppingTracker = []
-// 			stoppingTimeTracker = []
-// 		}
-// 	}
-	
-// 	var categorize_block = {
-// 		type: 'poldrack-single-stim',
-// 		data: {
-// 			trial_id: "practice-stop-feedback"
-// 		},
-// 		choices: 'none',
-// 		stimulus: getCategorizeFeedback,
-// 		timing_post_trial: 0,
-// 		is_html: true,
-// 		timing_stim: 500,
-// 		timing_response: 500, //500
-// 		response_ends_trial: false, 
-
-// 	  };
-// 	practiceTrials.push(practice_start_fixation_block)
-// 	practiceTrials.push(practice_training_block)
-// 	practiceTrials.push(practice_cue_directed_block)
-// 	practiceTrials.push(practice_fixation_block)
-// 	practiceTrials.push(practice_probe_block)
-// 	practiceTrials.push(practice_ITI_fixation_block)
-// 	practiceTrials.push(categorize_block)
-// }
-
 var practiceCount = 0
-// var practiceNode = {
-// 	timeline: practiceTrials,
-// 	loop_function: function(data){
-// 		stims = createTrialTypes(numTrialsPerBlock)
-// 		practiceCount += 1
-// 		current_trial = 0
-	
-// 		var total_trials = 0
-// 		var sum_responses = 0
-// 		var total_sum_rt = 0
-		
-// 		var go_trials = 0
-// 		var go_correct = 0
-// 		var go_rt = 0
-// 		var sum_go_responses = 0
-		
-// 		var stop_trials = 0
-// 		var stop_correct = 0
-// 		var stop_rt = 0
-// 		var sum_stop_responses = 0
-		
-	
-// 		for (var i = 0; i < data.length; i++){
-// 			if ((data[i].trial_id == "practice_trial") && (data[i].stop_signal_condition == 'go')){
-// 				total_trials +=1
-// 				go_trials +=1
-// 				if (data[i].rt != -1){
-// 					total_sum_rt += data[i].rt
-// 					go_rt += data[i].rt
-// 					sum_go_responses += 1
-// 					if (data[i].key_press == data[i].correct_response){
-// 						go_correct += 1
-		
-// 					}
-// 				}
-		
-// 			} else if ((data[i].trial_id == "practice_trial") && (data[i].stop_signal_condition == 'stop')){
-// 				total_trials +=1
-// 				stop_trials +=1
-// 				if (data[i].rt != -1){
-// 					total_sum_rt += data[i].rt
-// 					stop_rt += data[i].rt
-// 					sum_stop_responses += 1
-// 				} else if (data[i].key_press == -1){
-// 					stop_correct += 1
-// 				}
-				
-			
-// 			}
-	
-// 		}
-	
-// 		var accuracy = go_correct / go_trials
-// 		var missed_responses = (go_trials - sum_go_responses) / go_trials
-// 		var ave_rt = go_rt / sum_go_responses
-// 		var stop_acc = stop_correct / stop_trials
-	
-// 		feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
-		
-// 		if (practiceCount == practice_thresh){
-// 			feedback_text +=
-// 				'</p><p class = block-text>Done with this practice.' 
-// 				stims = createTrialTypes(numTrialsPerBlock)
-// 				return false
-// 		}
-			
-// 		if ((accuracy > accuracy_thresh) && (stop_acc < maxStopCorrectPractice) && (stop_acc > minStopCorrectPractice)){
-// 			feedback_text +=
-// 					'</p><p class = block-text>Done with this practice. Press Enter to continue.' 
-// 			stims = createTrialTypes(numTrialsPerBlock)
-// 			return false
-	
-// 		} else {
-// 			if (accuracy < accuracy_thresh) {
-// 				feedback_text +=
-// 						'</p><p class = block-text>We are going to try practice again to see if you can achieve higher accuracy.  Remember: <br>' + prompt_text_list
-// 			}
-					
-// 			if (missed_responses > missed_thresh){
-// 				feedback_text +=
-// 						'</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
-// 			}
-
-// 	      	if (ave_rt > rt_thresh){
-// 	        	feedback_text += 
-// 	            	'</p><p class = block-text>You have been responding too slowly.'
-// 	      	}
-			
-// 			if (stop_correct === maxStopCorrectPractice){
-// 				feedback_text +=
-// 				'</p><p class = block-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
-			
-// 			}
-			
-// 			if (stop_correct === minStopCorrectPractice){
-// 				feedback_text +=
-// 				'</p><p class = block-text>You have not been stopping your response when stars are present.  Please try your best to stop your response if you see a star.'
-			
-// 			}
-			
-// 			feedback_text +=
-// 				'</p><p class = block-text>Redoing this practice. Press Enter to continue.' 
-			
-// 			stims = createTrialTypes(practice_len)
-// 			return true
-		
-// 		}
-			
-	
-// 	}
-	
-// }
 
 var refreshTrials = []
 refreshTrials.push(refresh_feedback_block)
@@ -1189,13 +909,13 @@ var refreshNode = {
 				'</p><p class = instruct-text>You have been responding too slowly.'
 		}
 		
-		if (stop_correct === maxStopCorrectPractice){
+		if (stop_acc === maxStopCorrectPractice){
 			feedback_text +=
-			'</p><p class = instruct-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
+			'</p><p class = instruct-text>Do not slow down and wait for the star to appear. Please respond as quickly and accurately as possible when a star does not appear.'
 		
 		}
 		
-		if (stop_correct === minStopCorrectPractice){
+		if (stop_acc === minStopCorrectPractice){
 			feedback_text +=
 			'</p><p class = instruct-text>You have not been stopping your response when stars are present. Please try your best to stop your response if you see a star.'
 		}
@@ -1276,8 +996,11 @@ var testNode0 = {
 		var missed_responses = (go_trials - sum_go_responses) / go_trials
 		var ave_rt = go_rt / sum_go_responses
 		var stop_acc = stop_correct / stop_trials
+
+    console.log('stop acc: ' + stop_acc)
+    console.log('stop correct: ' + stop_correct)
 	
-		feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
+		feedback_text = "<br>Please take this time to read your feedback and to take a short break!"
 		feedback_text += "</p><p class = instruct-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
 		
 		if (accuracy < accuracy_thresh){
@@ -1295,13 +1018,13 @@ var testNode0 = {
             	'</p><p class = instruct-text>You have been responding too slowly.'
       	}
 		
-		if (stop_correct > maxStopCorrect){
+		if (stop_acc > maxStopCorrect){
 			feedback_text +=
-			'</p><p class = instruct-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
+			'</p><p class = instruct-text>Do not slow down and wait for the star to appear. Please respond as quickly and accurately as possible when a star does not appear.'
 		
 		}
 		
-		if (stop_correct < minStopCorrect){
+		if (stop_acc < minStopCorrect){
 			feedback_text +=
 			'</p><p class = instruct-text>You have not been stopping your response when stars are present.  Please try your best to stop your response if you see a star.'
 		
@@ -1376,8 +1099,11 @@ var testNode = {
 		var missed_responses = (go_trials - sum_go_responses) / go_trials
 		var ave_rt = go_rt / sum_go_responses
 		var stop_acc = stop_correct / stop_trials
+
+    console.log('stop acc: ' + stop_acc)
+    console.log('stop correct: ' + stop_correct)
 	
-		feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
+		feedback_text = "<br>Please take this time to read your feedback and to take a short break!"
 		feedback_text += "</p><p class = instruct-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
 		
 		if (accuracy < accuracy_thresh){
@@ -1395,13 +1121,13 @@ var testNode = {
             	'</p><p class = instruct-text>You have been responding too slowly.'
       	}
 		
-		if (stop_correct > maxStopCorrect){
+		if (stop_acc > maxStopCorrect){
 			feedback_text +=
-			'</p><p class = instruct-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
+			'</p><p class = instruct-text>Do not slow down and wait for the star to appear. Please respond as quickly and accurately as possible when a star does not appear.'
 		
 		}
 		
-		if (stop_correct < minStopCorrect){
+		if (stop_acc < minStopCorrect){
 			feedback_text +=
 			'</p><p class = instruct-text>You have not been stopping your response when stars are present.  Please try your best to stop your response if you see a star.'
 		
@@ -1409,7 +1135,7 @@ var testNode = {
 	
 		if (testCount == numTestBlocks){
 			feedback_text +=
-					'</p><p class = instruct-text>Done with this test. Press Enter to continue.<br> If you have been completing tasks continuously for an hour or more, please take a 15-minute break before starting again.'
+					'</p><p class = instruct-text>Done with this test.<br>'
 			return false
 		} else {
 			stims = createTrialTypes(numTrialsPerBlock, des_events)

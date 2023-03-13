@@ -403,22 +403,6 @@ for(i=0;i<shapes.length;i++){
 jsPsych.pluginAPI.preloadImages(images);
 
 
-
-// var prompt_text_list = '<ul style="text-align:left;">'+
-// 						'<li>' + shapes[0] + ': ' + possible_responses[0][0] + '</li>' +
-// 						'<li>' + shapes[2] + ': ' + possible_responses[2][0] + '</li>' +
-// 						'<li>Do not respond if a star appears!</li>' +
-// 					  '</ul>'
-
-// var prompt_text = '<div class = prompt_box>'+
-// 					  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">' + shapes[0] + ': ' + possible_responses[0][0] + '</p>' +
-// 					  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">' + shapes[2] + ': ' + possible_responses[2][0] + '</p>' +
-// 					  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">Do not respond if a star appears!</p>' +
-// 				  '</div>'
-	  
-
-
-// var stims = createTrialTypes(numTrialsPerBlock)
 var stims = []
 
 var exp_phase = "practice2"
@@ -431,20 +415,6 @@ var ITIs_resp = []
 
 var motor_perm = 0
 
-//practice feedback variables
-// var practice_feedback_text = '<div class = instructbox>'+ //'<div class = centerbox>'+
-// '<p class = block-text>In this task, you will see shapes appear on the screen one at a time. </p>' +
-// '<p class = block-text>Only one response is correct for each shape.</p>'+
-// '<p class = block-text><strong>If the shape is a '+shapes[0]+', press your '+possible_responses[0][0]+'.</strong></p>'+
-// '<p class = block-text><strong>If the shape is a '+shapes[2]+', press your '+possible_responses[2][0]+'.</strong></p>'+
-// //'<p class = block-text>You should respond as quickly and accurately as possible to each shape.</p>'+
-// '<p class = block-text>On some trials, a star will appear around the shape.  The star will appear with, or shortly after the shape appears.</p>'+
-// '<p class = block-text><b>If you see a star appear, please try your best to withhold your response on that trial.</b></p>'+
-// '<p class = block-text>If the star appears on a trial, and you try your best to withhold your response, you will find that you will be able to stop sometimes but not always.</p>'+
-// '<p class = block-text>Please do not slow down your responses in order to wait for the star.  You should respond as quickly and accurately as possible to each shape.</p>'+
-// '<p class = block-text>During practice, you will see a reminder of the rules.  <i> This will be removed for the test</i>. </p>'+ 
-// '<p class = block-text>When you are ready to begin, please press the spacebar. </p>'+
-// '</div>'
 var practice_trial_id = "instructions"
 var practice_feedback_timing = -1
 var practice_response_ends = true
@@ -487,9 +457,6 @@ var practice_end_block = {
 	  }
   };
 
-
-
-
 var practice_feedback_block = {
 	type: 'poldrack-single-stim',
 	stimulus: getPracticeFeedback,
@@ -511,7 +478,6 @@ var practice_feedback_block = {
 	} 
 
 };
-
 
 var ITI_fixation_block = {
 	type: 'poldrack-single-stim',
@@ -592,7 +558,6 @@ var SSD_setup_block = {
 	}
 }
 
-
 var practiceStopTrials = []
 practiceStopTrials.push(practice_feedback_block)
 //practiceStopTrials.push(instructions_block)
@@ -641,7 +606,6 @@ for (i = 0; i < practice_len; i++) {
 	practiceStopTrials.push(categorize_block)
 
 }
-
 
 var practiceStopCount = 0
 var practiceStopNode = {
@@ -698,8 +662,6 @@ var practiceStopNode = {
 		var stop_signal_respond = num_stop_responses / stop_length
 		
 		
-		
-
 		practice_feedback_text = "<br>Please take this time to read your feedback and to take a short break." //Press any button to continue."
 
 		if (practiceStopCount == practice_thresh) {
@@ -745,7 +707,7 @@ var practiceStopNode = {
 		
 			if (stop_signal_respond === minStopCorrectPractice){
 				practice_feedback_text +=
-				'</p><p class = block-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
+				'</p><p class = block-text>Do not slow down and wait for the star to appear. Please respond as quickly and accurately as possible when a star does not appear.'
 		
 			}
 			

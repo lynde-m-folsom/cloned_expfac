@@ -1,15 +1,6 @@
 /* ************************************ */
 /* Define helper functions */
 /* ************************************ */
-//FUNCTIONS FOR GETTING FMRI SEQUENCES
-function getdesignITIs(design_num) {
-	x = fetch(pathDesignSource+'design_'+design_num+'/ITIs_clean.txt').then(res => res.text()).then(res => res).then(text => text.split(/\r?\n/));
-	return x
-} 
-function getdesignEvents(design_num) {
-	x = fetch(pathDesignSource+'design_'+design_num+'/events_clean.txt').then(res => res.text()).then(res => res).then(text => text.split(/\r?\n/));
-	return x
-} 
 
 function getITI_stim() { //added for fMRI compatibility
 	var currITI = ITIs_stim.shift()
@@ -32,8 +23,6 @@ function getITI_resp() { //added for fMRI compatibility
 function getMotorPerm() {
 	return motor_perm
 }
-
-// var possible_responses = [['index finger', 89], ['index finger', 89], ['middle finger', 71], ['middle finger', 71]] //fmri responses - keys: BYGRM = thumb->pinky
 
 function getPossibleResponses() {
 	if (getMotorPerm()==0) {
@@ -156,13 +145,6 @@ var getPracticeTrialID = function() {
 var getPracticeFeedbackTiming = function() {
 	return practice_feedback_timing
 }
-
-
-
-// var getPracticeFeedback = function() {
-// 	return '<div class = bigbox><div class = picture_box><p class = block-text>' + practice_feedback_text + '</p></div></div>'
-// }
-
 
 var getFeedback = function() {
 	return '<div class = bigbox><div class = picture_box><p class = block-text>' + feedback_text + '</p></div></div>'
@@ -376,7 +358,6 @@ var maxStopCorrectPractice = 1
 var minStopCorrectPractice = 0
 
  
-// var possible_responses = [['F Key', 70],['H Key', 72]]
 var possible_responses = [['index finger', 37], ['middle finger', 39]]
 
 
@@ -390,14 +371,6 @@ var preFileTypeStar = '<img class = star src="/static/experiments/stop_signal_wi
 var stop_boards = ['<div class = bigbox><div class = centerbox><div class = starbox>','</div></div></div>']	   
 var flanker_boards = [['<div class = bigbox><div class = centerbox><div class = flankerLeft_2><div class = cue-text>'],['</div></div><div class = flankerLeft_1><div class = cue-text>'],['</div></div><div class = flankerMiddle><div class = cue-text>'],['</div></div><div class = flankerRight_1><div class = cue-text>'],['</div></div><div class = flankerRight_2><div class = cue-text>'],['</div></div></div></div>']]					   
 		
-
-// var stims = createTrialTypes(practice_len)
-// var prompt_text = '<ul style = "text-align:left;"><font color=white>'+
-// 					'<li>Indicate the identity of the middle letter</li>' +
-// 					'<li>Do not respond if you see a star around the letters!</li>' +
-// 					'<li>Do not slow down your responses to the letter to wait for the star.</li>' +
-// 				  '</font></ul>'
-
 var pathDesignSource = "/static/experiments/stop_signal_with_flanker__practice/designs/" //ADDED FOR fMRI SEQUENCES
 
 var pathSource = "/static/experiments/stop_signal_with_flanker__practice/images/"
@@ -425,20 +398,6 @@ var practice_events = ['go_congruent', 'go_congruent', 'go_incongruent', 'go_inc
 
 var feedback_text = 
 	'Welcome to the experiment. This experiment will take around 10 minutes. Press <i>space</i> to begin.'
-// var practice_feedback_block = {
-// 	type: 'poldrack-single-stim',
-// 	data: {
-// 		trial_id: "feedback_block"
-// 	},
-// 	choices: [32],
-// 	stimulus: getPracticeFeedback,
-// 	timing_post_trial: 0,
-// 	is_html: true,
-// 	timing_response: 180000,
-// 	response_ends_trial: true, 
-
-// };
-
 var practice_feedback_block = {
 	type: 'poldrack-single-stim',
 	stimulus: getPracticeFeedback,
@@ -673,7 +632,7 @@ var practiceNode = {
 			
 			if (stop_acc === maxStopCorrectPractice){
 			feedback_text +=
-				'</p><p class = block-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
+				'</p><p class = block-text>Do not slow down and wait for the star to appear. Please respond as quickly and accurately as possible when a star does not appear.'
 			
 			}
 			

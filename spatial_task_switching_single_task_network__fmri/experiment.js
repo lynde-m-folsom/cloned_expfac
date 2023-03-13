@@ -343,7 +343,7 @@ function getCue(){
 	magnitude = stim.magnitude
 	parity = stim.parity
 	
-	return stop_boards[whichQuadrant - 1][0] + '<div class = fixation>+</div>' + stop_boards[whichQuadrant - 1][1] 
+	return stop_boards[whichQuadrant - 1][0] + stop_boards[whichQuadrant - 1][1] 
 }
 
 function getStim(){
@@ -579,7 +579,7 @@ var motor_setup_block = {
 
 
 var feedback_text = 
-'Welcome to the experiment. This experiment will take around 5 minutes. Press <i>enter</i> to begin.'
+'Welcome to the experiment. '
 
 var refresh_feedback_block = {
 	type: 'poldrack-single-stim',
@@ -742,7 +742,7 @@ var refreshNode = {
 		}
 
 		if (ave_rt > rt_thresh){
-			refresh_feedback_textack_text += 
+			refresh_feedback_text += 
 				'</p><p class = instruct-text>You have been responding too slowly.'
 		}
 	
@@ -753,6 +753,7 @@ var refreshNode = {
 		task_switches = des_task_switches.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
 		des_task_switches = des_task_switches.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_task_switches
 		stims = createTrialTypes(task_switches)
+		//stims.reverse() //reverse the order of trial types to match designs
 		exp_stage = 'test'
 		
 		return false
@@ -983,7 +984,7 @@ var testNode = {
 	
 		if (testCount == numTestBlocks){
 			feedback_text +=
-					'</p><p class = instruct-text>Done with this test. To let the experimenters know when you are ready to continue, please press any button.'
+					'</p><p class = instruct-text>Done with this test. '
 			return false
 		} else {
 		

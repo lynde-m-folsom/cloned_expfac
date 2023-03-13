@@ -94,8 +94,9 @@ var getTestFeedback = function() {
 }
 
 var getCategorizeFeedback = function(){
-	curr_trial = jsPsych.progress().current_trial_global - 2
+	curr_trial = jsPsych.progress().current_trial_global - 1
 	trial_id = jsPsych.data.getDataByTrialIndex(curr_trial).trial_id
+	
 	if (trial_id == 'refresh_trial'){
 		if (jsPsych.data.getDataByTrialIndex(curr_trial).key_press == jsPsych.data.getDataByTrialIndex(curr_trial).correct_response){
 			
@@ -417,7 +418,7 @@ var choices = [89, 71]
 var exp_stage = 'practice'
 var refresh_length = 4 
 var numTrialsPerBlock = 40
-var numTestBlocks = 4
+var numTestBlocks = 2
 var accuracy_thresh = 0.75
 var rt_thresh = 1000
 var missed_thresh = 0.10
@@ -726,197 +727,6 @@ var test_feedback_block = {
 	response_ends_trial: false, // HJ CHANGE 
 };
 
-// var practiceTrials = []
-// practiceTrials.push(feedback_block)
-// practiceTrials.push(instructions_block)
-// for (i = 0; i < (practice_length); i++) {
-// 	var practice_start_fixation_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: '<div class = centerbox><div class = fixation><span style="color:white">+</span></div></div>',
-// 		is_html: true,
-// 		choices: 'none',
-// 		data: {
-// 			trial_id: "practice_fixation"
-// 		},
-// 		timing_post_trial: 0,
-// 		timing_stim: 500, //500
-// 		timing_response: 500, //500
-// 		prompt: prompt_text,
-// 		on_finish: function() {
-// 			jsPsych.data.addDataToLastTrial({
-// 				exp_stage: exp_stage,
-// 				current_trial: current_trial
-// 			})
-// 		}
-// 	}
-
-// 	var practice_fixation_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: '<div class = centerbox><div class = fixation><span style="color:white">+</span></div></div>',
-// 		is_html: true,
-// 		choices: 'none',
-// 		data: {
-// 			trial_id: "practice_fixation"
-// 		},
-// 		timing_post_trial: 0,
-// 		timing_stim: 2000, //2000
-// 		prompt: prompt_text,
-// 		timing_response: 2000, //2000
-// 		on_finish: function() {
-// 			jsPsych.data.addDataToLastTrial({
-// 				exp_stage: exp_stage,
-// 				current_trial: current_trial
-// 			})
-// 		}
-// 	}
-
-// 	var practice_ITI_fixation_block = {
-// 		type: 'poldrack-single-stim',
-// 		is_html: true,
-// 		choices: 'none',
-// 		data: {
-// 			trial_id: "practice_ITI_fixation"
-// 		},
-// 		timing_post_trial: 0,
-// 		timing_stim: 1000, //1000
-// 		prompt: prompt_text,
-// 		timing_response: 1000, //1000
-// 		on_finish: function() {
-// 			jsPsych.data.addDataToLastTrial({
-// 				exp_stage: exp_stage,
-// 				current_trial: current_trial
-// 			})
-// 			current_trial = current_trial + 1
-// 		}
-// 	}
-
-// 	var practice_training_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: getLettersHTML,
-// 		is_html: true,
-// 		data: {
-// 			trial_id: "practice_stim"
-// 		},
-// 		choices: 'none',
-// 		prompt: prompt_text,
-// 		timing_post_trial: 0,
-// 		timing_stim: 2000, //2000
-// 		timing_response: 2000 //2000
-// 	};
-
-
-
-// 	var practice_cue_block = {
-// 		type: 'poldrack-single-stim',
-// 		stimulus: getCueHTML,
-// 		is_html: true,
-// 		data: {
-// 			trial_id: "practice_cue",
-// 		},
-// 		choices: 'none',
-// 		prompt: prompt_text,
-// 		timing_post_trial: 0,
-// 		timing_stim: 1000, //1000
-// 		timing_response: 1000 //1000
-// 	};
-	
-// 	var categorize_block = {
-// 		type: 'poldrack-single-stim',
-// 		data: {
-// 			trial_id: "practice-stop-feedback"
-// 		},
-// 		choices: 'none',
-// 		stimulus: getCategorizeFeedback,
-// 		timing_post_trial: 0,
-// 		is_html: true,
-// 		timing_stim: 500, //500
-// 		timing_response: 500, //500
-// 		response_ends_trial: false, 
-
-// 	};
-	
-// 	practiceTrials.push(practice_start_fixation_block);
-// 	practiceTrials.push(practice_training_block);
-// 	practiceTrials.push(practice_cue_block);
-// 	practiceTrials.push(practice_fixation_block);
-// 	practiceTrials.push(practice_probe_block);
-// 	practiceTrials.push(practice_ITI_fixation_block);
-// 	practiceTrials.push(categorize_block);
-// }
-
-
-// var practiceCount = 0
-// var practiceNode = {
-// 	timeline: practiceTrials,
-// 	loop_function: function(data){
-// 		practiceCount += 1
-// 		stims = createTrialTypes(practice_length,numLetters)
-	
-// 		var sum_rt = 0
-// 		var sum_responses = 0
-// 		var correct = 0
-// 		var total_trials = 0
-	
-// 		for (var i = 0; i < data.length; i++){
-// 			if (data[i].trial_id == 'practice_trial'){
-// 				total_trials+=1
-// 				if (data[i].rt != -1){
-// 					sum_rt += data[i].rt
-// 					sum_responses += 1
-// 					if (data[i].key_press == data[i].correct_response){
-// 						correct += 1
-		
-// 					}
-// 				}
-		
-// 			}
-	
-// 		}
-	
-// 		var accuracy = correct / total_trials
-// 		var missed_responses = (total_trials - sum_responses) / total_trials
-// 		var ave_rt = sum_rt / sum_responses
-	
-// 		feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
-
-// 		if (accuracy > accuracy_thresh){
-// 			feedback_text +=
-// 					'</p><p class = block-text>Done with this practice. Press Enter to continue.' 
-// 			stims = createTrialTypes(numTrialsPerBlock,numLetters)
-// 			return false
-	
-// 		} else if (accuracy < accuracy_thresh){
-// 			feedback_text +=
-// 					'</p><p class = block-text>We are going to try practice again to see if you can achieve higher accuracy.  Remember: <br>' + prompt_text_list
-					
-// 			if (missed_responses > missed_thresh){
-// 				feedback_text +=
-// 						'</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
-// 			}
-
-// 	      	if (ave_rt > rt_thresh){
-// 	        	feedback_text += 
-// 	            	'</p><p class = block-text>You have been responding too slowly.'
-// 	      	}
-
-		
-// 			if (practiceCount == practice_thresh){
-// 				feedback_text +=
-// 					'</p><p class = block-text>Done with this practice.' 
-// 					stims = createTrialTypes(numTrialsPerBlock,numLetters)
-// 					return false
-// 			}
-			
-// 			feedback_text +=
-// 				'</p><p class = block-text>Redoing this practice. Press Enter to continue.' 
-			
-// 			return true
-		
-// 		}
-	
-// 	}
-	
-// }
 
 var refreshTrials = []
 refreshTrials.push(refresh_feedback_block)
@@ -1031,6 +841,7 @@ for (i = 0; i < (refresh_length); i++) {
 	refreshTrials.push(refresh_fixation_block);
 	refreshTrials.push(refresh_probe_block);
 	refreshTrials.push(categorize_block);
+
 }
 
 var refreshCount = 0
@@ -1145,7 +956,6 @@ var testNode0 = {
 		var directed_remembering_total = neg_respond_remember + pos_respond_remember
 		var directed_remembering_percent = directed_remembering_total / respond_remember_total 
 
-		console.log(directed_remembering_percent)
 		if (directed_remembering_percent >= 0.75){
 			test_feedback_text = 'According to the pattern of your responses, we believe that you are treating this task as a directed remembering task.  Please remember that <i>this is a directed forgetting task</i>.</p>'+
 								 '<p class = block-text>When you are presented with the cue TOP, you should <i> forget the top letters</i> and <i>remember the bottom letters.</i></p>'+
@@ -1178,7 +988,7 @@ var testNode0 = {
 			var missed_responses = (total_trials - sum_responses) / total_trials
 			var ave_rt = sum_rt / sum_responses
 	
-			test_feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
+			test_feedback_text = "<br>Please take this time to read your feedback and to take a short break!"
 			test_feedback_text += "</p><p class = block-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
 			
 		
@@ -1278,32 +1088,33 @@ var testNode = {
 			test_feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press enter to continue"
 			test_feedback_text += "</p><p class = block-text>You have completed: "+testCount+" out of "+numTestBlocks+" blocks of trials."
 			
+			if (testCount == numTestBlocks){
+				test_feedback_text +=
+						'</p><p class = block-text>Done with this test.'
+				return false
+			} else {
 		
-			if (accuracy < accuracy_thresh){
-				test_feedback_text +=
-						'</p><p class = block-text>Your accuracy is too low.  Remember: <br>' + getPromptTaskList()
-			}
-			if (missed_responses > missed_thresh){
-				test_feedback_text +=
-						'</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
-			}
+				if (accuracy < accuracy_thresh){
+					test_feedback_text +=
+							'</p><p class = block-text>Your accuracy is too low.  Remember: <br>' + getPromptTaskList()
+				}
+				if (missed_responses > missed_thresh){
+					test_feedback_text +=
+							'</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
+				}
 
 	      	if (ave_rt > rt_thresh){
 	        	feedback_text += 
 	            	'</p><p class = block-text>You have been responding too slowly.'
 	      	}
-			  
 
-			if (testCount == numTestBlocks){
-				test_feedback_text +=
-						'</p><p class = block-text>Done with this test.'
-				return false
-		}
+	  			return true
+			}
 	}
 
 }
 /* create experiment definition array */
-var directed_forgetting_single_task_network__fmri_experiment = [];
+directed_forgetting_single_task_network__fmri_experiment = [];
 
 directed_forgetting_single_task_network__fmri_experiment.push(design_setup_block)
 directed_forgetting_single_task_network__fmri_experiment.push(motor_setup_block)
@@ -1325,3 +1136,4 @@ directed_forgetting_single_task_network__fmri_experiment.push(testNode)
 directed_forgetting_single_task_network__fmri_experiment.push(test_feedback_block)
 
 directed_forgetting_single_task_network__fmri_experiment.push(end_block);
+

@@ -730,7 +730,7 @@ var getCorrectResponse = function(){
   
 		  if (accuracy < accuracy_thresh){
 			  feedback_text +=
-					  '</p><p class = block-text>We are going to try practice again to see if you can achieve higher accuracy.  Remember: <br>' + prompt_text_list
+					  '</p><p class = block-text>Remember: <br>' + prompt_text_list
 		  }
 					  
 		  if (missed_responses > missed_thresh){
