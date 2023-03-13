@@ -530,7 +530,7 @@ var practice_trial_id = "instructions"
 
 
 var feedback_text = 
-	'Welcome to the experiment. This experiment will take about 30 minutes. Press <i>space</i> to begin.'
+	'Welcome to the experiment. Press <i>space</i> to begin.'
 
 // var practice_feedback_block = {
 // 	type: 'poldrack-single-stim',
@@ -863,11 +863,11 @@ var practiceNode = {
 		var ave_rt = go_rt / sum_go_responses
 		var stop_acc = stop_correct / stop_trials
 	
-		feedback_text = "<br>Please take this time to read your feedback and to take a short break! Press space to continue"
+		feedback_text = "<br>Please take this time to read your feedback and to take a short break!"
 		
 		if (practiceCount == practice_thresh){
 			feedback_text +=
-				'</p><p class = block-text>Done with this practice.' 
+				'</p><p class = block-text>Done with this practice. Press space to continue' 
 				stims = createTrialTypes(numTrialsPerBlock)
 				return false
 		}
@@ -896,7 +896,7 @@ var practiceNode = {
 			
 			if (stop_correct === maxStopCorrectPractice){
 				feedback_text +=
-				'</p><p class = block-text>You have been responding too slowly.  Please respond as quickly and accurately to each stimulus that requires a response.'
+				'</p><p class = block-text>Do not slow down and wait for the star to appear. Please respond as quickly and accurately as possible when a star does not appear.'
 			
 			}
 			
