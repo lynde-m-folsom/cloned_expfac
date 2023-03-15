@@ -284,7 +284,7 @@ var getCorrectResponse = function(){
   
   function getRefreshFeedback() { 
 	  if (exp_id='instructions') {
-  return '<div class = bigbox><div class = centerbox><p class = block-text>' + 
+      return '<div class = bigbox><div class = centerbox><p class = block-text>' + 
 		  'In this experiment, ' + stims[0][0] + ' and ' + stims[1][0] + ' squares will appear on the screen. '+
 		  'If you see the ' + stims[0][0] + ' square you should <b> respond by pressing your ' + getPossibleResponses()[0] +  ' as quickly as possible</b>. '+
 		  'If you see the ' + stims[1][0] + ' square you should <b> not respond</b>.</p>'+
@@ -335,14 +335,13 @@ var getCorrectResponse = function(){
 	  }
   }
   practice_stimuli = []
-  //var  f = jsPsych.randomization.shuffle([["orange", "stim1"],["blue","stim2"]])
   var motor_perm = 0
   var stims = [["solid", "stim1"],["outlined","stim2"]] //solid and outlined squares used as stimuli for this task are not png files as in some others, but they are defined in style.css
   var stim = []
   var gap = 0
   var refresh_trial_id = "instructions"
   var refresh_feedback_timing = -1
-  var refresh_response_ends = true
+  var refresh_response_ends = true 
   var current_trial = 0
   var practice_length = 6
   
@@ -547,6 +546,7 @@ var getCorrectResponse = function(){
 	  timing_response: getRefreshFeedbackTiming, //10 seconds for feedback
 	  timing_stim: getRefreshFeedbackTiming,
 	  response_ends_trial: getRefreshResponseEnds,
+    choices: [32],
 	  cont_key: [32],
 	  on_finish: function() {
 		  refresh_trial_id = "practice-no-stop-feedback"
