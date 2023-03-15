@@ -270,7 +270,7 @@ var getStim = function(){
 		   	'<div class = lowerbox>' +
 				'<div class = left-text><div class = cue-text>' + preFileType + left_number + fileTypePNG + '</div></div>'+
 				'<div class = right-text><div class = cue-text>'+ preFileType + right_number + fileTypePNG + '</div></div>'+
-		    '</div>'+
+		    // '</div>'+
 		   task_boards[whichQuadrant - 1][1]
 }
 
@@ -582,28 +582,28 @@ var appendData = function(){
 function getRefreshFeedback(){
 	if (getRefreshTrialID()=='instructions'){
 		return 		'<div class = centerbox>'+
-		'<p class = block-text>In this experiment, across trials you will see a cue, either <i>left</i>, <i>first</i>, <i>right</i>, or <i>second</i>, followed by 2 numbers in one of 4 quadrants.  '+
+		'<p class = block-text style = "font-size:24px; line-height:80%%;"> In this experiment, across trials you will see a cue, either <i>left</i>, <i>first</i>, <i>right</i>, or <i>second</i>, followed by 2 numbers in one of 4 quadrants.  '+
 		'On any trial, one quadrant will have a cue, followed by 2 numbers.</p> '+
 	
-		'<p class = block-text>The cue will instruct you which of the following 2 numbers, you must make a judgement on.</p>'+
+		'<p class = block-text style = "font-size:24px; line-height:80%%;"> The cue will instruct you which of the following 2 numbers, you must make a judgement on.</p>'+
 		
-		'<p class = block-text>If you see the cue, <i>left</i> or <i>first</i>, please judge the upcoming left number.</p>'+
+		'<p class = block-text style = "font-size:24px; line-height:80%%;"> If you see the cue, <i>left</i> or <i>first</i>, please judge the upcoming left number.</p>'+
 		
-		'<p class = block-text>If you saw the cue, <i>right</i> or <i>second</i>, please judge the upcoming right number.</p>'+
+		'<p class = block-text style = "font-size:24px; line-height:80%%;"> If you saw the cue, <i>right</i> or <i>second</i>, please judge the upcoming right number.</p>'+
 	
-		'<p class = block-text>You will be asked to judge the <i>cued number </i>on magnitude (higher or lower than 5) or parity (odd or even), depending on which quadrant '+
+		'<p class = block-text style = "font-size:24px; line-height:80%%;"> You will be asked to judge the <i>cued number </i>on magnitude (higher or lower than 5) or parity (odd or even), depending on which quadrant '+
 		'the cue and numbers are in.</p>'+
 		
-		'<p class = block-text>In the top two quadrants, please judge the cued number based on <i>'+predictable_dimensions_list[0].dim+'</i>. Press the <i>'+getPossibleResponses()[0][0][0]+
+		'<p class = block-text style = "font-size:24px; line-height:80%%;"> In the top two quadrants, please judge the cued number based on <i>'+predictable_dimensions_list[0].dim+'</i>. Press the <i>'+getPossibleResponses()[0][0][0]+
 		'  if '+predictable_dimensions_list[0].values[0]+'</i>, and the <i>'+getPossibleResponses()[0][1][0]+'  if '+predictable_dimensions_list[0].values[1]+'</i>.</p>'+
 		/*In the top two quadrants, please judge the cued number based on magnitude. Press the M Key if high, and the Z Key if low.*/
 
-		'<p class = block-text>In the bottom two quadrants, please judge the cued number based on <i>'+predictable_dimensions_list[1].dim+'.</i>'+
+		'<p class = block-text style = "font-size:24px; line-height:80%%;"> In the bottom two quadrants, please judge the cued number based on <i>'+predictable_dimensions_list[1].dim+'.</i>'+
 		' Press the <i>'+getPossibleResponses()[1][0][0]+ ' if '+predictable_dimensions_list[1].values[0]+'</i>, and the <i>'+getPossibleResponses()[1][1][0]+
 		' if '+predictable_dimensions_list[1].values[1]+'</i>.</p>'+
 		/*In the bottom two quadrants, please judge the cued number based on parity. Press the M Key if even, and the Z Key if odd.*/
 		
-		'<p class = block-text>Please judge only the cued number for that trial!</p>'+
+		'<p class = block-text style = "font-size:24px; line-height:80%%;"> Please judge only the cued number for that trial!</p>'+
 		'</div>'
 	} else {
 		return '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' + refresh_feedback_text + '</font></p></div></div>'
@@ -670,7 +670,7 @@ var tasks = {
 var current_trial = 0
 
 var getPromptTextList = function(){ 
-      return'<ul style="text-align:left;">'+
+      return'<ul style="text-align:left; font-size: 24px;">'+
 						'<li>Top 2 quadrants: Judge cued number on '+predictable_dimensions_list[0].dim+'</li>' +
 						'<li>'+predictable_dimensions_list[0].values[0]+': ' + getPossibleResponses()[0][0][0] + '</li>' +
 						'<li>'+predictable_dimensions_list[0].values[1]+': ' + getPossibleResponses()[0][1][0] + '</li>' +
@@ -946,25 +946,25 @@ var practiceNode = {
 		var missed_responses = (total_trials - sum_responses) / total_trials
 		var ave_rt = sum_rt / sum_responses
 
-		refresh_feedback_text = "<div class = instructbox><p class = instruct-text>Please take this time to read your feedback and to take a short break!"
+		refresh_feedback_text = "<br>Please take this time to read your feedback and to take a short break!"
 
 		if (accuracy < accuracy_thresh){
 			refresh_feedback_text +=
-					'</p><p class = instruct-text> Remember: <br>' + getPromptTextList()
+					'</p><p class = block-text> Remember: <br>' + getPromptTextList()
 		}
 			
 		if (missed_responses > missed_thresh){
 			refresh_feedback_text +=
-				'</p><p class = instruct-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
+				'</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.'
 		}
 
 		if (ave_rt > rt_thresh){
 			refresh_feedback_text += 
-				'</p><p class = instruct-text>You have been responding too slowly.'
+				'</p><p class = block-text>You have been responding too slowly.'
 		}
 	
 		refresh_feedback_text +=
-			'</p><p class = instruct-text>Done with this practice. The test session will begin shortly.'
+			'</p><p class = block-text>Done with this practice. The test session will begin shortly.'
 		
 		
 		task_switches = des_task_switches.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
