@@ -195,7 +195,6 @@ img.center {
 /*******************************************************/
 /************       Cued CSS Styles        *************/
 /*******************************************************/
-
 .left-text {
   width: 5vw;
   height: 5vw;
@@ -215,10 +214,10 @@ img.center {
   left: 50%;
   background-color: none;
   transform: translate(25%, -50%);
-}
+} 
 
 .upperbox {
-  width:35vw;
+  width:30vw;
   height: 20vw;
   position:absolute;
   top:50%;
@@ -229,7 +228,7 @@ img.center {
 }
 
 .lowerbox {
-  width:35vw;
+  width:30vw;
   height: 20vw;
   position:absolute;
   top:50%;
