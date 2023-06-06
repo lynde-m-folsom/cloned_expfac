@@ -550,8 +550,8 @@ var fixation_boards = [['<div class = bigbox><div class = quad_box><div class = 
 					   ['<div class = bigbox><div class = quad_box><div class = decision-bottom-left><div class = fixation>+</div></div></div></div>']]
 
 
-var task_switches = makeTaskSwitches(practice_len) //added for spatial
-var stims = createTrialTypes(task_switches, practice_len) //changed for spatial
+var task_switches = makeTaskSwitches(refresh_len) //added for spatial
+var stims = createTrialTypes(task_switches, refresh_len) //changed for spatial
 
 //ADDED FOR SCANNING
 //fmri variables
@@ -911,7 +911,7 @@ var testNode0 = {
 		}
 	
 	}
-}
+
 
 var testTrials = []
 testTrials.push(feedback_block)
