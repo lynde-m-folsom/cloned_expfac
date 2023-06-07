@@ -200,6 +200,23 @@ var getQuad = function(oldQuad, curr_switch) {
 	return out;
 }
 
+var getCorrectResponse = function(shape_matching_condition, whichQuad) {
+	var out;
+	if (shape_matching_condition[0] == 'S') {
+		if (whichQuad < 3) { //if in top quadrants (1,2)
+			out = getPossibleResponses()[0][0][1]
+		} else  { //if in bottom quadrants (3,4) 
+			out = getPossibleResponses()[1][0][1]
+		}
+	} else {
+		if (whichQuad < 3) { //if in top quadrants (1,2)
+			out = getPossibleResponses()[1][0][1]
+		} else  { //if in bottom quadrants (3,4) 
+			out = getPossibleResponses()[0][0][1]
+		}
+	}
+	return out;
+}
 var createTrialTypes = function(task_switches, numTrialsPerBlock){
 	var whichQuadStart = jsPsych.randomization.repeat([1,2,3,4],1).pop()
 	var predictable_cond_array = predictable_conditions[whichQuadStart%2]
@@ -223,18 +240,10 @@ var createTrialTypes = function(task_switches, numTrialsPerBlock){
 	var distractor_i = 0
 	if (shape_matching_condition[0] == 'S') {
 		target_i = probe_i
-		if (predictable_dimension == 'the same'){
-			correct_response = possible_responses[0][1]
-		} else  {
-			correct_response = possible_responses[1][1]		
-		}
+		correct_response = getCorrectResponse(shape_matching_condition, whichQuadStart)
 	} else {
 		target_i = randomDraw([1,2,3,4,5,6,7,8,9,10].filter(function(y) {return y != probe_i}))				
-		if (predictable_dimension == 'the same'){
-			correct_response = possible_responses[1][1]
-		} else  {
-			correct_response = possible_responses[0][1]		
-		}
+		correct_response = getCorrectResponse(shape_matching_condition, whichQuadStart)
 	
 	}
 	
@@ -278,18 +287,10 @@ var createTrialTypes = function(task_switches, numTrialsPerBlock){
 		distractor_i = 0
 		if (shape_matching_condition[0] == 'S') {
 			target_i = probe_i
-			if (predictable_dimension == 'the same'){
-				correct_response = possible_responses[0][1]
-			} else  {
-				correct_response = possible_responses[1][1]		
-			}
+			correct_response = getCorrectResponse(shape_matching_condition, quadIndex)
 		} else {
 			target_i = randomDraw([1,2,3,4,5,6,7,8,9,10].filter(function(y) {return y != probe_i}))				
-			if (predictable_dimension == 'the same'){
-				correct_response = possible_responses[1][1]
-			} else  {
-				correct_response = possible_responses[0][1]		
-			}
+			correct_response = getCorrectResponse(shape_matching_condition, quadIndex)
 		
 		}
 		
@@ -305,7 +306,7 @@ var createTrialTypes = function(task_switches, numTrialsPerBlock){
 		console.log(predictable_cond_array[i%2])	
 		stim = {
 			whichQuad: quadIndex,
-			predictable_condition: predictable_cond_array[i%2],
+			predictable_condition: task_switches[i],
 			predictable_dimension: predictable_dimension,
 			shape_matching_condition: shape_matching_condition,
 			probe: probe_i,
@@ -460,6 +461,10 @@ function getRefreshFeedback(){
 		return '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' + refresh_feedback_text + '</font></p></div></div>'
 	}
 }
+function getTimeoutMessage() {
+	return '<div class = fb_box><div class = center-text>Respond Faster!</div></div>' +
+	getPromptText()
+}
 
 /* ************************************ */
 /* Define experimental variables */
@@ -562,6 +567,9 @@ var ITIs_resp = []
 var refresh_trial_id = "instructions"
 var refresh_feedback_timing = -1
 var refresh_response_ends = true
+
+var motor_perm = 0
+
 var getPromptTextList = function(){ 
 	return'<ul style="text-align:left; font-size: 32px; line-height:1.2;">'+
 					  '<li>Top 2 quadrants: Answer if the green and white shapes are '+predictable_dimensions_list[0].dim+'</li>' +
