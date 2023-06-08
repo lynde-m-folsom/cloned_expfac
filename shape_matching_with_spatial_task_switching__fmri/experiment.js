@@ -84,6 +84,7 @@ function assessPerformance() {
 	choice_counts[-1] = 0
 	choice_counts[77] = 0
 	choice_counts[90] = 0
+	possible_responses = getPossibleResponses()
 	for (var k = 0; k < possible_responses.length; k++) {
 		choice_counts[possible_responses[k][1]] = 0
 	}
@@ -143,6 +144,9 @@ var randomDraw = function(lst) {
   return lst[index]
 }
 
+function getRandomInt(max) {
+	return Math.floor(Math.random() * Math.floor(max));
+}
 //added for motor counterbalancing
 function getMotorPerm() {
 	return motor_perm
@@ -150,94 +154,126 @@ function getMotorPerm() {
 
 function getPossibleResponses(){
 	mperm = getMotorPerm()
-	if (mperm%2==0) {
-		stim1 = [['middle finger', 71],['index finger', 89]]
+	if (mperm == 0) {
+		stim1 = ['index finger', 89]
+		stim2 = ['middle finger', 71]
 	} else {
-		stim1 = [['index finger', 89], ['middle finger', 71]]
-	}
-	if (mperm<2){
-		stim2 = [['middle finger', 71],['index finger', 89]]
-	} else {
-		stim2 = [['index finger', 89], ['middle finger', 71]]
+		stim1 = ['middle finger', 71]
+		stim2 = ['index finger', 89]
 	}
 	return [stim1, stim2]
 }
 
-function getChoices() {
-	return [getPossibleResponses()[0][0][1],getPossibleResponses()[0][1][1]]
-}
+console.log(getPossibleResponses())
 
+function getChoices() {
+	return [getPossibleResponses()[0][1],getPossibleResponses()[1][1]]
+}
+console.log('choices', getChoices())
 //added for spatial task
 var makeTaskSwitches = function(numTrials) {
-	task_switch_arr = ["tstay_cstay", "tstay_cswitch", "tswitch_cswitch", "tswitch_cswitch"]
+	task_switch_arr = ['td_same_tstay_cswitch', 'td_same_tstay_cstay', 'td_same_tswitch_cswitch',
+	'td_diff_tstay_cswitch', 'td_diff_tstay_cstay', 'td_diff_tswitch_cswitch',
+	'td_na_tstay_cswitch', 'td_na_tstay_cstay', 'td_na_tswitch_cswitch']
 
-	out = jsPsych.randomization.repeat(task_switch_arr, numTrials / 4)
+	out = jsPsych.randomization.repeat(task_switch_arr, numTrials)
 	return out
 }
 
 //added for spatial task
 var getQuad = function(oldQuad, curr_switch) {
 	var out;
-	switch(curr_switch){
-		case "tstay_cstay":
-			out = oldQuad
-			break
-		case "tstay_cswitch":
-			if (oldQuad%2==0) { // if even (2,4), subtract 1
-				out = oldQuad - 1
-			} else {
-				out = oldQuad + 1 //if odd (1,3), add 1
-			}
-			break
-		case "tswitch_cswitch":
-			if (oldQuad < 3) { //if in top quadrants (1,2)
-				out = Math.ceil(Math.random() * 2) + 2 // should return 3 or 4
-			} else  { //if in bottom quadrants (3,4) 
-				out = Math.ceil(Math.random() * 2)  // should return 1 or 2
-			}
-			break
+	
+	if (curr_switch.includes("tstay_cstay")) {
+		out = oldQuad;
 	}
+	
+	if (curr_switch.includes("tstay_cswitch")) {
+		if (oldQuad % 2 == 0) { // if even (2,4), subtract 1
+			out = oldQuad - 1;
+		} else {
+			out = oldQuad + 1; //if odd (1,3), add 1
+		}
+	}
+	
+	if (curr_switch.includes("tswitch_cswitch")) {
+		if (oldQuad < 3) { //if in top quadrants (1,2)
+			out = Math.ceil(Math.random() * 2) + 2; // should return 3 or 4
+		} else  { //if in bottom quadrants (3,4) 
+			out = Math.ceil(Math.random() * 2);  // should return 1 or 2
+		}
+	}
+	
 	return out;
-}
+};
+
 
 var getCorrectResponse = function(shape_matching_condition, whichQuad) {
 	var out;
-	if (shape_matching_condition[0] == 'S') {
-		if (whichQuad < 3) { //if in top quadrants (1,2)
-			out = getPossibleResponses()[0][0][1]
-		} else  { //if in bottom quadrants (3,4) 
-			out = getPossibleResponses()[1][0][1]
-		}
-	} else {
-		if (whichQuad < 3) { //if in top quadrants (1,2)
-			out = getPossibleResponses()[1][0][1]
-		} else  { //if in bottom quadrants (3,4) 
-			out = getPossibleResponses()[0][0][1]
+	console.log('whichQuad', whichQuad)
+	console.log('shape_matching_condition', shape_matching_condition)
+	if (whichQuad < 3){
+		if (shape_matching_condition[0] == 'S') {
+			out = getPossibleResponses()[0][1]
+		} else {
+			out = getPossibleResponses()[1][1]
 		}
 	}
+	else {
+		if (shape_matching_condition[0] == 'S') {
+			out = getPossibleResponses()[1][1]
+		} else {
+			out = getPossibleResponses()[0][1]
+		}
+	}
+	console.log('correct response', out)
 	return out;
 }
-var createTrialTypes = function(task_switches, numTrialsPerBlock){
+
+function makeShapeMatchingDesignTrialTypes(design_events) {
+		//['SSS', 'SDD', 'SNN', 'DSD', 'DDD', 'DDS', 'DNN']
+		//neurodesign's events refer to the middle letter
+		var trial_type_arr = []
+		for (var i = 0; i < design_events.length; i++) {
+		  var idx;
+		  var possible_events;
+	
+		  if (design_events[i].includes('td_same')) {
+			possible_events = ['SSS', 'DSD']
+			idx = getRandomInt(2)
+			trial_type_arr.push(possible_events[idx])
+		  }
+	
+		  if (design_events[i].includes('td_diff')) {
+			possible_events = ['SDD', 'DDD', 'DDS']
+			idx = getRandomInt(3)
+			trial_type_arr.push(possible_events[idx])
+		  }
+	
+		  if (design_events[i].includes('td_na')) {
+			possible_events = ['SNN', 'DNN']
+			idx = getRandomInt(2)
+			trial_type_arr.push(possible_events[idx])
+		  }
+		}
+		return trial_type_arr
+	}
+	
+
+var createTrialTypes = function(task_conditions, numTrialsPerBlock){
 	var whichQuadStart = jsPsych.randomization.repeat([1,2,3,4],1).pop()
 	var predictable_cond_array = predictable_conditions[whichQuadStart%2]
 	predictable_dimensions = predictable_dimensions_list[0]
-	console.log(predictable_cond_array)	
 	var shape_matching_trial_type_list = []
-	var shape_matching_trial_types1 = jsPsych.randomization.repeat(shape_matching_conditions, numTrialsPerBlock/numConds)
-	var shape_matching_trial_types2 = jsPsych.randomization.repeat(shape_matching_conditions, numTrialsPerBlock/numConds)
-	var shape_matching_trial_types3 = jsPsych.randomization.repeat(shape_matching_conditions, numTrialsPerBlock/numConds)
-	var shape_matching_trial_types4 = jsPsych.randomization.repeat(shape_matching_conditions, numTrialsPerBlock/numConds)
-	shape_matching_trial_type_list.push(shape_matching_trial_types1)
-	shape_matching_trial_type_list.push(shape_matching_trial_types2)
-	shape_matching_trial_type_list.push(shape_matching_trial_types3)
-	shape_matching_trial_type_list.push(shape_matching_trial_types4)
-	
-	shape_matching_condition = jsPsych.randomization.repeat(shape_matching_conditions, 1).pop()
+	shape_matching_trial_type_list = makeShapeMatchingDesignTrialTypes(task_conditions)
 	predictable_dimension = predictable_dimensions[whichQuadStart - 1]
 	
 	var probe_i = randomDraw([1,2,3,4,5,6,7,8,9,10])
 	var target_i = 0
 	var distractor_i = 0
+
+	// for first stim
+	shape_matching_condition = shape_matching_trial_type_list[0]
 	if (shape_matching_condition[0] == 'S') {
 		target_i = probe_i
 		correct_response = getCorrectResponse(shape_matching_condition, whichQuadStart)
@@ -273,14 +309,14 @@ var createTrialTypes = function(task_switches, numTrialsPerBlock){
 	stims.push(first_stim)
 	
 	oldQuad = whichQuadStart
-	for (var i = 0; i < task_switches.length; i++){
-		whichQuadStart += 1
+	for (var i = 0; i < task_conditions.length-1; i++){
+			whichQuadStart += 1
 		quadIndex = whichQuadStart%4
 		if (quadIndex === 0){
 			quadIndex = 4
 		}
-		shape_matching_condition = shape_matching_trial_type_list[quadIndex - 1].pop()
-		quadIndex = getQuad(oldQuad, task_switches[i])
+		shape_matching_condition = shape_matching_trial_type_list[i+1]
+		quadIndex = getQuad(oldQuad, task_conditions[i])
 		predictable_dimension = predictable_dimensions[quadIndex - 1]
 		probe_i = randomDraw([1,2,3,4,5,6,7,8,9,10])
 		target_i = 0
@@ -303,10 +339,9 @@ var createTrialTypes = function(task_switches, numTrialsPerBlock){
 		} else if (shape_matching_condition[2] == 'N'){
 			distractor_i = 'none'
 		}
-		console.log(predictable_cond_array[i%2])	
 		stim = {
 			whichQuad: quadIndex,
-			predictable_condition: task_switches[i],
+			predictable_condition: task_conditions[i],
 			predictable_dimension: predictable_dimension,
 			shape_matching_condition: shape_matching_condition,
 			probe: probe_i,
@@ -384,12 +419,12 @@ var appendData = function(){
 
 	task_switch = 'na'
 	if (current_trial > 1) {
-		task_switch = task_switches[current_trial - 2] //this might be off
+		task_switch = task_conditions[current_trial - 2] //this might be off
 	}
 	
 	
-	if (trial_id == 'practice_trial'){
-		current_block = practiceCount
+	if (trial_id == 'refresh_trial'){
+		current_block = refreshCount
 	} else if (trial_id == 'test_trial'){
 		current_block = testCount
 	}
@@ -440,25 +475,19 @@ function getRefreshFeedback(){
 	
 		'<p class = block-text>You will be asked if the green shape is the same as or different from the white shape, depending on which quadrant '+
 		'the shapes are in.</p>'+
-	'</div>',
-	
-	'<div class = centerbox>'+
-		'<p class = block-text>When in the top two quadrants, please judge whether the two shapes are <i>'+predictable_dimensions[0]+'</i>. Press the <i>'+possible_responses[0][0]+
-		'  </i>if they are <i>'+predictable_dimensions[0]+'</i>, and the <i>'+possible_responses[1][0]+'  </i>if they are <i>'+predictable_dimensions[2]+'</i>.</p>'+
+		'<p class = block-text>When in the top two quadrants, please judge whether the two shapes are <i>the same</i>. Press the <i>'+getPossibleResponses()[0][0]+
+		'  </i>if they are <i>the same</i>, and the <i>'+getPossibleResponses()[1][0]+'  </i>if they are <i>different</i>.</p>'+
 
-		'<p class = block-text>When in the bottom two quadrants, please judge whether the two shapes are <i>'+predictable_dimensions[2]+'.</i>'+
-		' Press the <i>'+possible_responses[0][0]+' </i> if they are <i>'+predictable_dimensions[2]+'</i>, and the <i>'+possible_responses[1][0]+
-		' </i> if they are <i>'+predictable_dimensions[0]+'</i>.</p>'+
+		'<p class = block-text>When in the bottom two quadrants, please judge whether the two shapes are <i>different.</i>'+
+		' Press the <i>'+getPossibleResponses()[0][0]+' </i> if they are <i> different</i>, and the <i>'+getPossibleResponses()[1][0]+
+		' </i> if they are <i>the same</i>.</p>'+
 	
 		'<p class = block-text>On some trials a red shape will also be presented on the left. '+
 		'You should ignore the red shape — your task is to respond based on whether the white and green shapes match or mismatch.</p>'+
-	'</div>',
 	
-	'<div class = centerbox>'+
-		'<p class = block-text>During practice, you will receive a reminder of the rules. <i>This reminder will be taken out for test</i>.</p>'+
-	'</div>'
+		'<p class = block-text>During practice, you will receive a reminder of the rules. <i>This reminder will be taken out for test</i>.</p>'
 	} else {
-		return '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' + refresh_feedback_text + '</font></p></div></div>'
+		return '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' +refresh_feedback_text+ '</font></p></div></div>'
 	}
 }
 function getTimeoutMessage() {
@@ -477,9 +506,9 @@ var credit_var = 0
 
 // task specific variables
 // Set up variables for stimuli
-var refresh_len = 7
-var exp_len = 280 // must be divisible by 28
-var numTrialsPerBlock = 56; // divisible by 28
+var refresh_len = 14
+var exp_len = 288 
+var numTrialsPerBlock = 72; 
 var numTestBlocks = exp_len / numTrialsPerBlock
 
 var accuracy_thresh = 0.75
@@ -499,7 +528,8 @@ var numConds = predictable_conditions.length*predictable_dimensions_list.length*
 
 var fileTypePNG = ".png'></img>"
 var preFileType = "<img class = center src='/static/experiments/shape_matching_with_spatial_task_switching__fmri/images/"
-var path = '/static/experiments/shape_matching_with_spatial_task_switching__fmri/images/'
+var pathSource = '/static/experiments/shape_matching_with_spatial_task_switching__fmri/images/'
+var pathDesignSource = '/static/experiments/shape_matching_with_spatial_task_switching__fmri/designs/' 
 var colors = ['white','red','green']
 
 var exp_stage = 'practice'
@@ -508,10 +538,10 @@ var current_trial = 0
 var shape_stim = []
 for (var i = 1; i<11; i++) {
 	for (var c = 0; c<3; c++) {
-		shape_stim.push(path + i + '_' + colors[c] + '.png')
+		shape_stim.push(pathSource + i + '_' + colors[c] + '.png')
 	}
 }
-jsPsych.pluginAPI.preloadImages(shape_stim.concat(path+'mask.png'))
+jsPsych.pluginAPI.preloadImages(shape_stim.concat(pathSource+'mask.png'))
 
 // Trial types denoted by three letters for the relationship between:
 // probe-target, target-distractor, distractor-probe of the form
@@ -555,8 +585,8 @@ var fixation_boards = [['<div class = bigbox><div class = quad_box><div class = 
 					   ['<div class = bigbox><div class = quad_box><div class = decision-bottom-left><div class = fixation>+</div></div></div></div>']]
 
 
-var task_switches = makeTaskSwitches(refresh_len) //added for spatial
-var stims = createTrialTypes(task_switches, refresh_len) //changed for spatial
+var task_conditions = makeTaskSwitches(refresh_len) //added for spatial
+var stims = createTrialTypes(task_conditions) //changed for spatial
 
 //ADDED FOR SCANNING
 //fmri variables
@@ -572,23 +602,23 @@ var motor_perm = 0
 
 var getPromptTextList = function(){ 
 	return'<ul style="text-align:left; font-size: 32px; line-height:1.2;">'+
-					  '<li>Top 2 quadrants: Answer if the green and white shapes are '+predictable_dimensions_list[0].dim+'</li>' +
-					  '<li>'+predictable_dimensions_list[0].values[0]+': ' + getPossibleResponses()[0][0][0] + '</li>' +
-					  '<li>'+predictable_dimensions_list[0].values[1]+': ' + getPossibleResponses()[0][1][0] + '</li>' +
-					  '<li>Bottom 2 quadrants: Answer if the green and white shapes are '+predictable_dimensions_list[1].dim+'</li>' +
-					  '<li>'+predictable_dimensions_list[1].values[0]+': ' + getPossibleResponses()[1][0][0] + '</li>' +
-					  '<li>'+predictable_dimensions_list[1].values[1]+': ' + getPossibleResponses()[1][1][0] + '</li>' +
+					  '<li>Top 2 quadrants: Answer if the green and white shapes are the same</li>' +
+					  '<li>Same: ' + getPossibleResponses()[0][0] + '</li>' +
+					  '<li>Different: ' + getPossibleResponses()[1][0] + '</li>' +
+					  '<li>Bottom 2 quadrants: Answer if the green and white shapes are different</li>' +
+					  '<li>Different: ' + getPossibleResponses()[0][0] + '</li>' +
+					  '<li>Same: ' + getPossibleResponses()[1][0] + '</li>' +
 					'</ul>'
 }
 
 var getPromptText = function(){
 return '<div class = prompt_box>'+
-				'<p class = center-block-text style = "font-size:26px; line-height:80%%;">Top 2 quadrants: Answer if the green and white shapes are '+predictable_dimensions_list[0].dim+'</p>' +
-				  '<p class = center-block-text style = "font-size:26px; line-height:80%%;">'+predictable_dimensions_list[0].values[0]+': ' + getPossibleResponses()[0][0][0] + ' | ' + predictable_dimensions_list[0].values[1]+': ' + getPossibleResponses()[0][1][0] + '</p>' +
+				'<p class = center-block-text style = "font-size:26px; line-height:80%%;">Top 2 quadrants: Answer if the green and white shapes are the same </p>' +
+				  '<p class = center-block-text style = "font-size:26px; line-height:80%%;">Same: ' + getPossibleResponses()[0][0]+ ' | Different: ' + getPossibleResponses()[1][0] + '</p>' +
 				  '<p>&nbsp</p>' +
 		'<p>&nbsp</p>' +
-				  '<p class = center-block-text style = "font-size:26px; line-height:80%%;">Bottom 2 quadrants: Answer if the green and white shapes are '+predictable_dimensions_list[1].dim+'</p>' +
-				  '<p class = center-block-text style = "font-size:26px; line-height:80%%;">'+predictable_dimensions_list[1].values[0]+': ' + getPossibleResponses()[1][0][0] + ' | ' + predictable_dimensions_list[1].values[1]+': ' + getPossibleResponses()[1][1][0] + '</p>' +
+				  '<p class = center-block-text style = "font-size:26px; line-height:80%%;">Bottom 2 quadrants: Answer if the green and white shapes are different </p>' +
+				  '<p class = center-block-text style = "font-size:26px; line-height:80%%;">Different: ' + getPossibleResponses()[0][0] + ' | Same: ' + getPossibleResponses()[1][0] + '</p>' +
 		  '</div>'
 }
 /* ************************************ */
@@ -613,7 +643,7 @@ var design_setup_block = {
 		des_ITIs = insertBufferITIs(des_ITIs)
 		ITIs_stim = des_ITIs.slice(0)
 		ITIs_resp = des_ITIs.slice(0)
-		des_task_switches = await getdesignEvents(design_perm)
+		des_events = await getdesignEvents(design_perm)
 	}
 }
 
@@ -624,12 +654,12 @@ var motor_setup_block = {
 	},
 	questions: [
 		[
-			"<p class = center-block-text>motor permutation (0-3):</p>"
+			"<p class = center-block-text>motor permutation (0-1):</p>"
 		]
 	], on_finish: function(data) {
 		motor_perm=parseInt(data.responses.slice(7, 10))
-		task_switches = makeTaskSwitches(refresh_len)
-		stims = createTrialTypes(task_switches)
+		task_conditions = makeTaskSwitches(refresh_len)
+		stims = createTrialTypes(task_conditions)
 		
 	}
 }
@@ -728,6 +758,7 @@ for (i = 0; i < refresh_len + 1; i++) {
 		},
 		choices: 'none',
 		timing_response: 500, //500
+		timing_stim: 500, //500
 		timing_post_trial: 0,
 		response_ends_trial: false,
 		prompt: getPromptText
@@ -742,11 +773,11 @@ for (i = 0; i < refresh_len + 1; i++) {
 		data: {
 			trial_id: "refresh_trial"
 			},
-		correct_text: '<div class = fb_box><div class = center-text><font size = 20>Correct!</font></div></div>' + getPromptText,
-		incorrect_text: '<div class = fb_box><div class = center-text><font size = 20>Incorrect</font></div></div>' + getPromptText,
+		correct_text: '<div class = fb_box><div class = center-text><font size = 20>Correct!</font></div></div>',
+		incorrect_text: '<div class = fb_box><div class = center-text><font size = 20>Incorrect</font></div></div>',
 		timeout_message: getTimeoutMessage,
 		timing_stim: 1000, //1000
-		timing_response: 2000, //2000
+		timing_response:  2000, //2000
 		timing_feedback_duration: 500,
 		show_stim_with_feedback: false,
 		timing_post_trial: 0,
@@ -762,9 +793,9 @@ var refreshCount = 0
 var practiceNode = {
 	timeline: practiceTrials,
 	loop_function: function(data){
-		practiceCount += 1
-		task_switches = makeTaskSwitches(refresh_len)
-		stims = createTrialTypes(task_switches, refresh_len)
+		refreshCount += 1
+		task_conditions = makeTaskSwitches(refresh_len)
+		stims = createTrialTypes(task_conditions)
 		current_trial = 0
 	
 		var sum_rt = 0
@@ -812,11 +843,11 @@ var practiceNode = {
 		refresh_feedback_text +=
 			'</p><p class = block-text style = "font-size:32px; line-height:1.2;">Done with this practice. The test session will begin shortly.'
 		
-		task_switches = des_task_switches.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
-		des_task_switches = des_task_switches.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_task_switches
-		stims = createTrialTypes(task_switches)
+		task_conditions = des_events.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
+		des_events = des_events.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_events
+		stims = createTrialTypes(task_conditions)
 		exp_stage = 'test'
-			return false
+		return false
 		
 	}
 
@@ -829,7 +860,7 @@ for (i = 0; i < numTrialsPerBlock + 1; i++) {
 		stimulus: getFixation,
 		is_html: true,
 		data: {
-			"trial_id": "test_fixation",
+			"trial_id": "fixation",
 		},
 		choices: 'none',
 		timing_post_trial: 0,
@@ -862,9 +893,9 @@ var testNode0 = {
 	timeline: testTrials,
 	loop_function: function(data) {
 		testCount += 1
-    	task_switches = des_task_switches.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
-    	des_task_switches = des_task_switches.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_task_switches
-    	stims = createTrialTypes(task_switches)
+    	task_conditions = des_events.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
+    	des_events = des_events.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_events
+    	stims = createTrialTypes(task_conditions)
 		current_trial = 0
 		
 		var sum_rt = 0
@@ -929,7 +960,7 @@ for (i = 0; i < numTrialsPerBlock + 1; i++) {
 		stimulus: getFixation,
 		is_html: true,
 		data: {
-			"trial_id": "test_fixation",
+			"trial_id": "fixation",
 		},
 		choices: 'none',
 		timing_post_trial: 0,
@@ -960,8 +991,6 @@ var testNode = {
 	timeline: testTrials,
 	loop_function: function(data) {
 		testCount += 1
-		// task_switches = makeTaskSwitches(numTrialsPerBlock)
-		// stims = createTrialTypes(task_switches, numTrialsPerBlock)
 		current_trial = 0
 		
 		var sum_rt = 0
@@ -1013,9 +1042,9 @@ var testNode = {
 			return false
 		} else {
 
-			task_switches = des_task_switches.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
-			des_task_switches = des_task_switches.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_task_switches
-			stims = createTrialTypes(task_switches)	
+			task_conditions = des_events.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
+			des_events = des_events.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_events
+			stims = createTrialTypes(task_conditions)	
 
 			return true
 		}

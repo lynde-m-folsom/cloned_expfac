@@ -18,7 +18,8 @@
       "experiment.js",
       "static/css/jspsych.css",
       "static/css/default_style.css",
-      "style.css"
+      "style.css",
+      "https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.13.3/math.js"
     ],
     "exp_id": "shape_matching_with_spatial_task_switching__fmri",
     "cognitive_atlas_task_id": "",
