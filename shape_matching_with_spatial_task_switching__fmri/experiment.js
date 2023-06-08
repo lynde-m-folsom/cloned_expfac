@@ -853,7 +853,7 @@ var practiceNode = {
 
 }
 
-var testTrials0 = []
+var testTrial0 = []
 for (i = 0; i < numTrialsPerBlock + 1; i++) {
 	var fixation_block = {
 		type: 'poldrack-single-stim',
@@ -883,14 +883,14 @@ for (i = 0; i < numTrialsPerBlock + 1; i++) {
 		response_ends_trial: false,
 		on_finish: appendData
 	}
-	testTrials0.push(fixation_block)
-	testTrials0.push(test_block)
+	testTrial0.push(fixation_block)
+	testTrial0.push(test_block)
 }
 
 var testCount=0
 
 var testNode0 = {
-	timeline: testTrials,
+	timeline: testTrial0,
 	loop_function: function(data) {
 		testCount += 1
     	task_conditions = des_events.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
