@@ -495,8 +495,8 @@ var credit_var = 0
 // task specific variables
 // Set up variables for stimuli
 var refresh_len = 8
-var exp_len = 288 
-var numTrialsPerBlock = 72; 
+var exp_len = 240 
+var numTrialsPerBlock = 60; 
 var numTestBlocks = exp_len / numTrialsPerBlock
 
 var accuracy_thresh = 0.75
