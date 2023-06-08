@@ -1,6 +1,14 @@
 /*******************************************************/
 /***********    Network Default CSS Styles    **********/
 /*******************************************************/
+.fixation {
+ text-align: center;
+ font-size: 100px;
+ position: relative;
+ top: 50%; 
+ transform: translateY(-50%);
+ -webkit-transform: translateY(-50%);
+}
 
 .display_stage {
     position: fixed;
@@ -16,81 +24,6 @@
 
 .display_stage > div, .display_stage > p {
   color: white;
-}
-
-.flanker-text {
-	text-align: center;
-	font-size: 50px;
-	position: relative;
-    top: 50%; 
-    transform: translateY(-50%);
-    -webkit-transform: translateY(-50%);
-}
-
-.fb_box {
-  width:35vw;
-  height: 20vh;
-  position:absolute;
-  top:50%;
-  left:50%;
-  margin-right:-50%;
-  transform: translate(-50%,-175%);
-}
-
-.picture_box {
- width: 60%;
- height: 60%;
- position:absolute;
- top:50%;
- left:50%;
- transform: translate(-50%,-50%);
- margin-right:0%;
- background-color: none;
- text-align: center;
-}
-
-
-.fixation {
- text-align: center;
- font-size: 50px;
- position: relative;
- top: 50%; 
- transform: translateY(-50%);
- -webkit-transform: translateY(-50%);
-}
-
-.cue-text {
-  width:20vw;
-  height: 20vh;
-  position:absolute;
-  top:50%;
-  left:50%;
-  margin-right:-50%;
-  transform: translate(-50%,-50%);
-}
-
-
-.distractor_text {
-  width: 10%;
-  height: 10%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  background-color: none;
-  text-align: center;
-  transform: translate(-70%, -70%);
-}
-
-.bigbox {
-width:100%;
-margin: auto; 
-min-height: 100%;
-position:absolute;
-top:0%;
-left:0%;
-margin-right:0%;
-background-color: none;
-text-align: center;
 }
 
 .instructBox {
@@ -117,24 +50,56 @@ text-align: center;
  text-align: center;
 }
 
-img.center {
-  height: auto;
-  width: auto\9; /* ie8 */
-  position: absolute;  
-  top: 0;  
-  bottom: 0;  
-  left: 0;  
-  right: 0;  
-  margin: auto;  
-  max-height: 65%;
+.picture_box {
+ width: 60%;
+ height: 60%;
+ position:absolute;
+ top:50%;
+ left:50%;
+ transform: translate(-50%,-50%);
+ margin-right:0%;
+ background-color: none;
+ text-align: center;
+}
+
+
+.bigbox {
+width:100%;
+margin: auto; 
+min-height: 100%;
+position:absolute;
+top:0%;
+left:0%;
+margin-right:0%;
+background-color: none;
+text-align: center;
+}
+
+.mask {
+  width: 80%;
+}
+
+img {
+  height: 100%;
+  width: 100%;
+}
+
+.fb_box {
+  width:35vw;
+  height: 20vh;
+  position:absolute;
+  top:50%;
+  left:50%;
+  margin-right:-50%;
+  transform: translate(-50%,-175%);
 }
 
 /*******************************************************/
 /************    Predictive CSS Styles     *************/
 /*******************************************************/
 .quad_box {
- width: 85vw;
- height: 85vh;
+ width: 95vw; /*increase this and 'height' below will move green-red and white stims up and away from the prompt at center*/
+ height: 95vh;
  position:absolute;
  top:50%;
  left:50%;
@@ -193,48 +158,39 @@ img.center {
 }
 
 /*******************************************************/
-/************       Cued CSS Styles        *************/
+/************  Shape Matching CSS Styles   *************/
 /*******************************************************/
-.left-text {
-  width: 5vw;
-  height: 5vw;
-  position: absolute;
-  top: 50%;
-  left: 50%;
+
+.leftbox {
+  width: 10vw; /*decrease this and 'height' below will decrease size of the green-red stim*/
+  height: 10vw;
+  position:absolute;
+  top:50%;
+  left:47.5%;
+  margin-right:-50%;
+  transform: translate(-100%,-50%);
+  z-index: 2;
   background-color: none;
-  transform: translate(-125%, -50%);
 }
 
-
-.right-text {
-  width: 5vw;
-  height: 5vw;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  background-color: none;
-  transform: translate(25%, -50%);
-} 
-
-.upperbox {
-  width:30vw;
-  height: 20vw;
+.distractorbox {
+  width: 10vw; /*decrease this and 'height' below will decrease size of the distractor stim*/
+  height: 10vw;
   position:absolute;
   top:50%;
   left:50%;
   margin-right:-50%;
-  transform: translate(-50%, -75%);
+  transform: translate(-105%,-57%);
   background-color: none;
 }
 
-.lowerbox {
-  width:30vw;
-  height: 20vw;
+.rightbox { /*decrease this and 'height' below will decrease size of the white stim*/
+  width: 10vw;
+  height: 10vw;
   position:absolute;
   top:50%;
-  left:50%;
+  left:52.5%;
   margin-right:-50%;
-  transform: translate(-50%, -25%);
+  transform: translate(0%,-50%);
   background-color: none;
 }
-
