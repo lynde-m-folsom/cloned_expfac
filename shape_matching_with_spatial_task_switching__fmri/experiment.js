@@ -164,12 +164,11 @@ function getPossibleResponses(){
 	return [stim1, stim2]
 }
 
-console.log(getPossibleResponses())
 
 function getChoices() {
 	return [getPossibleResponses()[0][1],getPossibleResponses()[1][1]]
 }
-console.log('choices', getChoices())
+
 //added for spatial task
 var makeTaskSwitches = function(numTrials) {
 	task_switch_arr = ['td_same_tstay_cswitch', 'td_same_tstay_cstay', 'td_same_tswitch_cswitch',
@@ -210,8 +209,6 @@ var getQuad = function(oldQuad, curr_switch) {
 
 var getCorrectResponse = function(shape_matching_condition, whichQuad) {
 	var out;
-	console.log('whichQuad', whichQuad)
-	console.log('shape_matching_condition', shape_matching_condition)
 	if (whichQuad < 3){
 		if (shape_matching_condition[0] == 'S') {
 			out = getPossibleResponses()[0][1]
@@ -226,7 +223,6 @@ var getCorrectResponse = function(shape_matching_condition, whichQuad) {
 			out = getPossibleResponses()[0][1]
 		}
 	}
-	console.log('correct response', out)
 	return out;
 }
 
@@ -235,22 +231,24 @@ function makeShapeMatchingDesignTrialTypes(design_events) {
 		//neurodesign's events refer to the middle letter
 		var trial_type_arr = []
 		for (var i = 0; i < design_events.length; i++) {
-		  var idx;
-		  var possible_events;
+		console.log('shapematching i', i)
+		var idx;
+		var possible_events;
+		console.log('design_events[i]', design_events[i])
 	
-		  if (design_events[i].includes('td_same')) {
+		if (design_events[i].includes('td_same')) {
 			possible_events = ['SSS', 'DSD']
 			idx = getRandomInt(2)
 			trial_type_arr.push(possible_events[idx])
 		  }
 	
-		  if (design_events[i].includes('td_diff')) {
+		if (design_events[i].includes('td_diff')) {
 			possible_events = ['SDD', 'DDD', 'DDS']
 			idx = getRandomInt(3)
 			trial_type_arr.push(possible_events[idx])
 		  }
 	
-		  if (design_events[i].includes('td_na')) {
+		if (design_events[i].includes('td_na')) {
 			possible_events = ['SNN', 'DNN']
 			idx = getRandomInt(2)
 			trial_type_arr.push(possible_events[idx])
@@ -260,13 +258,11 @@ function makeShapeMatchingDesignTrialTypes(design_events) {
 	}
 	
 
-var createTrialTypes = function(task_conditions, numTrialsPerBlock){
+var createTrialTypes = function(task_conditions){
 	var whichQuadStart = jsPsych.randomization.repeat([1,2,3,4],1).pop()
-	var predictable_cond_array = predictable_conditions[whichQuadStart%2]
-	predictable_dimensions = predictable_dimensions_list[0]
 	var shape_matching_trial_type_list = []
 	shape_matching_trial_type_list = makeShapeMatchingDesignTrialTypes(task_conditions)
-	predictable_dimension = predictable_dimensions[whichQuadStart - 1]
+	console.log('shape_matching_trial_type_list', shape_matching_trial_type_list)
 	
 	var probe_i = randomDraw([1,2,3,4,5,6,7,8,9,10])
 	var target_i = 0
@@ -299,7 +295,6 @@ var createTrialTypes = function(task_conditions, numTrialsPerBlock){
 	var first_stim = {
 		whichQuad: whichQuadStart,
 		predictable_condition: 'N/A',
-		predictable_dimension: predictable_dimension,
 		shape_matching_condition: shape_matching_condition,
 		probe: probe_i,
 		target: target_i,
@@ -309,18 +304,14 @@ var createTrialTypes = function(task_conditions, numTrialsPerBlock){
 	stims.push(first_stim)
 	
 	oldQuad = whichQuadStart
-	for (var i = 0; i < task_conditions.length-1; i++){
-			whichQuadStart += 1
-		quadIndex = whichQuadStart%4
-		if (quadIndex === 0){
-			quadIndex = 4
-		}
-		shape_matching_condition = shape_matching_trial_type_list[i+1]
+	for (var i = 0; i < task_conditions.length; i++){
+		console.log('i: ', i)
+		shape_matching_condition = shape_matching_trial_type_list[i]
 		quadIndex = getQuad(oldQuad, task_conditions[i])
-		predictable_dimension = predictable_dimensions[quadIndex - 1]
 		probe_i = randomDraw([1,2,3,4,5,6,7,8,9,10])
 		target_i = 0
 		distractor_i = 0
+		console.log('shape_matching_condition: ', shape_matching_condition)
 		if (shape_matching_condition[0] == 'S') {
 			target_i = probe_i
 			correct_response = getCorrectResponse(shape_matching_condition, quadIndex)
@@ -342,7 +333,6 @@ var createTrialTypes = function(task_conditions, numTrialsPerBlock){
 		stim = {
 			whichQuad: quadIndex,
 			predictable_condition: task_conditions[i],
-			predictable_dimension: predictable_dimension,
 			shape_matching_condition: shape_matching_condition,
 			probe: probe_i,
 			target: target_i,
@@ -381,7 +371,6 @@ var getStim = function(){
 var getMask = function(){
 	stim = stims.shift() //stims = [] at initial stage
 	predictable_condition = stim.predictable_condition
-	predictable_dimension = stim.predictable_dimension
 	shape_matching_condition = stim.shape_matching_condition
 	probe = stim.probe
 	target = stim.target
@@ -399,8 +388,8 @@ var getMask = function(){
 
 var getFixation = function(){
 	stim = stims.shift() //stims = [] at initial stage
+	console.log('fixation stim :', stim)
 	predictable_condition = stim.predictable_condition
-	predictable_dimension = stim.predictable_dimension
 	shape_matching_condition = stim.shape_matching_condition
 	probe = stim.probe
 	target = stim.target
@@ -431,7 +420,6 @@ var appendData = function(){
 	
 	jsPsych.data.addDataToLastTrial({
 		predictable_condition: predictable_condition,
-		predictable_dimension: predictable_dimension,
 		task_switch: task_switch,
 		shape_matching_condition: shape_matching_condition,
 		probe: probe,
@@ -506,7 +494,7 @@ var credit_var = 0
 
 // task specific variables
 // Set up variables for stimuli
-var refresh_len = 14
+var refresh_len = 8
 var exp_len = 288 
 var numTrialsPerBlock = 72; 
 var numTestBlocks = exp_len / numTrialsPerBlock
@@ -517,13 +505,7 @@ var missed_thresh = 0.10
 var practice_thresh =  3 //blocks of 28 trials
  
 
-var predictable_conditions = [['switch','stay'],
-							 ['stay','switch']]
-var predictable_dimensions_list = [['the same', 'the same', 'different','different'],
-							 	  ['different','different', 'the same', 'the same' ]]
 var shape_matching_conditions = ['DDD','SDD','DSD','DDS','SSS','SNN','DNN']
-var numConds = predictable_conditions.length*predictable_dimensions_list.length*shape_matching_conditions.length
-
 
 
 var fileTypePNG = ".png'></img>"
@@ -584,9 +566,6 @@ var fixation_boards = [['<div class = bigbox><div class = quad_box><div class = 
 					   ['<div class = bigbox><div class = quad_box><div class = decision-bottom-right><div class = fixation>+</div></div></div></div>'],
 					   ['<div class = bigbox><div class = quad_box><div class = decision-bottom-left><div class = fixation>+</div></div></div></div>']]
 
-
-var task_conditions = makeTaskSwitches(refresh_len) //added for spatial
-var stims = createTrialTypes(task_conditions) //changed for spatial
 
 //ADDED FOR SCANNING
 //fmri variables
@@ -771,7 +750,7 @@ for (i = 0; i < refresh_len + 1; i++) {
 		choices: getChoices(),
 		key_answer: getResponse,
 		data: {
-			trial_id: "refresh_trial"
+			"trial_id": "refresh_trial"
 			},
 		correct_text: '<div class = fb_box><div class = center-text><font size = 20>Correct!</font></div></div>',
 		incorrect_text: '<div class = fb_box><div class = center-text><font size = 20>Incorrect</font></div></div>',
@@ -896,6 +875,7 @@ var testNode0 = {
     	task_conditions = des_events.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
     	des_events = des_events.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_events
     	stims = createTrialTypes(task_conditions)
+		console.log('stims.length: ', stims.length)
 		current_trial = 0
 		
 		var sum_rt = 0
@@ -941,12 +921,7 @@ var testNode0 = {
 				'</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have been responding too slowly.'
 		}	
 
-		if (testCount == numTestBlocks){
-			feedback_text +=
-					'</p><p class = block-text>Done with this test.'
 			return false
-		} 			
-			return true
 		}
 	
 	}
@@ -1020,7 +995,7 @@ var testNode = {
 	
 		feedback_text = '</p><p class = block-text style = "font-size:32px; line-height:1.2;">Please take this time to read your feedback and to take a short break!'
 		feedback_text += '</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have completed: '+testCount+' out of '+numTestBlocks+' blocks of trials.'
-	
+		console.log('testCount, numtestblocks:', testCount, numTestBlocks)
 		if (accuracy < accuracy_thresh){
 			feedback_text +=
 				'</p><p class = block-text style = "font-size:32px; line-height:1.2;"> Your accuracy is too low.  Remember: <br>' + getPromptTextList() 
