@@ -920,8 +920,6 @@ var practiceNode = {
     if (accuracy > accuracy_thresh) {
       refresh_feedback_text +=
         "</p><p class = block-text>Done with this practice. Press Enter to end practice.";
-      task_switches = makeTaskSwitches(numTrialsPerBlock);
-      stims = createTrialTypes(task_switches, numTrialsPerBlock);
       return false;
     } else if (accuracy < accuracy_thresh) {
       refresh_feedback_text +=
