@@ -15,8 +15,8 @@ function insertBufferITIs(design_ITIs) {
 	var buffer_ITIs = genITIs()
 	var out_ITIs = []
 	while(design_ITIs.length > 0) {
-		out_ITIs = out_ITIs.concat(buffer_ITIs.slice(0,2)) //get 2 buffer ITIs to start each block
-		buffer_ITIs = buffer_ITIs.slice(2,) //remove the just used buffer ITIs from the buffer ITI array
+		out_ITIs = out_ITIs.concat(buffer_ITIs.slice(0,1)) //get 2 buffer ITIs to start each block
+		buffer_ITIs = buffer_ITIs.slice(1,) //remove the just used buffer ITIs from the buffer ITI array
 		
 		curr_block_ITIs = design_ITIs.slice(0,numTrialsPerBlock) //get this current block's ITIs
 		design_ITIs = design_ITIs.slice(numTrialsPerBlock,) //remove this current block's ITIs from des_ITIs
@@ -528,7 +528,9 @@ var design_setup_block = {
 		design_perm =parseInt(data.responses.slice(7, 10))
 		des_ITIs = await getdesignITIs(design_perm)
 		des_ITIs = des_ITIs.map(Number)
+		console.log(des_ITIs)
 		des_ITIs = insertBufferITIs(des_ITIs)
+		console.log(des_ITIs)
 		ITIs_stim = des_ITIs.slice(0)
 		ITIs_resp = des_ITIs.slice(0)
 		des_events = await getdesignEvents(design_perm)
