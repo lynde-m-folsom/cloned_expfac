@@ -67,7 +67,7 @@ function getDisplayElement() {
 }
 
 function addID() {
-  jsPsych.data.addDataToLastTrial({exp_id: 'n_back_with_predictable_task_switching__fmri'})
+  jsPsych.data.addDataToLastTrial({exp_id: 'n_back_with_spatial_task_switching__fmri'})
 }
 
 function assessPerformance() {
@@ -219,11 +219,11 @@ var createTrialTypes = function(task_switches, trial_lens){ //spatial task
 
 	var n_back_trial_type_list = createNBackConditionsArray(trial_lens)
 
-	console.log('n_back_trial_type_list :', n_back_trial_type_list)	
+
 	stims = []		
 	
 	oldQuad = whichQuadStart //added for spatial
-	for (var i = 0; i < trial_lens; i++){
+	for (var i = 0; i < trial_lens+1; i++){ 
 		if ( i === 0){
 			quadIndex = oldQuad
 			n_back_cond = 'Mismatch'
@@ -232,12 +232,10 @@ var createTrialTypes = function(task_switches, trial_lens){ //spatial task
 			predictable_dimension = 'N/A' //originally 'N/A' here (because for trials =< current delay, there've not enough previous trials yet to match to). However, '1-back' or '2-back' being shown is okay, too.
 			task_switch_condition = 'N/A'
 			delay = 'N/A'
-			console.log('i :', i, ' n_back_cond :', n_back_cond)
 
 		} else if ( i == 1){
 			quadIndex = getQuad(oldQuad, task_switches[i-1])//added for spatial
 			n_back_cond = n_back_trial_type_list[i-1]
-			console.log('i :', i, ' n_back_cond :', n_back_cond)
 			task_switch_condition = task_switches[i-1]
 
 			if (quadIndex < 3) {
@@ -267,7 +265,6 @@ var createTrialTypes = function(task_switches, trial_lens){ //spatial task
 		} else if ( i > 1){
 			quadIndex = getQuad(oldQuad, task_switches[i-1])//added for spatial
 			n_back_cond = n_back_trial_type_list[i-1]
-			console.log('i :', i, ' n_back_cond :', n_back_cond)
 			task_switch_condition = task_switches[i-1]
 			if (quadIndex < 3) {
 				predictable_dimension='1-back'
@@ -298,7 +295,6 @@ var createTrialTypes = function(task_switches, trial_lens){ //spatial task
 		}
 		
 		stims.push(stim)	
-		console.log('stim :', stim.whichQuad)
 		oldQuad = quadIndex // added for spatial
 	}
 	return stims
@@ -421,13 +417,13 @@ function getTimeoutMessage() {
 var sumInstructTime = 0 //ms
 var instructTimeThresh = 0 ///in seconds
 var credit_var = 0
-var run_attention_checks = true
+var run_attention_checks = false 
 
 
 var refresh_len = 8 // must be divisible by 4
 var exp_len = 240 // must be divisible by 10
 var numTrialsPerBlock = 40 // must be divisible by 10
-var numTestBlocks = exp_len / numTrialsPerBlock
+var numTestBlocks = 6 //exp_len / numTrialsPerBlock
 
 var accuracy_thresh = 0.75
 var rt_thresh = 1000
@@ -550,8 +546,8 @@ var motor_setup_block = {
 		]
 	], on_finish: function(data) {
 		motor_perm=parseInt(data.responses.slice(7, 10))
-		task_conditions = makeTaskSwitches(refresh_len+1)
-		stims = createTrialTypes(task_conditions, refresh_len+1)
+		task_conditions = makeTaskSwitches(refresh_len)
+		stims = createTrialTypes(task_conditions, refresh_len)
 		
 	}
 }
@@ -707,7 +703,6 @@ var practiceNode = {
 			}
 	
 		}
-	
 		var accuracy = correct / total_trials
 		var missed_responses = (total_trials - sum_responses) / total_trials
 		var ave_rt = sum_rt / sum_responses
@@ -734,7 +729,7 @@ var practiceNode = {
 		
 		task_conditions = des_events.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
 		des_events = des_events.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_events
-		stims = createTrialTypes(task_conditions, numTrialsPerBlock+1)
+		stims= createTrialTypes(task_conditions, numTrialsPerBlock)
 		exp_stage = 'test'
 		return false
 		
@@ -743,7 +738,7 @@ var practiceNode = {
 }
 
 var testTrial0 = []
-for (i = 0; i < numTrialsPerBlock + 1; i++) {
+for (i = 0; i < numTrialsPerBlock+1; i++) {
 	var fixation_block = {
 		type: 'poldrack-single-stim',
 		stimulus: getFixation,
@@ -781,18 +776,19 @@ var testCount=0
 var testNode0 = {
 	timeline: testTrial0,
 	loop_function: function(data) {
+		console.log(data)
 		testCount += 1
     	task_conditions = des_events.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
     	des_events = des_events.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_events
-    	stims = createTrialTypes(task_conditions, numTrialsPerBlock+1)
-		console.log('stims.length: ', stims.length)
+    	stims= createTrialTypes(task_conditions, numTrialsPerBlock)
+
 		current_trial = 0
 		
 		var sum_rt = 0
 		var sum_responses = 0
 		var correct = 0
 		var total_trials = 0
-	
+
 		for (var i = 0; i < data.length; i++){
 			if (data[i].trial_id == "test_trial"){
 				total_trials+=1
@@ -830,7 +826,6 @@ var testNode0 = {
 			feedback_text += 
 				'</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have been responding too slowly.'
 		}	
-
 			return false
 		}
 	
@@ -839,7 +834,7 @@ var testNode0 = {
 
 var testTrials = []
 testTrials.push(feedback_block)
-for (i = 0; i < numTrialsPerBlock + 1; i++) {
+for (i = 0; i < numTrialsPerBlock+1; i++) {
 	var fixation_block = {
 		type: 'poldrack-single-stim',
 		stimulus: getFixation,
@@ -882,7 +877,7 @@ var testNode = {
 		var sum_responses = 0
 		var correct = 0
 		var total_trials = 0
-	
+		console.log(data)
 		for (var i = 0; i < data.length; i++){
 			if (data[i].trial_id == "test_trial"){
 				total_trials+=1
@@ -896,16 +891,14 @@ var testNode = {
 				}
 		
 			}
-	
 		}
-	
 		var accuracy = correct / total_trials
 		var missed_responses = (total_trials - sum_responses) / total_trials
 		var ave_rt = sum_rt / sum_responses
 	
 		feedback_text = '</p><p class = block-text style = "font-size:32px; line-height:1.2;">Please take this time to read your feedback and to take a short break!'
 		feedback_text += '</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have completed: '+testCount+' out of '+numTestBlocks+' blocks of trials.'
-		console.log('testCount, numtestblocks:', testCount, numTestBlocks)
+		console.log('testCount:', testCount, 'numTestBlocks: ', numTestBlocks)
 		if (accuracy < accuracy_thresh){
 			feedback_text +=
 				'</p><p class = block-text style = "font-size:32px; line-height:1.2;"> Your accuracy is too low.  Remember: <br>' + getPromptTextList() 
@@ -924,13 +917,15 @@ var testNode = {
 		if (testCount == numTestBlocks){
 			feedback_text +=
 					'</p><p class = block-text>Done with this test.'
+
 			return false
 		} else {
 
 			task_conditions = des_events.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
 			des_events = des_events.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_events
-			stims = createTrialTypes(task_conditions, numTrialsPerBlock+1)	
-
+			stims = createTrialTypes(task_conditions, numTrialsPerBlock)	
+			console.log(stims)
+			console.log(stims.length)
 			return true
 		}
 	
