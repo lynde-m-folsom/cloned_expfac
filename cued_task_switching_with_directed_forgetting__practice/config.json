@@ -1,6 +1,6 @@
 [
     {
-        "name": "Cued with Directed Forgetting Experiment fMRI",
+        "name": "Cued with Directed Forgetting Experiment Practice",
         "template":"jspsych",
         "run": [
           "static/js/math.min.js",
@@ -21,7 +21,7 @@
           "style.css",
           "https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.13.3/math.js"
                ],
-        "exp_id": "cued_task_switching_with_directed_forgetting__fmri",
+        "exp_id": "cued_task_switching_with_directed_forgetting__practice",
         "cognitive_atlas_task_id": "trm_56674c7c2fa4f",
         "contributors": [
                          "Patrick Bissett",

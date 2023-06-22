@@ -3,48 +3,12 @@
 /* ************************************ */
 function addID() {
   jsPsych.data.addDataToLastTrial({
-    exp_id: "cued_task_switching_with_directed_forgetting__fmri",
+    exp_id: "cued_task_switching_with_directed_forgetting__practice",
   });
 }
 
 function getMotorPerm() {
   return motor_perm;
-}
-
-//FUNCTIONS FOR GETTING FMRI SEQUENCES
-function getdesignITIs(design_num) {
-  x = fetch(pathDesignSource + "design_" + design_num + "/ITIs_clean.txt")
-    .then((res) => res.text())
-    .then((res) => res)
-    .then((text) => text.split(/\r?\n/));
-  return x;
-}
-function getdesignEvents(design_num) {
-  x = fetch(pathDesignSource + "design_" + design_num + "/events_clean.txt")
-    .then((res) => res.text())
-    .then((res) => res)
-    .then((text) => text.split(/\r?\n/));
-  return x;
-}
-
-function getITI_stim() {
-  //aded for fMRI compatibility
-  var currITI = ITIs_stim.shift();
-  if (currITI == 0.0) {
-    //THIS IS JUST FOR CONVENIENCE BEFORE NEW DESIGNS ARE REGENERATED
-    currITI = 0.1;
-  }
-  return currITI;
-}
-
-function getITI_resp() {
-  //added for fMRI compatibility
-  var currITI = ITIs_resp.shift();
-  if (currITI == 0.0) {
-    //THIS IS JUST FOR CONVENIENCE BEFORE NEW DESIGNS ARE REGENERATED
-    currITI = 0.1;
-  }
-  return currITI;
 }
 
 function insertBufferITIs(design_ITIs) {
@@ -144,19 +108,18 @@ function assessPerformance() {
 }
 
 var getFeedback = function () {
+  console.log("getFeedback");
   return (
-    '<div class = bigbox><div class = picture_box><p class = block-text><font color="white">' +
+    "<div class = bigbox><div class = picture_box><p class = block-text>" +
     feedback_text +
-    "</font></p></div></div>"
+    "</p></div></div>"
   );
 };
 
 var getCategorizeFeedback = function () {
   curr_trial = jsPsych.progress().current_trial_global - 1;
   trial_id = jsPsych.data.getDataByTrialIndex(curr_trial).trial_id;
-  console.log("this isnt working");
   if (trial_id == "practice_trial") {
-    console.log("this is really the practice trial");
     if (
       jsPsych.data.getDataByTrialIndex(curr_trial).key_press ==
       jsPsych.data.getDataByTrialIndex(curr_trial).correct_response
@@ -333,7 +296,6 @@ var createTrialTypes = function (numTrialsPerBlock) {
     cue = getCue();
     probe = getProbe(directed_condition, letters, cue, cued_dimension);
     correct_response = getCorrectResponse(cued_dimension, cue, probe, letters);
-    console.log;
     stim = {
       task_condition: task_condition,
       cued_condition: cued_condition,
@@ -350,14 +312,11 @@ var createTrialTypes = function (numTrialsPerBlock) {
 
     used_letters = used_letters.concat(letters);
   }
-  console.log("number of trials: " + new_stims.length);
   return new_stims;
 };
 
 function getCuedCueCondition(text) {
   cued = text.split("_")[1] + text.split("_")[2];
-  console.log("text: " + text);
-  console.log("cued: " + cued);
   if (cued == "tstaycstay") {
     return "stay";
   } else if (cued == "tswitchcswitch") {
@@ -369,8 +328,6 @@ function getCuedCueCondition(text) {
 
 function getCuedTaskCondition(text) {
   cued = text.split("_")[1] + text.split("_")[2];
-  console.log("text: " + text);
-  console.log("cued: " + cued);
   if (cued == "tstaycstay") {
     return "stay";
   } else if (cued == "tswitchcswitch") {
@@ -598,8 +555,6 @@ var getSwitchingCueStim = function () {
 };
 
 var getProbeStim = function () {
-  trial += 1;
-  console.log(trial);
   return (
     "<div class = bigbox><div class = centerbox><div class = cue-text>" +
     preFileType +
@@ -653,12 +608,13 @@ function getPromptTaskList() {
 }
 
 function getRefreshFeedback() {
-  if ((exp_id = "instructions")) {
+  console.log("refresh feedback");
+  if (getRefreshTrialID() == "instructions") {
     return (
       '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white"><div class = instructbox>' +
       "<p class = instruct-text>In this experiment you will be presented with a cue, either remember (or retain) or forget (or disregard). This cue instructs what kind of task you will be doing for that trial.</p> " +
       "<p class = instruct-text>After the remember (or retain) or forget (or disregard) cue disappears, you will be presented with 4 letters. You must memorize all 4 letters.</p> " +
-      "<p class =instruct-textAfter the 4 letters disappear, you will see another cue, either TOP or BOT. This instructs you which letters you should remember or forget, either the top or bottom letters.</p>" +
+      "<p class =instruct-text>After the 4 letters disappear, you will see another cue, either TOP or BOT. This instructs you which letters you should remember or forget, either the top or bottom letters.</p>" +
       "<p class = instruct-text> For example, if the first cue was forget and the second cue was TOP, please forget the top 2 letters. <i>The other 2 letters are called your memory set!</i></p>" +
       "<p class = instruct-text>If you see the cue, " +
       cued_dimensions[0] +
@@ -683,7 +639,7 @@ function getRefreshFeedback() {
   } else {
     return (
       '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' +
-      refresh_feedback_text +
+      feedback_text +
       "</font></p></div></div>"
     );
   }
@@ -738,7 +694,7 @@ var refresh_feedback_timing = -1;
 var refresh_response_ends = true;
 
 // new vars
-var refresh_len = 4; // must be divisible by 16
+var refresh_len = 8; // must be divisible by 16
 var exp_len = 96; // must be divisible by 16
 var numTrialsPerBlock = 32; // divisible by 16
 var numTestBlocks = exp_len / numTrialsPerBlock;
@@ -762,17 +718,17 @@ var cues = [
 var cued_dimensions = ["remember", "forget"];
 
 var possible_responses = [
-  ["index finger", 89],
-  ["middle finger", 71],
+  ["index finger", 37],
+  ["middle finger", 39],
 ];
 
 var current_trial = 0;
 
 var fileTypePNG = ".png'></img>";
 var preFileType =
-  "<img class = center src='/static/experiments/cued_task_switching_with_directed_forgetting__fmri/images/";
+  "<img class = center src='/static/experiments/cued_task_switching_with_directed_forgetting__practice/images/";
 var pathDesignSource =
-  "/static/experiments/cued_task_switching_with_directed_forgetting__fmri/designs/"; //ADDED FOR fMRI SEQUENCES
+  "/static/experiments/cued_task_switching_with_directed_forgetting__practice/designs/"; //ADDED FOR fMRI SEQUENCES
 
 var stimArray = [
   "A",
@@ -869,7 +825,7 @@ var prompt_text =
 
 //PRE LOAD IMAGES HERE
 var pathSource =
-  "/static/experiments/cued_task_switching_with_directed_forgetting__fmri/images/";
+  "/static/experiments/cued_task_switching_with_directed_forgetting__practice/images/";
 var images = [];
 
 for (i = 0; i < stimArray.length; i++) {
@@ -884,31 +840,11 @@ images.push(pathSource + "forget.png");
 images.push(pathSource + "disregard.png");
 jsPsych.pluginAPI.preloadImages(images);
 
-design_events = [];
 var stims = [];
-ITIs_stim = [];
-ITIs_resp = [];
 
 /* ************************************ */
 /* Set up jsPsych blocks */
 /* ************************************ */
-
-var design_setup_block = {
-  type: "survey-text",
-  data: {
-    trial_id: "design_setup",
-  },
-  questions: [["<p class = center-block-text>Design permutation (0-1):</p>"]],
-  on_finish: async function (data) {
-    design_perm = parseInt(data.responses.slice(7, 10));
-    des_ITIs = await getdesignITIs(design_perm);
-    des_ITIs = des_ITIs.map(Number);
-    des_ITIs = insertBufferITIs(des_ITIs);
-    ITIs_stim = des_ITIs.slice(0);
-    ITIs_resp = des_ITIs.slice(0);
-    des_events = await getdesignEvents(design_perm);
-  },
-};
 
 var motor_setup_block = {
   type: "survey-text",
@@ -919,7 +855,6 @@ var motor_setup_block = {
   on_finish: function (data) {
     motor_perm = parseInt(data.responses.slice(7, 10));
     stims = createTrialTypes(refresh_len);
-    console.log("returns this many trials: " + stims.length);
   },
 };
 
@@ -955,54 +890,40 @@ var end_block = {
   },
 };
 
+/// This ensures that the subject does not read through the instructions too quickly.  If they do it too quickly, then we will go over the loop again.
+var instructions_block = {
+  type: "poldrack-single-stim",
+  data: {
+    trial_id: getRefreshTrialID,
+  },
+  choices: [32],
+  stimulus: getRefreshFeedback,
+  timing_post_trial: 0,
+  is_html: true,
+  timing_response: -1, //10 seconds for feedback
+  timing_stim: -1,
+  response_ends_trial: true,
+  on_finish: function () {
+    refresh_trial_id = "practice-no-stop-feedback";
+    practice_feedback_timing = 10000;
+    practice_response_ends = false;
+  },
+};
+
 var feedback_instruct_text =
   "Welcome to the experiment. This task will take around 30 minutes. Press <i>enter</i> to begin.";
+
 var feedback_instruct_block = {
   type: "poldrack-text",
   data: {
-    trial_id: "instruction",
+    trial_id: "practice_feedback",
   },
-  cont_key: [13],
+  cont_key: [32],
   text: getFeedback,
   timing_post_trial: 0,
+  is_html: true,
   timing_response: 10000,
-};
-
-var start_test_block = {
-  type: "poldrack-text",
-  data: {
-    trial_id: "instruction",
-  },
-  timing_response: 180000,
-  text:
-    "<div class = instructbox>" +
-    "<p class = instruct-text>In this experiment you will be presented with a cue, either remember (or retain) or forget (or disregard). This cue instructs what kind of task you will be doing for that trial.</p> " +
-    "<p class = instruct-text>After the remember (or retain) or forget (or disregard) cue disappears, you will be presented with 4 letters. You must memorize all 4 letters.</p> " +
-    "<p class =instruct-textAfter the 4 letters disappear, you will see another cue, either TOP or BOT. This instructs you which letters you should remember or forget, either the top or bottom letters.</p>" +
-    "<p class = instruct-text> For example, if the first cue was forget and the second cue was TOP, please forget the top 2 letters. <i>The other 2 letters are called your memory set!</i></p>" +
-    "<p class = instruct-text>If you see the cue, " +
-    cued_dimensions[0] +
-    ", please  <i>" +
-    cued_dimensions[0] +
-    "</i> the cued set.</p>" +
-    "<p class = instruct-text>If you see the cue, " +
-    cued_dimensions[1] +
-    ", please  <i>" +
-    cued_dimensions[1] +
-    "</i> the cued set.</p>" +
-    "<p class = instruct-text>After, you will be presented with a probe (single letter).  Please indicate whether this probe was in your memory set.</p>" +
-    "<p class = instruct-text>Press the <i>" +
-    possible_responses[0][0] +
-    "  </i>if the probe was in the memory set, and the <i>" +
-    possible_responses[1][0] +
-    "  </i>if not.</p>" +
-    "<p class = instruct-text>We will start practice when you finish instructions. Please respond to the probe as quickly and accurately as possible. During practice, you will receive a reminder of the rules.  <i>This reminder will be taken out for test</i>.</p>" +
-    "</div>",
-  cont_key: [32],
-  timing_post_trial: 1000,
-  on_finish: function () {
-    feedback_text = "We will now start the test portion. Press enter to begin.";
-  },
+  response_ends_trial: true,
 };
 
 var test_feedback_block = {
@@ -1019,7 +940,7 @@ var test_feedback_block = {
 };
 
 var refreshTrials = [];
-refreshTrials.push(refresh_feedback_block);
+refreshTrials.push(instructions_block);
 for (i = 0; i < refresh_len + 1; i++) {
   var start_fixation_block = {
     type: "poldrack-single-stim",
@@ -1133,6 +1054,8 @@ var refreshNode = {
   loop_function: function (data) {
     refreshCount += 1;
     current_trial = 0;
+    stims = createTrialTypes(refresh_len);
+
     var sum_rt = 0;
     var sum_responses = 0;
     var correct = 0;
@@ -1156,11 +1079,16 @@ var refreshNode = {
     var ave_rt = sum_rt / sum_responses;
 
     feedback_text =
-      "<br>Please take this time to read your feedback and to take a short break!";
+      "<br>Please take this time to read your feedback and to take a short break! Press enter to continue";
 
-    if (accuracy < accuracy_thresh) {
+    if (accuracy > accuracy_thresh) {
       feedback_text +=
-        "</p><p class = block-text> Remember: <br>" + getPromptTaskList();
+        "</p><p class = block-text>Done with this practice. Press Enter to continue.";
+      return false;
+    } else if (accuracy < accuracy_thresh) {
+      feedback_text +=
+        "</p><p class = block-text>We are going to try practice again to see if you can achieve higher accuracy.  Remember: <br>" +
+        getPromptTaskList();
 
       if (missed_responses > missed_thresh) {
         feedback_text +=
@@ -1172,200 +1100,33 @@ var refreshNode = {
           "</p><p class = block-text>You have been responding too slowly.";
       }
 
-      ("</p><p class = block-text>Done with this practice.");
-    }
-
-    stims = createTrialTypes(numTrialsPerBlock);
-    console.log(stims.length);
-    return false;
-  },
-};
-trial = 0;
-var testTrials = [];
-for (i = 0; i < numTrialsPerBlock + 1; i++) {
-  var start_fixation_block = {
-    type: "poldrack-single-stim",
-    stimulus:
-      '<div class = centerbox><div class = fixation><span style="color:white;">+</span></div></div>',
-    is_html: true,
-    choices: "none",
-    data: {
-      trial_id: "test_start_fixation",
-    },
-    timing_post_trial: 0,
-    timing_stim: getITI_stim, //500
-    timing_response: getITI_resp,
-    fixation_default: true,
-  };
-
-  var fixation_block = {
-    type: "poldrack-single-stim",
-    stimulus: getFixation,
-    is_html: true,
-    choices: "none",
-    data: {
-      trial_id: "test_fixation",
-    },
-    timing_post_trial: 0,
-    timing_stim: 2000, //2000
-    timing_response: 2000, //2000
-  };
-
-  var training_block = {
-    type: "poldrack-single-stim",
-    stimulus: getTrainingStim,
-    is_html: true,
-    data: {
-      trial_id: "test_four_letters",
-    },
-    choices: "none",
-    timing_post_trial: 0,
-    timing_stim: 2000, //2000
-    timing_response: 2000, //2000
-  };
-
-  var cue_directed_block = {
-    type: "poldrack-single-stim",
-    stimulus: getDirectedCueStim,
-    is_html: true,
-    data: {
-      trial_id: "test_directed_cue",
-    },
-    choices: false,
-    timing_post_trial: 0,
-    timing_stim: 1000, //1000
-    timing_response: 1000, //1000
-  };
-
-  var cue_switching_block = {
-    type: "poldrack-single-stim",
-    stimulus: getSwitchingCueStim,
-    is_html: true,
-    data: {
-      trial_id: "test_switching_cue",
-    },
-    choices: false,
-    timing_post_trial: 0,
-    timing_stim: 150, //1000
-    timing_response: 150, //1000
-  };
-
-  var probe_block = {
-    type: "poldrack-single-stim",
-    stimulus: getProbeStim,
-    is_html: true,
-    data: {
-      trial_id: "test_trial",
-    },
-    choices: [getPossibleResponses()[0][1], getPossibleResponses()[1][1]],
-    timing_post_trial: 0,
-    timing_stim: 1000, //1000
-    timing_response: 2000, //1000
-    response_ends_trial: false,
-    on_finish: appendData,
-    fixation_default: true,
-    fixation_stim:
-      '<div class = centerbox><div class = fixation><span style="color:white;">+</span></div></div>',
-  };
-
-  testTrials.push(start_fixation_block);
-  testTrials.push(cue_switching_block);
-  testTrials.push(training_block);
-  testTrials.push(cue_directed_block);
-  testTrials.push(fixation_block);
-  testTrials.push(probe_block);
-}
-
-var testCount = 0;
-var testNode = {
-  timeline: testTrials,
-  loop_function: function (data) {
-    testCount += 1;
-    current_trial = 0;
-
-    var sum_rt = 0;
-    var sum_responses = 0;
-    var correct = 0;
-    var total_trials = 0;
-
-    for (var i = 0; i < data.length; i++) {
-      if (data[i].trial_id == "test_trial") {
-        total_trials += 1;
-        if (data[i].rt != -1) {
-          sum_rt += data[i].rt;
-          sum_responses += 1;
-          if (data[i].key_press == data[i].correct_response) {
-            correct += 1;
-          }
-        }
+      if (refreshCount == practice_thresh) {
+        feedback_text += "</p><p class = block-text>Done with this practice.";
+        return false;
       }
-    }
 
-    var accuracy = correct / total_trials;
-    var missed_responses = (total_trials - sum_responses) / total_trials;
-    var ave_rt = sum_rt / sum_responses;
-
-    feedback_text =
-      "<br>Please take this time to read your feedback and to take a short break! Press enter to continue";
-    feedback_text +=
-      "</p><p class = block-text>You have completed: " +
-      testCount +
-      " out of " +
-      numTestBlocks +
-      " blocks of trials.";
-
-    if (accuracy < accuracy_thresh) {
       feedback_text +=
-        "</p><p class = block-text>Your accuracy is too low.  Remember: <br>" +
-        prompt_text_list;
-    }
+        "</p><p class = block-text>Redoing this practice. Press space to continue.";
 
-    if (missed_responses > missed_thresh) {
-      feedback_text +=
-        "</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.";
-    }
-
-    if (ave_rt > rt_thresh) {
-      feedback_text +=
-        "</p><p class = block-text>You have been responding too slowly.";
-    }
-
-    if (testCount == numTestBlocks) {
-      feedback_text +=
-        "</p><p class = block-text>Done with this test. Press Enter to continue.<br> If you have been completing tasks continuously for an hour or more, please take a 15-minute break before starting again.";
-      return false;
-    } else {
-      stims = createTrialTypes(numTrialsPerBlock);
-      console.log(stims.length);
       return true;
     }
   },
 };
 
 /* create experiment definition array */
-var cued_task_switching_with_directed_forgetting__fmri_experiment = [];
-cued_task_switching_with_directed_forgetting__fmri_experiment.push(
-  design_setup_block
-); //exp_input
-cued_task_switching_with_directed_forgetting__fmri_experiment.push(
+var cued_task_switching_with_directed_forgetting__practice_experiment = [];
+
+cued_task_switching_with_directed_forgetting__practice_experiment.push(
   motor_setup_block
 ); //exp_input
 
-test_keys(
-  cued_task_switching_with_directed_forgetting__fmri_experiment,
-  [89, 71]
+cued_task_switching_with_directed_forgetting__practice_experiment.push(
+  refreshNode
 );
-
-cued_task_switching_with_directed_forgetting__fmri_experiment.push(refreshNode);
-cued_task_switching_with_directed_forgetting__fmri_experiment.push(
+cued_task_switching_with_directed_forgetting__practice_experiment.push(
   feedback_instruct_block
 );
 
-cni_bore_setup(cued_task_switching_with_directed_forgetting__fmri_experiment);
-
-cued_task_switching_with_directed_forgetting__fmri_experiment.push(testNode);
-cued_task_switching_with_directed_forgetting__fmri_experiment.push(
-  feedback_instruct_block
+cued_task_switching_with_directed_forgetting__practice_experiment.push(
+  end_block
 );
-
-cued_task_switching_with_directed_forgetting__fmri_experiment.push(end_block);

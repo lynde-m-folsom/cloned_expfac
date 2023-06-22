@@ -154,9 +154,7 @@ var getFeedback = function () {
 var getCategorizeFeedback = function () {
   curr_trial = jsPsych.progress().current_trial_global - 1;
   trial_id = jsPsych.data.getDataByTrialIndex(curr_trial).trial_id;
-  console.log("this isnt working");
   if (trial_id == "practice_trial") {
-    console.log("this is really the practice trial");
     if (
       jsPsych.data.getDataByTrialIndex(curr_trial).key_press ==
       jsPsych.data.getDataByTrialIndex(curr_trial).correct_response
@@ -333,7 +331,6 @@ var createTrialTypes = function (numTrialsPerBlock) {
     cue = getCue();
     probe = getProbe(directed_condition, letters, cue, cued_dimension);
     correct_response = getCorrectResponse(cued_dimension, cue, probe, letters);
-    console.log;
     stim = {
       task_condition: task_condition,
       cued_condition: cued_condition,
@@ -350,14 +347,11 @@ var createTrialTypes = function (numTrialsPerBlock) {
 
     used_letters = used_letters.concat(letters);
   }
-  console.log("number of trials: " + new_stims.length);
   return new_stims;
 };
 
 function getCuedCueCondition(text) {
   cued = text.split("_")[1] + text.split("_")[2];
-  console.log("text: " + text);
-  console.log("cued: " + cued);
   if (cued == "tstaycstay") {
     return "stay";
   } else if (cued == "tswitchcswitch") {
@@ -369,8 +363,6 @@ function getCuedCueCondition(text) {
 
 function getCuedTaskCondition(text) {
   cued = text.split("_")[1] + text.split("_")[2];
-  console.log("text: " + text);
-  console.log("cued: " + cued);
   if (cued == "tstaycstay") {
     return "stay";
   } else if (cued == "tswitchcswitch") {
@@ -598,8 +590,6 @@ var getSwitchingCueStim = function () {
 };
 
 var getProbeStim = function () {
-  trial += 1;
-  console.log(trial);
   return (
     "<div class = bigbox><div class = centerbox><div class = cue-text>" +
     preFileType +
@@ -658,7 +648,7 @@ function getRefreshFeedback() {
       '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white"><div class = instructbox>' +
       "<p class = instruct-text>In this experiment you will be presented with a cue, either remember (or retain) or forget (or disregard). This cue instructs what kind of task you will be doing for that trial.</p> " +
       "<p class = instruct-text>After the remember (or retain) or forget (or disregard) cue disappears, you will be presented with 4 letters. You must memorize all 4 letters.</p> " +
-      "<p class =instruct-textAfter the 4 letters disappear, you will see another cue, either TOP or BOT. This instructs you which letters you should remember or forget, either the top or bottom letters.</p>" +
+      "<p class =instruct-text>After the 4 letters disappear, you will see another cue, either TOP or BOT. This instructs you which letters you should remember or forget, either the top or bottom letters.</p>" +
       "<p class = instruct-text> For example, if the first cue was forget and the second cue was TOP, please forget the top 2 letters. <i>The other 2 letters are called your memory set!</i></p>" +
       "<p class = instruct-text>If you see the cue, " +
       cued_dimensions[0] +
@@ -919,7 +909,6 @@ var motor_setup_block = {
   on_finish: function (data) {
     motor_perm = parseInt(data.responses.slice(7, 10));
     stims = createTrialTypes(refresh_len);
-    console.log("returns this many trials: " + stims.length);
   },
 };
 
@@ -966,43 +955,6 @@ var feedback_instruct_block = {
   text: getFeedback,
   timing_post_trial: 0,
   timing_response: 10000,
-};
-
-var start_test_block = {
-  type: "poldrack-text",
-  data: {
-    trial_id: "instruction",
-  },
-  timing_response: 180000,
-  text:
-    "<div class = instructbox>" +
-    "<p class = instruct-text>In this experiment you will be presented with a cue, either remember (or retain) or forget (or disregard). This cue instructs what kind of task you will be doing for that trial.</p> " +
-    "<p class = instruct-text>After the remember (or retain) or forget (or disregard) cue disappears, you will be presented with 4 letters. You must memorize all 4 letters.</p> " +
-    "<p class =instruct-textAfter the 4 letters disappear, you will see another cue, either TOP or BOT. This instructs you which letters you should remember or forget, either the top or bottom letters.</p>" +
-    "<p class = instruct-text> For example, if the first cue was forget and the second cue was TOP, please forget the top 2 letters. <i>The other 2 letters are called your memory set!</i></p>" +
-    "<p class = instruct-text>If you see the cue, " +
-    cued_dimensions[0] +
-    ", please  <i>" +
-    cued_dimensions[0] +
-    "</i> the cued set.</p>" +
-    "<p class = instruct-text>If you see the cue, " +
-    cued_dimensions[1] +
-    ", please  <i>" +
-    cued_dimensions[1] +
-    "</i> the cued set.</p>" +
-    "<p class = instruct-text>After, you will be presented with a probe (single letter).  Please indicate whether this probe was in your memory set.</p>" +
-    "<p class = instruct-text>Press the <i>" +
-    possible_responses[0][0] +
-    "  </i>if the probe was in the memory set, and the <i>" +
-    possible_responses[1][0] +
-    "  </i>if not.</p>" +
-    "<p class = instruct-text>We will start practice when you finish instructions. Please respond to the probe as quickly and accurately as possible. During practice, you will receive a reminder of the rules.  <i>This reminder will be taken out for test</i>.</p>" +
-    "</div>",
-  cont_key: [32],
-  timing_post_trial: 1000,
-  on_finish: function () {
-    feedback_text = "We will now start the test portion. Press enter to begin.";
-  },
 };
 
 var test_feedback_block = {
@@ -1176,11 +1128,9 @@ var refreshNode = {
     }
 
     stims = createTrialTypes(numTrialsPerBlock);
-    console.log(stims.length);
     return false;
   },
 };
-trial = 0;
 var testTrials = [];
 for (i = 0; i < numTrialsPerBlock + 1; i++) {
   var start_fixation_block = {
@@ -1306,7 +1256,7 @@ var testNode = {
     var ave_rt = sum_rt / sum_responses;
 
     feedback_text =
-      "<br>Please take this time to read your feedback and to take a short break! Press enter to continue";
+      "<br>Please take this time to read your feedback and to take a short break!";
     feedback_text +=
       "</p><p class = block-text>You have completed: " +
       testCount +
@@ -1332,11 +1282,10 @@ var testNode = {
 
     if (testCount == numTestBlocks) {
       feedback_text +=
-        "</p><p class = block-text>Done with this test. Press Enter to continue.<br> If you have been completing tasks continuously for an hour or more, please take a 15-minute break before starting again.";
+        "</p><p class = block-text>Done with this test. Press Enter to continue.<br>";
       return false;
     } else {
       stims = createTrialTypes(numTrialsPerBlock);
-      console.log(stims.length);
       return true;
     }
   },
