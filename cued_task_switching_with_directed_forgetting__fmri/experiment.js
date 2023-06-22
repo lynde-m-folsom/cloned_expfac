@@ -454,29 +454,29 @@ var getCorrectResponse = function (cued_dimension, cue, probe, letters) {
   if (cued_dimension == "remember") {
     if (cue == "TOP") {
       if (jQuery.inArray(probe, letters.slice(0, numLetters / 2)) != -1) {
-        return possible_responses[0][1];
+        return getPossibleResponses()[0][1];
       } else {
-        return possible_responses[1][1];
+        return getPossibleResponses()[1][1];
       }
     } else if (cue == "BOT") {
       if (jQuery.inArray(probe, letters.slice(numLetters / 2)) != -1) {
-        return possible_responses[0][1];
+        return getPossibleResponses()[0][1];
       } else {
-        return possible_responses[1][1];
+        return getPossibleResponses()[1][1];
       }
     }
   } else if (cued_dimension == "forget") {
     if (cue == "TOP") {
       if (jQuery.inArray(probe, letters.slice(numLetters / 2)) != -1) {
-        return possible_responses[0][1];
+        return getPossibleResponses()[0][1];
       } else {
-        return possible_responses[1][1];
+        return getPossibleResponses()[1][1];
       }
     } else if (cue == "BOT") {
       if (jQuery.inArray(probe, letters.slice(0, numLetters / 2)) != -1) {
-        return possible_responses[0][1];
+        return getPossibleResponses()[0][1];
       } else {
-        return possible_responses[1][1];
+        return getPossibleResponses()[1][1];
       }
     }
   }
@@ -633,10 +633,10 @@ function getPromptTaskList() {
     " the cued location</li>" +
     "<li>Please respond if the probe (single letter) was in the memory set.</li>" +
     "<li>In memory set: " +
-    possible_responses[0][0] +
+    getPossibleResponses()[0][0] +
     "</li>" +
     "<li>Not in memory set: " +
-    possible_responses[1][0] +
+    getPossibleResponses()[1][0] +
     "</li>" +
     "</ul>"
   );
@@ -692,6 +692,7 @@ function getRefreshResponseEnds() {
 }
 
 var getTestFeedback = function () {
+  console.log("get test feedback");
   return (
     "<div class = bigbox><div class = picture_box><p class = block-text>" +
     test_feedback_text +
@@ -815,48 +816,6 @@ var task_boards = [
   ["</div></div></div></div>"],
 ];
 
-var prompt_text_list =
-  '<ul style="text-align:left">' +
-  "<li>Cue was " +
-  cued_dimensions[0] +
-  " : " +
-  cued_dimensions[0] +
-  " the cued location</li>" +
-  "<li>Cue was " +
-  cued_dimensions[1] +
-  " : " +
-  cued_dimensions[1] +
-  " the cued location</li>" +
-  "<li>Please respond if the probe (single letter) was in the memory set.</li>" +
-  "<li>In memory set: " +
-  getPossibleResponses() +
-  "</li>" +
-  "<li>Not in memory set: " +
-  getPossibleResponses() +
-  "</li>" +
-  "</ul>";
-
-var prompt_text =
-  "<div class = prompt_box>" +
-  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">Cue was ' +
-  cued_dimensions[0] +
-  " : " +
-  cued_dimensions[0] +
-  " the cued location</p>" +
-  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">Cue was ' +
-  cued_dimensions[1] +
-  " : " +
-  cued_dimensions[1] +
-  " the cued location</p>" +
-  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">Please respond if the probe (single letter) was in the memory set.</p>' +
-  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">In memory set: ' +
-  getPossibleResponses() +
-  "</p>" +
-  '<p class = center-block-text style = "font-size:16px; line-height:80%%;">Not in memory set: ' +
-  getPossibleResponses() +
-  "</p>" +
-  "</div>";
-
 //PRE LOAD IMAGES HERE
 var pathSource =
   "/static/experiments/cued_task_switching_with_directed_forgetting__fmri/images/";
@@ -944,14 +903,12 @@ var end_block = {
   },
 };
 
-var feedback_instruct_text =
-  "Welcome to the experiment. This task will take around 30 minutes. Press <i>enter</i> to begin.";
 var feedback_instruct_block = {
   type: "poldrack-text",
   data: {
     trial_id: "instruction",
   },
-  cont_key: [13],
+  cont_key: [32],
   text: getFeedback,
   timing_post_trial: 0,
   timing_response: 10000,
@@ -1123,15 +1080,171 @@ var refreshNode = {
         feedback_text +=
           "</p><p class = block-text>You have been responding too slowly.";
       }
-
-      ("</p><p class = block-text>Done with this practice.");
     }
 
     stims = createTrialTypes(numTrialsPerBlock);
     return false;
   },
 };
+
+var testCount = 0;
+
+var testTrials0 = [];
+for (i = 0; i < numTrialsPerBlock + 1; i++) {
+  var start_fixation_block = {
+    type: "poldrack-single-stim",
+    stimulus:
+      '<div class = centerbox><div class = fixation><span style="color:white;">+</span></div></div>',
+    is_html: true,
+    choices: "none",
+    data: {
+      trial_id: "test_start_fixation",
+    },
+    timing_post_trial: 0,
+    timing_stim: getITI_stim, //500
+    timing_response: getITI_resp,
+    fixation_default: true,
+  };
+
+  var fixation_block = {
+    type: "poldrack-single-stim",
+    stimulus: getFixation,
+    is_html: true,
+    choices: "none",
+    data: {
+      trial_id: "test_fixation",
+    },
+    timing_post_trial: 0,
+    timing_stim: 2000, //2000
+    timing_response: 2000, //2000
+  };
+
+  var training_block = {
+    type: "poldrack-single-stim",
+    stimulus: getTrainingStim,
+    is_html: true,
+    data: {
+      trial_id: "test_four_letters",
+    },
+    choices: "none",
+    timing_post_trial: 0,
+    timing_stim: 2000, //2000
+    timing_response: 2000, //2000
+  };
+
+  var cue_directed_block = {
+    type: "poldrack-single-stim",
+    stimulus: getDirectedCueStim,
+    is_html: true,
+    data: {
+      trial_id: "test_directed_cue",
+    },
+    choices: false,
+    timing_post_trial: 0,
+    timing_stim: 1000, //1000
+    timing_response: 1000, //1000
+  };
+
+  var cue_switching_block = {
+    type: "poldrack-single-stim",
+    stimulus: getSwitchingCueStim,
+    is_html: true,
+    data: {
+      trial_id: "test_switching_cue",
+    },
+    choices: false,
+    timing_post_trial: 0,
+    timing_stim: 150, //1000
+    timing_response: 150, //1000
+  };
+
+  var probe_block = {
+    type: "poldrack-single-stim",
+    stimulus: getProbeStim,
+    is_html: true,
+    data: {
+      trial_id: "test_trial",
+    },
+    choices: [getPossibleResponses()[0][1], getPossibleResponses()[1][1]],
+    timing_post_trial: 0,
+    timing_stim: 1000, //1000
+    timing_response: 2000, //1000
+    response_ends_trial: false,
+    on_finish: appendData,
+    fixation_default: true,
+    fixation_stim:
+      '<div class = centerbox><div class = fixation><span style="color:white;">+</span></div></div>',
+  };
+
+  testTrials0.push(start_fixation_block);
+  testTrials0.push(cue_switching_block);
+  testTrials0.push(training_block);
+  testTrials0.push(cue_directed_block);
+  testTrials0.push(fixation_block);
+  testTrials0.push(probe_block);
+}
+
+var testNode0 = {
+  timeline: testTrials0,
+  loop_function: function (data) {
+    console.log("this hit forsure?");
+    testCount += 1;
+    current_trial = 0;
+    stims = createTrialTypes(numTrialsPerBlock);
+
+    var sum_rt = 0;
+    var sum_responses = 0;
+    var correct = 0;
+    var total_trials = 0;
+
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].trial_id == "test_trial") {
+        total_trials += 1;
+        if (data[i].rt != -1) {
+          sum_rt += data[i].rt;
+          sum_responses += 1;
+          if (data[i].key_press == data[i].correct_response) {
+            correct += 1;
+          }
+        }
+      }
+    }
+
+    var accuracy = correct / total_trials;
+    var missed_responses = (total_trials - sum_responses) / total_trials;
+    var ave_rt = sum_rt / sum_responses;
+
+    test_feedback_text =
+      "<br>Please take this time to read your feedback and to take a short break!";
+    test_feedback_text +=
+      "</p><p class = block-text>You have completed: " +
+      testCount +
+      " out of " +
+      numTestBlocks +
+      " blocks of trials.";
+
+    if (accuracy < accuracy_thresh) {
+      test_feedback_text +=
+        "</p><p class = block-text>Your accuracy is too low.  Remember: <br>" +
+        getPromptTaskList();
+    }
+
+    if (missed_responses > missed_thresh) {
+      test_feedback_text +=
+        "</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.";
+    }
+
+    if (ave_rt > rt_thresh) {
+      test_feedback_text +=
+        "</p><p class = block-text>You have been responding too slowly.";
+    }
+
+    return false;
+  },
+};
+
 var testTrials = [];
+testTrials.push(test_feedback_block);
 for (i = 0; i < numTrialsPerBlock + 1; i++) {
   var start_fixation_block = {
     type: "poldrack-single-stim",
@@ -1226,10 +1339,10 @@ for (i = 0; i < numTrialsPerBlock + 1; i++) {
   testTrials.push(probe_block);
 }
 
-var testCount = 0;
 var testNode = {
   timeline: testTrials,
   loop_function: function (data) {
+    console.log("what about the feedback!!!");
     testCount += 1;
     current_trial = 0;
 
@@ -1255,9 +1368,9 @@ var testNode = {
     var missed_responses = (total_trials - sum_responses) / total_trials;
     var ave_rt = sum_rt / sum_responses;
 
-    feedback_text =
+    test_feedback_text =
       "<br>Please take this time to read your feedback and to take a short break!";
-    feedback_text +=
+    test_feedback_text +=
       "</p><p class = block-text>You have completed: " +
       testCount +
       " out of " +
@@ -1265,24 +1378,24 @@ var testNode = {
       " blocks of trials.";
 
     if (accuracy < accuracy_thresh) {
-      feedback_text +=
+      test_feedback_text +=
         "</p><p class = block-text>Your accuracy is too low.  Remember: <br>" +
-        prompt_text_list;
+        getPromptTaskList();
     }
 
     if (missed_responses > missed_thresh) {
-      feedback_text +=
+      test_feedback_text +=
         "</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.";
     }
 
     if (ave_rt > rt_thresh) {
-      feedback_text +=
+      test_feedback_text +=
         "</p><p class = block-text>You have been responding too slowly.";
     }
 
     if (testCount == numTestBlocks) {
-      feedback_text +=
-        "</p><p class = block-text>Done with this test. Press Enter to continue.<br>";
+      test_feedback_text +=
+        "</p><p class = block-text>Done with this test. <br>";
       return false;
     } else {
       stims = createTrialTypes(numTrialsPerBlock);
@@ -1312,9 +1425,10 @@ cued_task_switching_with_directed_forgetting__fmri_experiment.push(
 
 cni_bore_setup(cued_task_switching_with_directed_forgetting__fmri_experiment);
 
+cued_task_switching_with_directed_forgetting__fmri_experiment.push(testNode0);
 cued_task_switching_with_directed_forgetting__fmri_experiment.push(testNode);
 cued_task_switching_with_directed_forgetting__fmri_experiment.push(
-  feedback_instruct_block
+  test_feedback_block
 );
 
 cued_task_switching_with_directed_forgetting__fmri_experiment.push(end_block);

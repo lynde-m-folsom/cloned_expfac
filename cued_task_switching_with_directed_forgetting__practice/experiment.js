@@ -419,29 +419,29 @@ var getCorrectResponse = function (cued_dimension, cue, probe, letters) {
   if (cued_dimension == "remember") {
     if (cue == "TOP") {
       if (jQuery.inArray(probe, letters.slice(0, numLetters / 2)) != -1) {
-        return possible_responses[0][1];
+        return getPossibleResponses()[0][1];
       } else {
-        return possible_responses[1][1];
+        return getPossibleResponses()[1][1];
       }
     } else if (cue == "BOT") {
       if (jQuery.inArray(probe, letters.slice(numLetters / 2)) != -1) {
-        return possible_responses[0][1];
+        return getPossibleResponses()[0][1];
       } else {
-        return possible_responses[1][1];
+        return getPossibleResponses()[1][1];
       }
     }
   } else if (cued_dimension == "forget") {
     if (cue == "TOP") {
       if (jQuery.inArray(probe, letters.slice(numLetters / 2)) != -1) {
-        return possible_responses[0][1];
+        return getPossibleResponses()[0][1];
       } else {
-        return possible_responses[1][1];
+        return getPossibleResponses()[1][1];
       }
     } else if (cue == "BOT") {
       if (jQuery.inArray(probe, letters.slice(0, numLetters / 2)) != -1) {
-        return possible_responses[0][1];
+        return getPossibleResponses()[0][1];
       } else {
-        return possible_responses[1][1];
+        return getPossibleResponses()[1][1];
       }
     }
   }
@@ -577,8 +577,8 @@ function getPossibleResponses() {
     return possible_responses;
   } else if (getMotorPerm() == 1) {
     return [
-      ["middle finger", 71],
-      ["index finger", 89],
+      ["middle finger", 39],
+      ["index finger", 37],
     ];
   }
 }
@@ -598,10 +598,10 @@ function getPromptTaskList() {
     " the cued location</li>" +
     "<li>Please respond if the probe (single letter) was in the memory set.</li>" +
     "<li>In memory set: " +
-    possible_responses[0][0] +
+    getPossibleResponses()[0][0] +
     "</li>" +
     "<li>Not in memory set: " +
-    possible_responses[1][0] +
+    getPossibleResponses()[1][0] +
     "</li>" +
     "</ul>"
   );
@@ -1079,7 +1079,7 @@ var refreshNode = {
     var ave_rt = sum_rt / sum_responses;
 
     feedback_text =
-      "<br>Please take this time to read your feedback and to take a short break! Press enter to continue";
+      "<br>Please take this time to read your feedback and to take a short break! Press space to continue";
 
     if (accuracy > accuracy_thresh) {
       feedback_text +=
