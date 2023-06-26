@@ -366,7 +366,7 @@ var createTrialTypes = function (numTrialsPerBlock, delay) {
 var getPracticeFeedback = function () {
   if (getPracticeTrialID() == "instructions") {
     return (
-      "<div class = centerbox>" +
+      "<div style='top:40%;' class = centerbox>" +
       "<p class = block-text>In this experiment, across trials you will see a white letter with an overlapping red letter on every trial.</p>" +
       "<p class = block-text>You will be asked to match the current white letter to the white letter that appeared either 1 or 2 trials ago depending on the delay given to you for that block.</p>" +
       "<p class = block-text>Press the " +
@@ -378,7 +378,7 @@ var getPracticeFeedback = function () {
       "<p class = block-text>Ignore the red letter, focus only on the white letter.</p>" +
       '<p class = block-text>Capitalization does not matter, so "T" matches with "t".</p> ' +
       "<p class = block-text>Please respond as quickly and accurately as possible to the presentation of the letters.</p> " +
-      "<p class = block-text>We will start practice when you finish instructions. Your delay for practice is 2. Please make sure you understand the instructions before moving on. You will be given a reminder of the rules for practice. <i>This will be removed for test!</i></p>" +
+      "<p class = block-text>We will start practice when you finish instructions. Your delay for practice is 1. Please make sure you understand the instructions before moving on. You will be given a reminder of the rules for practice. <i>This will be removed for test!</i></p>" +
       "<p class = block-text>During practice, you will receive a reminder of the rules. <i>This reminder will be taken out for test</i>.</p>" +
       "</div>"
     );
@@ -447,25 +447,6 @@ var appendData = function () {
     });
   }
 };
-
-//Functions added for in-person sessions
-function genITIs() {
-  mean_iti = 0.5; //mean and standard deviation of 0.5 secs
-  min_thresh = 0;
-  max_thresh = 4;
-
-  lambda = 1 / mean_iti;
-  iti_array = [];
-  for (i = 0; i < exp_len + numTestBlocks; i++) {
-    //add 3 ITIs per test block to make sure there are enough
-    curr_iti = -Math.log(Math.random()) / lambda;
-    while (curr_iti > max_thresh || curr_iti < min_thresh) {
-      curr_iti = -Math.log(Math.random()) / lambda;
-    }
-    iti_array.push(curr_iti * 1000); //convert ITIs from seconds to milliseconds
-  }
-  return iti_array;
-}
 
 /* ************************************ */
 /*    Define Experimental Variables     */
@@ -555,9 +536,6 @@ var pathSource =
 var images = [];
 
 // ADDED FOR SCANNING
-//fmri variables
-var ITIs_stim = [];
-var ITIs_resp = [];
 
 var refresh_trial_id = "instructions";
 var refresh_feedback_timing = -1;
@@ -639,11 +617,6 @@ var practice_feedback_block = {
     practice_trial_id = "practice-no-stop-feedback";
     practice_feedback_timing = 10000;
     practice_response_ends = false;
-    if (ITIs_stim.length === 0) {
-      //if ITIs haven't been generated, generate them!
-      ITIs_stim = genITIs();
-      ITIs_resp = ITIs_stim.slice(0); //make a copy of ITIs so that timing_stimulus & timing_response are the same
-    }
   },
 };
 var exp_stage = "practice";
@@ -657,7 +630,7 @@ var practice_fixation_block = {
   },
   timing_response: 500,
   timing_post_trial: 0,
-  prompt: getPromptTextList(),
+  prompt: getPromptTextList,
   on_finish: function () {
     jsPsych.data.addDataToLastTrial({ exp_stage: exp_stage });
   },
@@ -876,6 +849,7 @@ var practiceNode2 = {
     }
   },
 };
+
 var practice_end_block = {
   type: "poldrack-text",
   data: {
