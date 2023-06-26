@@ -19,11 +19,11 @@ var getPromptTextList = function () {
 function getPossibleResponses() {
   mperm = getMotorPerm();
   if (mperm == 0) {
-    stim1 = ["index finger", 89];
-    stim2 = ["middle finger", 71];
+    stim1 = ["index finger", 37];
+    stim2 = ["middle finger", 39];
   } else {
-    stim1 = ["middle finger", 71];
-    stim2 = ["index finger", 89];
+    stim1 = ["middle finger", 39];
+    stim2 = ["index finger", 37];
   }
   return [stim1, stim2];
 }

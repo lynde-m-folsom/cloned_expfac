@@ -94,12 +94,19 @@ function getdesignEvents(design_num) {
   return x;
 }
 
-function insertBufferITIs(design_ITIs) {
+function insertBufferITIs(design_ITIs, delays) {
   var buffer_ITIs = genITIs();
   var out_ITIs = [];
+  delay_seq = delays.slice();
   while (design_ITIs.length > 0) {
-    out_ITIs = out_ITIs.concat(buffer_ITIs.slice(0, 2)); //get 2 buffer ITIs to start each block
-    buffer_ITIs = buffer_ITIs.slice(2); //remove the just used buffer ITIs from the buffer ITI array
+    block_delay = delay_seq.pop();
+    if (block_delay == 2) {
+      out_ITIs = out_ITIs.concat(buffer_ITIs.slice(0, 2)); //get 2 buffer ITIs to start each block
+      buffer_ITIs = buffer_ITIs.slice(2); //remove the just used buffer ITIs from the buffer ITI array
+    } else if (block_delay == 1) {
+      out_ITIs = out_ITIs.concat(buffer_ITIs.slice(0, 1)); //get 1 buffer ITIs to start each block
+      buffer_ITIs = buffer_ITIs.slice(1); //remove the just used buffer ITIs from the buffer ITI array
+    }
 
     curr_block_ITIs = design_ITIs.slice(0, numTrialsPerBlock); //get this current block's ITIs
     design_ITIs = design_ITIs.slice(numTrialsPerBlock); //remove this current block's ITIs from des_ITIs
@@ -239,10 +246,8 @@ function gen_testTrials_1back() {
         trial_id: "test_trial",
       },
       choices: [getPossibleResponses()[0][1], getPossibleResponses()[1][1]],
-      // timing_stim: 1000, //1000
-      // timing_response: 2000, //2000
-      timing_stim: 100, //1000
-      timing_response: 100, //2000
+      timing_stim: 1000, //1000
+      timing_response: 2000, //2000
       timing_post_trial: 0,
       response_ends_trial: false,
       on_finish: appendData,
@@ -268,10 +273,8 @@ function gen_testTrials_2back() {
         trial_id: "test_trial",
       },
       choices: [getPossibleResponses()[0][1], getPossibleResponses()[1][1]],
-      // timing_stim: 1000, //1000
-      // timing_response: 2000, //2000
-      timing_stim: 100, //1000
-      timing_response: 100, //2000
+      timing_stim: 1000, //1000
+      timing_response: 2000, //2000
       timing_post_trial: 0,
       response_ends_trial: false,
       on_finish: appendData,
@@ -482,7 +485,7 @@ var feedback_block = {
   stimulus: getFeedback,
   timing_post_trial: 0,
   is_html: true,
-  timing_response: 10000,
+  timing_response: 4000,
   response_ends_trial: false,
 };
 
@@ -874,7 +877,7 @@ var design_setup_block = {
     design_perm = parseInt(data.responses.slice(7, 10));
     des_ITIs = await getdesignITIs(design_perm);
     des_ITIs = des_ITIs.map(Number);
-    des_ITIs = insertBufferITIs(des_ITIs);
+    des_ITIs = insertBufferITIs(des_ITIs, delays);
     ITIs_stim = des_ITIs.slice(0);
     ITIs_resp = des_ITIs.slice(0);
     des_events = await getdesignEvents(design_perm);
@@ -947,10 +950,8 @@ for (i = 0; i < practice_len + 2; i++) {
     incorrect_text:
       "<div class = upperbox><div class = center-text>Incorrect</font></div></div>", // + prompt_text_list,
     timeout_message: getTimeoutMessage,
-    // timing_stim: 1000, //1000
-    // timing_response: 2000, //2000
-    timing_stim: 100, //1000
-    timing_response: 100, //2000
+    timing_stim: 1000, //1000
+    timing_response: 2000, //2000
     timing_feedback_duration: 500,
     show_stim_with_feedback: false,
     timing_post_trial: 0,
@@ -1060,232 +1061,8 @@ var fixation_block = {
 /* ************************************ */
 /*        Set up timeline blocks        */
 /* ************************************ */
-var practiceTrials = [];
-practiceTrials.push(refresh_feedback_block);
-
-for (i = 0; i < practice_len + 3; i++) {
-  var practice_fixation_block = {
-    type: "poldrack-single-stim",
-    stimulus: "<div class = centerbox><div class = fixation>+</div></div>",
-    is_html: true,
-    choices: "none",
-    data: {
-      trial_id: "practice_fixation",
-    },
-    timing_response: 500, //500
-    timing_post_trial: 0,
-    prompt: getPromptTextList(),
-  };
-
-  var practice_block = {
-    type: "poldrack-categorize",
-    stimulus: getStim,
-    is_html: true,
-    choices: getChoices(),
-    key_answer: getResponse,
-    data: {
-      trial_id: "practice_trial",
-    },
-    correct_text:
-      "<div class = fb_box><div class = center-text><font size = 20>Correct!</font></div></div>" +
-      prompt_text,
-    incorrect_text:
-      "<div class = fb_box><div class = center-text><font size = 20>Incorrect</font></div></div>" +
-      prompt_text,
-    timeout_message: getTimeoutMessage,
-    // timing_stim: 1000, //1000
-    // timing_response: 2000, //2000
-    timing_stim: 100, //1000
-    timing_response: 100, //2000
-    timing_feedback_duration: 500, //500
-    show_stim_with_feedback: false,
-    timing_post_trial: 0,
-    on_finish: appendData,
-    prompt: getPromptTextList(),
-  };
-  practiceTrials.push(practice_fixation_block);
-  practiceTrials.push(practice_block);
-}
-
-var testTrials = [];
-// update key presses for possible responses from motor perm
-testTrials.push(feedback_block);
-for (i = 0; i < numTrialsPerBlock + 3; i++) {
-  var test_block = {
-    type: "poldrack-single-stim",
-    stimulus: getStim,
-    is_html: true,
-    data: {
-      trial_id: "test_trial",
-    },
-    choices: getChoices(),
-    // timing_stim: 1000, //1000
-    // timing_response: 2000, //2000
-    timing_stim: 100, //1000
-    timing_response: 100, //2000
-    timing_post_trial: 0,
-    response_ends_trial: false,
-    fixation_default: true,
-    on_finish: appendData,
-  };
-  testTrials.push(fixation_block);
-  testTrials.push(test_block);
-}
-
-var testTrial0 = [];
-for (i = 0; i < numTrialsPerBlock + 1; i++) {
-  var fixation_block = {
-    type: "poldrack-single-stim",
-    stimulus: getFixation,
-    is_html: true,
-    data: {
-      trial_id: "fixation",
-    },
-    choices: "none",
-    timing_post_trial: 0,
-    timing_stim: getITI_stim,
-    timing_response: getITI_resp,
-  };
-
-  var test_block = {
-    type: "poldrack-single-stim",
-    stimulus: getStim,
-    is_html: true,
-    data: {
-      trial_id: "test_trial",
-    },
-    choices: getChoices(),
-    fixation_default: true,
-    // timing_stim: 1000, //1000
-    // timing_response: 2000, //2000
-    timing_stim: 100, //1000
-    timing_response: 100, //2000
-    timing_post_trial: 0,
-    response_ends_trial: false,
-    on_finish: appendData,
-  };
-  testTrial0.push(fixation_block);
-  testTrial0.push(test_block);
-}
-
-var testNode0 = {
-  timeline: testTrial0,
-  loop_function: function (data) {
-    testCount += 1;
-    current_trial = 0;
-
-    var sum_rt = 0;
-    var sum_responses = 0;
-    var correct = 0;
-    var total_trials = 0;
-
-    for (var i = 0; i < data.length; i++) {
-      if (data[i].trial_id == "test_trial") {
-        total_trials += 1;
-        if (data[i].rt != -1) {
-          sum_rt += data[i].rt;
-          sum_responses += 1;
-          if (data[i].key_press == data[i].correct_response) {
-            correct += 1;
-          }
-        }
-      }
-    }
-
-    var accuracy = correct / total_trials;
-    var missed_responses = (total_trials - sum_responses) / total_trials;
-    var ave_rt = sum_rt / sum_responses;
-
-    feedback_text =
-      '</p><p class = block-text style = "font-size:32px; line-height:1.2;">Please take this time to read your feedback and to take a short break!';
-    feedback_text +=
-      '</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have completed: ' +
-      testCount +
-      " out of " +
-      numTestBlocks +
-      " blocks of trials.";
-
-    if (accuracy < accuracy_thresh) {
-      feedback_text +=
-        '</p><p class = block-text style = "font-size:32px; line-height:1.2;"> Your accuracy is too low.  Remember: <br>' +
-        getPromptTextList();
-    }
-
-    if (missed_responses > missed_thresh) {
-      feedback_text +=
-        '</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have not been responding to some trials.  Please respond on every trial that requires a response.';
-    }
-
-    if (ave_rt > rt_thresh) {
-      feedback_text +=
-        '</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have been responding too slowly.';
-    }
-
-    return false;
-  },
-};
 
 var testCount = 0;
-var testNode = {
-  timeline: testTrials,
-  loop_function: function (data) {
-    testCount += 1;
-    current_trial = 0;
-
-    var sum_rt = 0;
-    var sum_responses = 0;
-    var correct = 0;
-    var total_trials = 0;
-
-    for (var i = 0; i < data.length; i++) {
-      if (data[i].trial_id == "test_trial") {
-        total_trials += 1;
-        if (data[i].rt != -1) {
-          sum_rt += data[i].rt;
-          sum_responses += 1;
-          if (data[i].key_press == data[i].correct_response) {
-            correct += 1;
-          }
-        }
-      }
-    }
-
-    var accuracy = correct / total_trials;
-    var missed_responses = (total_trials - sum_responses) / total_trials;
-    var ave_rt = sum_rt / sum_responses;
-
-    feedback_text =
-      '</p><p class = block-text style = "font-size:32px; line-height:1.2;">Please take this time to read your feedback and to take a short break!';
-    feedback_text +=
-      '</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have completed: ' +
-      testCount +
-      " out of " +
-      numTestBlocks +
-      " blocks of trials.";
-    if (accuracy < accuracy_thresh) {
-      feedback_text +=
-        '</p><p class = block-text style = "font-size:32px; line-height:1.2;"> Your accuracy is too low.  Remember: <br>' +
-        getPromptTextList();
-    }
-
-    if (missed_responses > missed_thresh) {
-      feedback_text +=
-        '</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have not been responding to some trials.  Please respond on every trial that requires a response.';
-    }
-
-    if (ave_rt > rt_thresh) {
-      feedback_text +=
-        '</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have been responding too slowly.';
-    }
-
-    if (testCount == numTestBlocks) {
-      feedback_text += "</p><p class = block-text>Done with this test.";
-      return false;
-    } else {
-      return true;
-    }
-  },
-};
 
 /* ************************************ */
 /*          Set up Experiment           */
