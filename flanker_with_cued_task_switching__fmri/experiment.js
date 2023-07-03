@@ -143,6 +143,7 @@ function getChoices() {
 	}
 	  
   }
+
 function assessPerformance() {
 	var experiment_data = jsPsych.data.getTrialsOfType('poldrack-single-stim')
 	var missed_count = 0
@@ -337,30 +338,21 @@ var getStim = function() {
 // task and stim
 var getResponse = function() {
   switch (curr_task) {
-    case 'color':
-      if (curr_stim.color == 'orange') {
-      	correct_response = response_keys.key[0]
-        return correct_response
-      } else {
-      	correct_response = response_keys.key[1]
-        return correct_response
-      }
-      break;
     case 'magnitude':
       if (curr_stim.number > 5) {
-      	correct_response = response_keys.key[0]
+      	correct_response = response_keys.key[0][0]
         return correct_response
       } else {
-      	correct_response = response_keys.key[1]
+      	correct_response = response_keys.key[0][1]
         return correct_response
       }
       break;
     case 'parity':
       if (curr_stim.number % 2 === 0) {
-      	correct_response = response_keys.key[0]
+      	correct_response = response_keys.key[1][0]
         return correct_response
       } else {
-      	correct_response = response_keys.key[1]
+      	correct_response = response_keys.key[1][1]
         return correct_response
       }
   }
@@ -379,11 +371,11 @@ function getTimeoutMessage() {
 		
 			'<p class = block-text>You will be asked to judge the <i>center number </i>on magnitude (higher or lower than 5) or parity (odd or even), depending on which cue you saw.</p>'+
 
-			'<p class = block-text>If you see the cue, <i>magnitude</i> or <i>high-low</i>, please judge the number based on whether it is lower or higher than 5. Press the <i>'+getResponseKeys().key_name[0]+
-				' key</i> if high, and the <i>'+getResponseKeys().key_name[1]+' key</i> if low.</p>'+
+			'<p class = block-text>If you see the cue, <i>magnitude</i> or <i>high-low</i>, please judge the number based on whether it is lower or higher than 5. Press the <i>'+getResponseKeys().key_name[0][0]+
+				' key</i> if high, and the <i>'+getResponseKeys().key_name[0][1]+' key</i> if low.</p>'+
 		
-			'<p class = block-text>If you see the cue, <i>parity</i> or <i>odd-even</i>, please judge the number based on whether it is odd or even. Press the <i>'+getResponseKeys().key_name[0]+
-				' key</i> if even, and the <i>'+getResponseKeys().key_name[1]+' key</i> if odd.</p>'+
+			'<p class = block-text>If you see the cue, <i>parity</i> or <i>odd-even</i>, please judge the number based on whether it is odd or even. Press the <i>'+getResponseKeys().key_name[1][0]+
+				' key</i> if even, and the <i>'+getResponseKeys().key_name[1][1]+' key</i> if odd.</p>'+
 				
 			'<p class = block-text>Please judge only the center number, you should ignore the other numbers.</p>'+
 		
@@ -507,10 +499,10 @@ var exp_stage = 'practice' // defines the exp_stage, switched by start_test_bloc
 
 function getPromptTaskList() {
 	return '<ul style="text-align:left;"><font color="white">'+
-					   	'<li><i>Parity</i> or <i>Odd-Even</i>: ' + getResponseKeys().key_name[0] + ' if even and ' + response_keys.key_name[1] + ' if odd.</li>'+
-					   	'<li><i>Magnitude</i> or <i>High-Low</i>: ' + getResponseKeys().key_name[0] + ' if >5 and ' + response_keys.key_name[1] + ' if <5.</li>'+
-					   	'<li>Only judge the center number!</li>'+
-					   '</ul>'
+  '<li><i>Magnitude</i> or <i>High-Low</i>: ' + getResponseKeys().key_name[0][0] + ' if >5 and ' + getResponseKeys().key_name[0][1] + ' if <5.</li>'+ 
+  '<li><i>Parity</i> or <i>Odd-Even</i>: ' + getResponseKeys().key_name[1][0] + ' if even and ' + getResponseKeys().key_name[1][1] + ' if odd.</li>'+
+  '<li>Only judge the center number!</li>'+
+  '</ul>'
 }
 
 //PRE LOAD IMAGES HERE
