@@ -928,7 +928,7 @@ var practiceNode = {
 		  }
 
 		  if (ave_rt > rt_thresh){
-			  refresh_feedback_textack_text += 
+			  refresh_feedback_text += 
 				  '</p><p class = instruct-text>You have been responding too slowly.'
 		  }
 
