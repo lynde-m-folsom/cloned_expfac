@@ -14,6 +14,27 @@
     z-index: 0;
 }
 
+.centerbox {
+  width: 50vw;
+  height: 60vh;
+  position:absolute;
+  top:40%;
+  left:50%;
+  margin-right:-50%;
+  transform: translate(-50%,-50%);
+}
+
+.block-text { 
+  width:100%;
+  text-align: left;
+  margin: 0 auto;
+  margin-bottom: 1em;
+  font-size: 40px;
+  line-height: 120%;
+  color: white;
+}
+
+
 .display_stage > div, .display_stage > p {
   color: white;
 }
@@ -61,24 +82,12 @@
 
 .cue-text {
   width:20vw;
-  height: 20vh;
+  height: 20vw;
   position:absolute;
   top:50%;
   left:50%;
   margin-right:-50%;
   transform: translate(-50%,-50%);
-}
-
-
-.distractor_text {
-  width: 10%;
-  height: 10%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  background-color: none;
-  text-align: center;
-  transform: translate(-70%, -70%);
 }
 
 .bigbox {
@@ -109,8 +118,8 @@ text-align: center;
  width: 75%;
  height: 20%;
  position:absolute;
- top:50%;
- left:50%;
+ top:10%;
+ left:20%;
  transform: translate(-50%,-45%);
  margin-right:0%;
  background-color: none;
@@ -130,94 +139,10 @@ img.center {
 }
 
 /*******************************************************/
-/************    Predictive CSS Styles     *************/
+/***********          2x2 CSS Styles          **********/
 /*******************************************************/
-.quad_box {
- width: 85vw;
- height: 90vh;
- position:absolute;
- top:50%;
- left:50%;
- transform: translate(-50%,-50%);
- margin-right: -50%;
- background-color: none;
- text-align: center;
-}
-
-.decision-top-left {
- width: 35vw;
- height: 35vh;
- position:absolute;
- top:25%;
- left:25%;
- transform: translate(-50%,-50%);
- margin-right: -50%;
- background-color: none;
- text-align: center;
-}
-
-.decision-bottom-left {
- width: 35vw;
- height: 35vh;
- position:absolute;
- top:75%;
- left:25%;
- transform: translate(-50%,-50%);
- margin-right: -50%;
- background-color: none;
- text-align: center;
-}
-
-.decision-top-right {
- height: 35vh;
- width: 35vw;
- position:absolute;
- top:25%;
- left:75%;
- transform: translate(-50%,-50%);
- margin-right: -50%;
- background-color: none;
- text-align: center;
-}
-
-.decision-bottom-right {
- height: 35vh;
- width: 35vw;
- position:absolute;
- top:75%;
- left:75%;
- transform: translate(-50%,-50%);
- margin-right: -50%;
- background-color: none;
- text-align: center;
-}
-
-/*******************************************************/
-/************       Cued CSS Styles        *************/
-/*******************************************************/
-.left-text {
-  width: 5vw;
-  height: 5vw;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  background-color: none;
-  transform: translate(-125%, -50%);
-}
-
-
-.right-text {
-  width: 5vw;
-  height: 5vw;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  background-color: none;
-  transform: translate(25%, -50%);
-} 
-
 .upperbox {
-  width:30vw;
+  width:35vw;
   height: 20vw;
   position:absolute;
   top:50%;
@@ -228,7 +153,7 @@ img.center {
 }
 
 .lowerbox {
-  width:30vw;
+  width:35vw;
   height: 20vw;
   position:absolute;
   top:50%;
@@ -238,3 +163,71 @@ img.center {
   background-color: none;
 }
 
+.promptbox {
+  width:35vw;
+  height: 20vw;
+  position:absolute;
+  top:50%;
+  left:50%;
+  margin-right:-50%;
+  transform: translate(-125%, 50%);
+}
+
+/*******************************************************/
+/***********        Flanker CSS Styles        **********/
+/*******************************************************/
+
+.flankerLeft_2 {
+width: 5vw;
+height: 5vw;
+position:absolute;
+top:50%;
+left:50%; 
+margin-right:0%;
+transform: translate(-150%,-50%);
+background-color: none;
+}
+
+.flankerLeft_1 {
+width: 5vw;
+height: 5vw;
+position:absolute;
+top:50%;
+left:50%; 
+margin-right:0%;
+transform: translate(-100%,-50%);
+background-color: none;
+}
+
+.flankerMiddle {
+width: 5vw;
+height: 5vw;
+position:absolute;
+top:50%;
+left:50%;
+margin-right:0%;
+transform: translate(-50%,-50%);
+background-color: none;
+}
+
+.flankerRight_1 {
+width: 5vw;
+height: 5vw;
+position:absolute;
+top:50%;
+left:50%;
+margin-right:0%;
+transform: translate(0%,-50%);
+background-color: none;
+}
+
+.flankerRight_2 {
+width: 5vw;
+height: 5vw;
+position:absolute;
+top:50%;
+left:50%;
+margin-right:0%;
+transform: translate(50%,-50%);
+background-color: none;
+}
