@@ -53,7 +53,7 @@ function getITI_resp() { //added for fMRI compatibility
 }
 
 function addID() {
-  jsPsych.data.addDataToLastTrial({exp_id: 'shape_matching_with_cued_task_switching__fmri'})
+  jsPsych.data.addDataToLastTrial({exp_id: 'shape_matching_with_cued_task_switching__practice'})
 }
 
 function assessPerformance() {
@@ -160,11 +160,11 @@ function getMotorPerm() {
 function getPossibleResponses(){
 	mperm = getMotorPerm()
 	if (mperm == 0) {
-		stim1 = ['index finger', 89]
-		stim2 = ['middle finger', 71]
+		stim1 = ['index finger', 37]
+		stim2 = ['middle finger', 39]
 	} else {
-		stim1 = ['middle finger', 71]
-		stim2 = ['index finger', 89]
+		stim1 = ['middle finger', 39]
+		stim2 = ['index finger', 37]
 	}
 	return [stim1, stim2]
 }
@@ -449,20 +449,10 @@ var practice_thresh = 3
 var CTI = 150
 // task specific variables
 
-var refresh_len = 10
-var exp_len = 336
+var refresh_len = 28
+var refresh_thres = 3
 var numTrialsPerBlock = 84
 var numTestBlocks = exp_len / numTrialsPerBlock
-
-//ADDED FOR SCANNING
-//fmri variables
-var ITIs_stim = []
-var ITIs_resp = []
-
-
-var refresh_trial_id = "instructions"
-var refresh_feedback_timing = -1
-var refresh_response_ends = true
 
 var motor_perm = 0
 
@@ -528,6 +518,17 @@ var numbersPreload = ['1','2','3','4','6','7','8','9']
 var colorsPreload = ['white','green','red']
 var images = []
 
+//ADDED FOR SCANNING
+//fmri variables
+var ITIs_stim = [];
+var ITIs_resp = [];
+
+var refresh_trial_id = "instructions";
+var refresh_feedback_timing = -1;
+var refresh_response_ends = true;
+
+var motor_perm = 0;
+
 for(i=0;i<numbersPreload.length;i++){
 	for(x=0;x<colorsPreload.length;x++){
 		images.push(pathSource + numbersPreload[i] + '_' + colorsPreload[x] + '.png')
@@ -542,26 +543,6 @@ jsPsych.pluginAPI.preloadImages(images);
 /* ************************************ */
 var des_ITIs = []
 var des_events = []
-
-var design_setup_block = {
-	type: 'survey-text',
-	data: {
-		trial_id: "design_setup"
-	},
-	questions: [
-		[
-			"<p class = center-block-text>Design permutation (0-1):</p>"
-		]
-	], on_finish: async function(data) {
-		design_perm =parseInt(data.responses.slice(7, 10))
-		des_ITIs = await getdesignITIs(design_perm)
-		des_ITIs = des_ITIs.map(Number)
-		des_ITIs = insertBufferITIs(des_ITIs)
-		ITIs_stim = des_ITIs.slice(0)
-		ITIs_resp = des_ITIs.slice(0)
-		des_events = await getdesignEvents(design_perm)
-	}
-}
 
 var motor_setup_block = {
 	type: 'survey-text',
@@ -686,53 +667,6 @@ var feedback_block = {
 	response_ends_trial: false,
 };
 
-// var practice_block = {
-//   type: 'poldrack-categorize',
-//   stimulus: getStim,
-//   is_html: true,
-//   key_answer: getResponse,
-//   correct_text: '<div class = fb_box><div class = center-text><font size = 20>Correct!</font></div></div>' + '<div class = promptbox>' + prompt_task_list + '</div>',
-//   incorrect_text: '<div class = fb_box><div class = center-text><font size = 20>Incorrect</font></div></div>' +'<div class = promptbox>' + prompt_task_list + '</div>',
-//   timeout_message: '<div class = fb_box><div class = center-text><font size = 20>Respond Faster!</font></div></div>' + '<div class = promptbox>' + prompt_task_list + '</div>',
-//   choices: choices,
-//   data: {
-//     trial_id: 'practice_trial',
-//     exp_stage: "practice"
-//   },
-//   timing_feedback_duration: 500,
-//   show_stim_with_feedback: false,
-//   timing_response: 2000, //2000
-//   timing_stim: 1000, //1000
-//   timing_post_trial: 0,
-//   prompt: '<div class = promptbox>' + prompt_task_list + '</div>',
-//   on_finish: appendData
-// }
-
-// var test_block = {
-//   type: 'poldrack-single-stim',
-//   stimulus: getStim,
-//   is_html: true,
-//   choices: choices,
-//   data: {
-//     trial_id: 'test_trial',
-//     exp_stage: 'test'
-//   },
-//   timing_post_trial: 0,
-//   timing_response: 2000, //2000
-//   timing_stim: 1000,  //1000
-//   on_finish: function(data) {
-//     appendData()
-//     correct = false
-//     if (data.key_press === correct_response) {
-//       correct = true
-//     }
-//     jsPsych.data.addDataToLastTrial({
-//       'correct_response': correct_response,
-//       'correct': correct
-//     })
-//   }
-// }
-
 /* ************************************ */
 /*        Set up timeline blocks        */
 /* ************************************ */
@@ -839,279 +773,44 @@ var practiceNode = {
 	
 		refresh_feedback_text = '</p><p class = block-text style = "font-size:32px; line-height:1.2;">Please take this time to read your feedback and to take a short break!'
 
-		if (accuracy < accuracy_thresh){
+		if (accuracy > accuracy_thresh) {
 			refresh_feedback_text +=
-					'</p><p class = block-text style = "font-size:32px; line-height:1.2;"> Remember: <br>' + getPromptTextList()
-		}
-			
-		if (missed_responses > missed_thresh){
+			  "</p><p class = block-text>Done with this practice. Press Enter to end practice.";
+			return false;
+		  } else if (accuracy < accuracy_thresh) {
 			refresh_feedback_text +=
-				'</p><p class = block-text style = "font-size:32px; line-height:1.2;">You have not been responding to some trials.  Please respond on every trial that requires a response.'
-		}
-
-		if (ave_rt > rt_thresh){
-			refresh_feedback_text += 
-				'</p><p class = block-text style = "font-size:32px; line-height:1.2;">You have been responding too slowly.'
-		}
-	
-		refresh_feedback_text +=
-			'</p><p class = block-text style = "font-size:32px; line-height:1.2;">Done with this practice. The test session will begin shortly.'
-		
-		task_conditions = des_events.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
-		des_events = des_events.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_events
-		task_switches = getTaskSwitches(task_conditions)
-		exp_stage = 'test'
-		return false
-		
-	}
-
-}
-var testTrial0= []
-for (i = 0; i < numTrialsPerBlock+1; i++) {
-	var fixation_block = {
-		type: 'poldrack-single-stim',
-		stimulus: getFixation,
-		is_html: true,
-		data: {
-			"trial_id": "fixation",
-		},
-		choices: 'none',
-		timing_post_trial: 0,
-		timing_stim: getITI_stim,
-		timing_response: getITI_resp
-	}
-	var cue_block = {
-		type: 'poldrack-single-stim',
-		stimulus: getCue,
-		is_html: true,
-		choices: 'none',
-		data: {
-		  trial_id: 'cue'
-		},
-		timing_response: getCTI, 
-		timing_stim: getCTI, 
-		timing_post_trial: 0,
-		on_finish: function() {
-		  jsPsych.data.addDataToLastTrial({
-			exp_stage: exp_stage
-		  })
-		  appendData()
-		}
-	  };
-		
-	var test_block = {
-		type: 'poldrack-single-stim',
-		stimulus: getStim,
-		is_html: true,
-		data: {
-			"trial_id": "test_trial",
-		},
-		choices: getChoices(),
-		fixation_default: true,
-		timing_stim: 1000, //1000
-		timing_response: 2000, //2000
-		timing_post_trial: 0,
-		response_ends_trial: false,
-		on_finish: appendData
-	}
-	testTrial0.push(setStims_block)
-	testTrial0.push(fixation_block)
-	testTrial0.push(cue_block);
-	testTrial0.push(test_block)
-
-}
-
-var testCount = 0
-var testNode0 = {
-	timeline: testTrial0,
-	loop_function: function(data) {
-		testCount += 1
-		task_conditions = des_events.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
-		des_events = des_events.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_events
-		task_switches = getTaskSwitches(task_conditions)
-		current_trial = 0
-		
-		var sum_rt = 0
-		var sum_responses = 0
-		var correct = 0
-		var total_trials = 0
-	
-		for (var i = 0; i < data.length; i++){
-			if (data[i].trial_id == "test_trial"){
-				total_trials+=1
-				if (data[i].rt != -1){
-					sum_rt += data[i].rt
-					sum_responses += 1
-					if (data[i].key_press == data[i].correct_response){
-						correct += 1
-		
-					}
-				}
-		
+			  "</p><p class = block-text>We are going to try practice again to see if you can achieve higher accuracy.  Remember: <br>" +
+			  getPromptTextList();
+	  
+			if (missed_responses > missed_thresh) {
+			  refresh_feedback_text +=
+				"</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.";
 			}
-	
-		}
-	
-		var accuracy = correct / total_trials
-		var missed_responses = (total_trials - sum_responses) / total_trials
-		var ave_rt = sum_rt / sum_responses
-	
-		feedback_text = '</p><p class = block-text style = "font-size:32px; line-height:1.2;">Please take this time to read your feedback and to take a short break!'
-		feedback_text += '</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have completed: '+testCount+' out of '+numTestBlocks+' blocks of trials.'
-	
-		if (accuracy < accuracy_thresh){
-			feedback_text +=
-				'</p><p class = block-text style = "font-size:32px; line-height:1.2;"> Your accuracy is too low.  Remember: <br>' + getPromptTextList() 
-		}
-
-		if (missed_responses > missed_thresh){
-			feedback_text +=
-				'</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have not been responding to some trials.  Please respond on every trial that requires a response.'
-		}
-
-		if (ave_rt > rt_thresh) {
-			feedback_text += 
-				'</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have been responding too slowly.'
-		}	
-
-			return false
-		}
-	
-	}
-
-var testTrials = []
-testTrials.push(feedback_block)
-for (i = 0; i < numTrialsPerBlock+1; i++) {
-	var fixation_block = {
-		type: 'poldrack-single-stim',
-		stimulus: getFixation,
-		is_html: true,
-		data: {
-			"trial_id": "fixation",
-		},
-		choices: 'none',
-		timing_post_trial: 0,
-		timing_stim: getITI_stim,
-		timing_response: getITI_resp
-	}
-	var cue_block = {
-		type: 'poldrack-single-stim',
-		stimulus: getCue,
-		is_html: true,
-		choices: 'none',
-		data: {
-		  trial_id: 'cue'
-		},
-		timing_response: getCTI, 
-		timing_stim: getCTI, 
-		timing_post_trial: 0,
-		on_finish: function() {
-		  jsPsych.data.addDataToLastTrial({
-			exp_stage: exp_stage
-		  })
-		  appendData()
-		}
-	  };
-		
-	var test_block = {
-		type: 'poldrack-single-stim',
-		stimulus: getStim,
-		is_html: true,
-		data: {
-			"trial_id": "test_trial",
-		},
-		choices: getChoices(),
-		fixation_default: true,
-		timing_stim: 1000, //1000
-		timing_response: 2000, //2000
-		timing_post_trial: 0,
-		response_ends_trial: false,
-		on_finish: appendData
-	}
-	testTrials.push(setStims_block)
-	testTrials.push(fixation_block)
-	testTrials.push(cue_block);
-	testTrials.push(test_block)
-
-}
-var testNode = {
-	timeline: testTrials,
-	loop_function: function(data) {
-		testCount += 1
-		current_trial = 0
-		
-		var sum_rt = 0
-		var sum_responses = 0
-		var correct = 0
-		var total_trials = 0
-	
-		for (var i = 0; i < data.length; i++){
-			if (data[i].trial_id == "test_trial"){
-				total_trials+=1
-				if (data[i].rt != -1){
-					sum_rt += data[i].rt
-					sum_responses += 1
-					if (data[i].key_press == data[i].correct_response){
-						correct += 1
-		
-					}
-				}
-		
+	  
+			if (ave_rt > rt_thresh) {
+			  refresh_feedback_textv +=
+				"</p><p class = block-text>You have been responding too slowly.";
 			}
-	
-		}
-	
-		var accuracy = correct / total_trials
-		var missed_responses = (total_trials - sum_responses) / total_trials
-		var ave_rt = sum_rt / sum_responses
-	
-		feedback_text = '</p><p class = block-text style = "font-size:32px; line-height:1.2;">Please take this time to read your feedback and to take a short break!'
-		feedback_text += '</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have completed: '+testCount+' out of '+numTestBlocks+' blocks of trials.'
-		console.log('testCount, numtestblocks:', testCount, numTestBlocks)
-		if (accuracy < accuracy_thresh){
-			feedback_text +=
-				'</p><p class = block-text style = "font-size:32px; line-height:1.2;"> Your accuracy is too low.  Remember: <br>' + getPromptTextList() 
-		}
-
-		if (missed_responses > missed_thresh){
-			feedback_text +=
-				'</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have not been responding to some trials.  Please respond on every trial that requires a response.'
-		}
-
-		if (ave_rt > rt_thresh) {
-			feedback_text += 
-				'</p><p class = block-text style = "font-size:32px; line-height:1.2;"> You have been responding too slowly.'
-		}	
-
-		if (testCount == numTestBlocks){
-			feedback_text +=
-					'</p><p class = block-text>Done with this test.'
-			return false
-		} else {
-
-			task_conditions = des_events.slice(0,numTrialsPerBlock) //GRAB NEWEST BLOCKS WORTH OF TRIALS
-			des_events = des_events.slice(numTrialsPerBlock,) //SHAVE OFF THIS BLOCK FROM des_events
-			task_switches = getTaskSwitches(task_conditions)
-
-			return true
-		}
-	
-	}
-}
+	  
+			if (refreshCount == refresh_thresh) {
+			  refresh_feedback_text +=
+				"</p><p class = block-text>Done with this practice.";
+			  return false;
+			}
+	  
+			refresh_feedback_text +=
+			  "</p><p class = block-text>Redoing this practice. Press Enter to continue.";
+	  
+			return true;
+		  }
+		},
+	  };
 
 /* create experiment definition array */
-var shape_matching_with_cued_task_switching__fmri_experiment= [];
-shape_matching_with_cued_task_switching__fmri_experiment.push(design_setup_block)
-shape_matching_with_cued_task_switching__fmri_experiment.push(motor_setup_block)
+var shape_matching_with_cued_task_switching__practice_experiment= [];
+shape_matching_with_cued_task_switching__practice_experiment.push(motor_setup_block)
 
-test_keys(shape_matching_with_cued_task_switching__fmri_experiment, [89,71])
+shape_matching_with_cued_task_switching__practice_experiment.push(practiceNode);
+shape_matching_with_cued_task_switching__practice_experiment.push(refresh_feedback_block);
 
-shape_matching_with_cued_task_switching__fmri_experiment.push(practiceNode);
-shape_matching_with_cued_task_switching__fmri_experiment.push(refresh_feedback_block);
-
-cni_bore_setup(shape_matching_with_cued_task_switching__fmri_experiment)
-shape_matching_with_cued_task_switching__fmri_experiment.push(testNode0);
-shape_matching_with_cued_task_switching__fmri_experiment.push(testNode);
-shape_matching_with_cued_task_switching__fmri_experiment.push(feedback_block);
-
-shape_matching_with_cued_task_switching__fmri_experiment.push(end_block)
+shape_matching_with_cued_task_switching__practice_experiment.push(end_block)
