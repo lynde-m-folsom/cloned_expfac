@@ -441,7 +441,7 @@ var instructTimeThresh = 0 ///in seconds
 var credit_var = 0
 
 var fileTypePNG = '.png"></img>'
-var preFileType = '<img class = center src="/static/experiments/shape_matching_with_cued_task_switching__fmri/images/'
+var preFileType = '<img class = center src="/static/experiments/shape_matching_with_cued_task_switching__practice/images/'
 var accuracy_thresh = 0.75
 var rt_thresh = 1000
 var missed_thresh = 0.10
@@ -450,7 +450,7 @@ var CTI = 150
 // task specific variables
 
 var refresh_len = 28
-var refresh_thres = 3
+var refresh_thresh = 3
 var numTrialsPerBlock = 28
 var numTestBlocks = 8
 
@@ -512,8 +512,8 @@ return '<ul stype="text-align:left;"><div class = prompt_box>'+
 var task_boards = [['<div class = bigbox><div class = leftbox>'],['</div><div class = distractorbox>'],['</div><div class = rightbox>'],['</div></div>']]
 
 //PRE LOAD IMAGES HERE
-var pathSource = "/static/experiments/shape_matching_with_cued_task_switching__fmri/images/"
-var pathDesignSource = '/static/experiments/shape_matching_with_cued_task_switching__fmri/designs/' 
+var pathSource = "/static/experiments/shape_matching_with_cued_task_switching__practice/images/"
+var pathDesignSource = '/static/experiments/shape_matching_with_cued_task_switching__practice/designs/' 
 var numbersPreload = ['1','2','3','4','6','7','8','9']
 var colorsPreload = ['white','green','red']
 var images = []
@@ -583,7 +583,7 @@ var refresh_feedback_block = {
 var end_block = {
   type: 'poldrack-text',
   data: {
-    exp_id: "shape_matching_with_cued_task_switching__fmri",
+    exp_id: "shape_matching_with_cued_task_switching__practice",
     trial_id: "end",
   },
   text: '<div class = centerbox><p class = center-block-text>Thanks for completing this task!</p><p class = center-block-text>Press <i>enter</i> to continue.</p></div>',
@@ -591,7 +591,8 @@ var end_block = {
   timing_response: 10000,
   on_finish: function(){
 		assessPerformance()
-    }
+    },
+	response_ends_trial: true
 };
 
 /* define practice and test blocks */
