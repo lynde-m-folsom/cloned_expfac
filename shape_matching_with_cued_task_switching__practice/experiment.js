@@ -25,7 +25,7 @@ function genITIs() {
 
 	lambda = 1/mean_iti
 	iti_array = []
-	for (i=0; i < exp_len +numTestBlocks ; i++) { //add 3 ITIs per test block to make sure there are enough
+	for (i=0; i < numTestBlocks ; i++) { //add 3 ITIs per test block to make sure there are enough
 		curr_iti = - Math.log(Math.random()) / lambda;
 		while (curr_iti > max_thresh || curr_iti < min_thresh) {
 			curr_iti = - Math.log(Math.random()) / lambda;
@@ -451,8 +451,8 @@ var CTI = 150
 
 var refresh_len = 28
 var refresh_thres = 3
-var numTrialsPerBlock = 84
-var numTestBlocks = exp_len / numTrialsPerBlock
+var numTrialsPerBlock = 28
+var numTestBlocks = 8
 
 var motor_perm = 0
 
