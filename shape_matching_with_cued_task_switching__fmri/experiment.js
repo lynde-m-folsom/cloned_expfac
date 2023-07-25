@@ -11,6 +11,9 @@ function getdesignEvents(design_num) {
 	x = fetch(pathDesignSource+'design_'+design_num+'/events_clean.txt').then(res => res.text()).then(res => res).then(text => text.split(/\r?\n/));
 	return x
 }
+function getRandomInt(max) {
+	return Math.floor(Math.random() * Math.floor(max));
+}
 
 function insertBufferITIs(design_ITIs) {
 	var buffer_ITIs = genITIs()
@@ -26,6 +29,7 @@ function insertBufferITIs(design_ITIs) {
 	}
 	return out_ITIs
 }
+
 
 //Functions added for in-person sessions
 function genITIs() { 
@@ -191,11 +195,17 @@ var getFeedback = function() {
 var getTaskSwitches = function(event_designs){
 	var task_switches = []
 	var shape_matching_trial_types = ['DDD','SDD','DSD','DDS','SSS','SNN','DNN']
+	
 	task_switches.push({
 		task_switch: 'na',
 		cue_switch: 'na',
 		shape_matching_type: randomDraw(shape_matching_trial_types)
 	})
+
+	console.log(event_designs)
+	var shape_matching_events = makeShapeMatchingDesignTrialTypes(event_designs)
+	console.log('event designs after running func', event_designs)
+
 	for (var i = 0; i < event_designs.length; i++) {
 		console.log('events_design: ', event_designs[i])
 		if (event_designs[i].includes('tstay_cstay')) {
@@ -209,19 +219,19 @@ var getTaskSwitches = function(event_designs){
 			cue_switch = 'stay'
 		}
 
-		if (event_designs[i].includes('DDD')) {
+		if (shape_matching_events[i].includes('DDD')) {
 			shape_matching_type = 'DDD'
-		} else if (event_designs[i].includes('SDD')) {
+		} else if (shape_matching_events[i].includes('SDD')) {
 			shape_matching_type = 'SDD'
-		} else if (event_designs[i].includes('DSD')) {
+		} else if (shape_matching_events[i].includes('DSD')) {
 			shape_matching_type = 'DSD'
-		} else if (event_designs[i].includes('DDS')) {
+		} else if (shape_matching_events[i].includes('DDS')) {
 			shape_matching_type = 'DDS'
-		} else if (event_designs[i].includes('SSS')) {
+		} else if (shape_matching_events[i].includes('SSS')) {
 			shape_matching_type = 'SSS'
-		} else if (event_designs[i].includes('SNN')) {
+		} else if (shape_matching_events[i].includes('SNN')) {
 			shape_matching_type = 'SNN'
-		} else if (event_designs[i].includes('DNN')) {
+		} else if (shape_matching_events[i].includes('DNN')) {
 			shape_matching_type = 'DNN'
 		}
 		task_switches.push({
@@ -297,6 +307,7 @@ var getCue = function() {
 
 
 var getStim = function(){
+	console.log('shape matching condition', shape_matching_condition)
 	var stim_html = ''
 	if ((shape_matching_condition == "SNN") || (shape_matching_condition == "DNN")){
 		stim_html = '<div class = upperbox><div class = "center-text" >' + curr_cue + '</div></div>' +
@@ -441,6 +452,38 @@ function getTimeoutMessage() {
 
 
 
+function makeShapeMatchingDesignTrialTypes(design_events) {
+	//['SSS', 'SDD', 'SNN', 'DSD', 'DDD', 'DDS', 'DNN']
+	//neurodesign's events refer to the middle letter
+	var trial_type_arr = []
+	for (var i = 0; i < design_events.length; i++) {
+	console.log('shapematching i', i)
+	var idx;
+	var possible_events;
+	console.log('design_events[i]', design_events[i])
+
+	if (design_events[i].includes('td_same')) {
+		possible_events = ['SSS', 'DSD']
+		idx = getRandomInt(2)
+		trial_type_arr.push(possible_events[idx])
+	  }
+
+	if (design_events[i].includes('td_diff')) {
+		possible_events = ['SDD', 'DDD', 'DDS']
+		idx = getRandomInt(3)
+		trial_type_arr.push(possible_events[idx])
+	  }
+
+	if (design_events[i].includes('td_na')) {
+		possible_events = ['SNN', 'DNN']
+		idx = getRandomInt(2)
+		trial_type_arr.push(possible_events[idx])
+	  }
+	}
+	return trial_type_arr
+}
+
+
 /* ************************************ */
 /* Define experimental variables */
 /* ************************************ */
@@ -517,8 +560,8 @@ var exp_stage = 'practice' // defines the exp_stage, switched by start_test_bloc
 
 var getPromptTextList = function(){ 
 	return'<ul style="text-align:left; font-size: 32px; line-height:1.2;">'+
-					  '<li>Same or Equal: ' + getPossibleResponses()[0][0] + 'if shapes are the same and '+ getPossibleResponses()[1][0] + ' if not. </li>' +
-					  '<li>Different or Distinct: ' + getPossibleResponses()[0][0] + 'if shapes are different and '+ getPossibleResponses()[1][0] + ' if not. </li>' +
+					  '<li>Same or Equal: ' + getPossibleResponses()[0][0] + ' if shapes are the same and '+ getPossibleResponses()[1][0] + ' if not. </li>' +
+					  '<li>Different or Distinct: ' + getPossibleResponses()[0][0] + ' if shapes are different and '+ getPossibleResponses()[1][0] + ' if not. </li>' +
 					'</ul>'
 }
 
@@ -570,6 +613,7 @@ var design_setup_block = {
 		ITIs_stim = des_ITIs.slice(0)
 		ITIs_resp = des_ITIs.slice(0)
 		des_events = await getdesignEvents(design_perm)
+		console.log('#### des_events ####', des_events)
 	}
 }
 
@@ -586,7 +630,6 @@ var motor_setup_block = {
 		motor_perm=parseInt(data.responses.slice(7, 10))
 		// task_conditions = makeTaskSwitches(refresh_len)
 		// stims = createTrialTypes(task_conditions)
-		
 	}
 }
 
