@@ -305,7 +305,7 @@ var numTestBlocks = exp_len / numTrialsPerBlock
 var choices = [89, 71]
 //var choices = [90, 77]
 
-var accuracy_thresh = 0.80
+var accuracy_thresh = 0.75
 var rt_thresh = 1000
 var missed_thresh = 0.10
 var practice_thresh = 3 // 3 blocks of 14 trials
