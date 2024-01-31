@@ -233,7 +233,7 @@ var getFeedback = function() {
 var getCue = function(){
 	console.log(whichQuadrant)
 	var cue_html = task_boards[whichQuadrant - 1][0] +
-				   	'<div class = upperbox><div class = "center-text" >' + curr_cue + '</div></div>' +
+				   	'<div class = upperbox><div class = "center-text" style="font-size: 85px;" >' + curr_cue + '</div></div>' +
 				   task_boards[whichQuadrant - 1][1]
 				   
   	return cue_html
@@ -266,7 +266,7 @@ var getFixation = function(){
 var getStim = function(){	
 		
 	return task_boards[whichQuadrant - 1][0] + 
-		   	'<div class = upperbox><div class = "center-text" >' + curr_cue + '</div></div>' +
+		   	'<div class = upperbox><div class = "center-text" style="font-size: 85px;">' + curr_cue + '</div></div>' +
 		   	'<div class = lowerbox>' +
 				'<div class = left-text><div class = cue-text>' + preFileType + left_number + fileTypePNG + '</div></div>'+
 				'<div class = right-text><div class = cue-text>'+ preFileType + right_number + fileTypePNG + '</div></div>'+

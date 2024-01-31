@@ -229,6 +229,7 @@ var getCorrectResponse = function(shape_matching_condition, whichQuad) {
 function makeShapeMatchingDesignTrialTypes(design_events) {
 		//['SSS', 'SDD', 'SNN', 'DSD', 'DDD', 'DDS', 'DNN']
 		//neurodesign's events refer to the middle letter
+		console.log('##### design events #####', design_events)
 		var trial_type_arr = []
 		for (var i = 0; i < design_events.length; i++) {
 		console.log('shapematching i', i)
@@ -261,7 +262,10 @@ function makeShapeMatchingDesignTrialTypes(design_events) {
 var createTrialTypes = function(task_conditions){
 	var whichQuadStart = jsPsych.randomization.repeat([1,2,3,4],1).pop()
 	var shape_matching_trial_type_list = []
+	console.log('@@@ task_conditions @@@', task_conditions)
 	shape_matching_trial_type_list = makeShapeMatchingDesignTrialTypes(task_conditions)
+	console.log('+++ shape matching trial type list +++ ', shape_matching_trial_type_list)
+	
 	console.log('shape_matching_trial_type_list', shape_matching_trial_type_list)
 	
 	var probe_i = randomDraw([1,2,3,4,5,6,7,8,9,10])
@@ -592,12 +596,12 @@ var getPromptTextList = function(){
 
 var getPromptText = function(){
 return '<div class = prompt_box>'+
-				'<p class = center-block-text style = "font-size:26px; line-height:80%%;">Top 2 quadrants: Answer if the green and white shapes are the same </p>' +
-				  '<p class = center-block-text style = "font-size:26px; line-height:80%%;">Same: ' + getPossibleResponses()[0][0]+ ' | Different: ' + getPossibleResponses()[1][0] + '</p>' +
+				'<p style = "font-size:26px; line-height:80%%;">Top 2 quadrants: Answer if the green and white shapes are the same </p>' +
+				  '<p style = "font-size:26px; line-height:80%%;">Same: ' + getPossibleResponses()[0][0]+ ' | Different: ' + getPossibleResponses()[1][0] + '</p>' +
 				  '<p>&nbsp</p>' +
 		'<p>&nbsp</p>' +
-				  '<p class = center-block-text style = "font-size:26px; line-height:80%%;">Bottom 2 quadrants: Answer if the green and white shapes are different </p>' +
-				  '<p class = center-block-text style = "font-size:26px; line-height:80%%;">Different: ' + getPossibleResponses()[0][0] + ' | Same: ' + getPossibleResponses()[1][0] + '</p>' +
+				  '<p style = "font-size:26px; line-height:80%%;">Bottom 2 quadrants: Answer if the green and white shapes are different </p>' +
+				  '<p style = "font-size:26px; line-height:80%%;">Different: ' + getPossibleResponses()[0][0] + ' | Same: ' + getPossibleResponses()[1][0] + '</p>' +
 		  '</div>'
 }
 /* ************************************ */

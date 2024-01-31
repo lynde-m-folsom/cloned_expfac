@@ -18,7 +18,7 @@
   width: 50vw;
   height: 60vh;
   position:absolute;
-  top:40%;
+  top:50%;
   left:50%;
   margin-right:-50%;
   transform: translate(-50%,-50%);
@@ -114,6 +114,16 @@ text-align: center;
  font-size: 24px;
 }
 
+.instruct-text {
+  width:100%;
+  text-align: left;
+  margin: 0 auto;
+  margin-bottom: 1em;
+  font-size: 36px;
+  line-height: 120%;
+  color: white;
+}
+
 .prompt_box {
  width: 75%;
  height: 20%;
@@ -136,6 +146,10 @@ img.center {
   right: 0;  
   margin: auto;  
   max-height: 65%;
+}
+
+img.center {
+  height: 20vh !important;
 }
 
 /*******************************************************/

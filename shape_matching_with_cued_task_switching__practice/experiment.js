@@ -197,6 +197,9 @@ var getTaskSwitches = function(event_designs){
 		} else if (event_designs[i].includes('tswitch_cstay')) {
 			task_switch = 'switch',
 			cue_switch = 'stay'
+		} else if (event_designs[i].includes('tswitch_cswitch')) {
+			task_switch = 'switch',
+			cue_switch = 'switch'
 		}
 
 		if (event_designs[i].includes('DDD')) {
@@ -789,7 +792,7 @@ var practiceNode = {
 			}
 	  
 			if (ave_rt > rt_thresh) {
-			  refresh_feedback_textv +=
+			  refresh_feedback_text +=
 				"</p><p class = block-text>You have been responding too slowly.";
 			}
 	  

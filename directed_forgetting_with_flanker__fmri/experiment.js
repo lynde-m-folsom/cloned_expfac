@@ -381,14 +381,22 @@ function getPossibleResponses() {
 	}
 }
 
-
-function getPromptTaskList() {
-	return '<ul style="text-align:left;"><font color="white">'+
+function getPromptText() {
+	return '<ul style="text-align:left; font-size: 40px;"><font color="white">'+
 							'<li>Please respond if the probe (single letter) was in the memory set.'+
 						   	'<li>In memory set: '+getPossibleResponses()[0][0]+'</li>'+
 							   '<li>Not in memory set: '+getPossibleResponses()[1][0]+'</li>' 
 							   +'<li>Ignore the letters that are not in the middle!</li>' + 
 						   '</font></ul>'
+}
+
+function getPromptTextList() {
+	return '<div class=""><ul style="text-align:left;font-size:22px;"><font color="white">'+
+							'<li>Please respond if the probe (single letter) was in the memory set.'+
+						   	'<li>In memory set: '+getPossibleResponses()[0][0]+'</li>'+
+							   '<li>Not in memory set: '+getPossibleResponses()[1][0]+'</li>' 
+							   +'<li>Ignore the letters that are not in the middle!</li>' + 
+						   '</font></ul></div>'
 }
 
 function getRefreshFeedback() {
@@ -661,7 +669,7 @@ for (i = 0; i < refresh_len; i++) {
 		timing_post_trial: 0,
 		timing_stim: 500, //500
 		timing_response: 500,
-		prompt: getPromptTaskList,
+		prompt: getPromptTextList,
 		on_finish: function(){
 			stim = getNextStim()
 		}
@@ -678,7 +686,7 @@ for (i = 0; i < refresh_len; i++) {
 		timing_post_trial: 0,
 		timing_stim: 2000, //2000
 		timing_response: 2000,
-		prompt: getPromptTaskList
+		prompt: getPromptTextList
 	}
 
 	var ITI_fixation_block = {
@@ -691,7 +699,7 @@ for (i = 0; i < refresh_len; i++) {
 		timing_post_trial: 0,
 		timing_stim: 1000, //1000
 		timing_response: 1000,
-		prompt: getPromptTaskList, 
+		prompt: getPromptTextList, 
 		fixation_default: true
 	}
 
@@ -706,7 +714,7 @@ for (i = 0; i < refresh_len; i++) {
 		timing_post_trial: 0,
 		timing_stim: 1000, //1000
 		timing_response: 1000,
-		prompt: getPromptTaskList,
+		prompt: getPromptTextList,
 		fixation_default: true
 	};
 
@@ -722,7 +730,7 @@ for (i = 0; i < refresh_len; i++) {
 		timing_post_trial: 0,
 		timing_stim: 2000, //2000
 		timing_response: 2000,
-		prompt: getPromptTaskList,
+		prompt: getPromptTextList,
 		fixation_default: true
 	};
 	
@@ -736,7 +744,7 @@ for (i = 0; i < refresh_len; i++) {
 		timing_post_trial: 0,
 		is_html: true,
 		on_finish: appendData,
-		prompt: getPromptTaskList,
+		prompt: getPromptTextList,
 		show_stim_with_feedback: false,
 		fixation_default: true, 
 	};
@@ -752,7 +760,7 @@ for (i = 0; i < refresh_len; i++) {
 		is_html: true,
 		timing_stim: 500, //500
 		timing_response: 500,
-		prompt: getPromptTaskList,
+		prompt: getPromptTextList,
 		response_ends_trial: false, 
 
 	  };
@@ -802,7 +810,7 @@ var refreshNode = {
 	
 		   if (accuracy < accuracy_thresh){
 			feedback_text +=
-					'</p><p class = block-text> Remember: <br>' + getPromptTaskList() 
+					'</p><p class = block-text> Remember: <br>' + getPromptText() 
 					
 			if (missed_responses > missed_thresh){
 				feedback_text +=
@@ -968,7 +976,7 @@ var testNode0 = {
 		
 		if (accuracy < accuracy_thresh){
 			test_feedback_text +=
-					'</p><p class = block-text>Your accuracy is too low.  Remember: <br>' + getPromptTaskList() 
+					'</p><p class = block-text>Your accuracy is too low.  Remember: <br>' + getPromptText() 
 		}
 		
 		if (missed_responses > missed_thresh){
@@ -1039,7 +1047,7 @@ var testNode = {
 		
 		if (accuracy < accuracy_thresh){
 			test_feedback_text +=
-					'</p><p class = block-text>Your accuracy is too low.  Remember: <br>' + getPromptTaskList() 
+					'</p><p class = block-text>Your accuracy is too low.  Remember: <br>' + getPromptText() 
 		}
 		
 		if (missed_responses > missed_thresh){

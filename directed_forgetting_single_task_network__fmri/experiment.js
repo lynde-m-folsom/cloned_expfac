@@ -369,25 +369,25 @@ function getTimeoutMessage() {
   function getRefreshFeedback() {
 	if (exp_id='instructions') {
 		return 	'<div class = centerbox>'+
-		'<p class = block-text>In this experiment, on each trial you will be presented with '+
+		'<p class = instruct-text>In this experiment, on each trial you will be presented with '+
 		''+numLetters+' letters. You must memorize all '+numLetters+' letters. </p>'+
 	
-		'<p class = block-text>After the presentation of '+numLetters+' letters, there will be a short delay. You will then be presented with a cue, '+
+		'<p class = instruct-text>After the presentation of '+numLetters+' letters, there will be a short delay. You will then be presented with a cue, '+
 		'either <b>TOP</b> or <b>BOT</b>. This will instruct you to <b>forget</b> the '+
 		''+numLetters/2+' letters located at either the top or bottom (respectively) of the screen.</p>' + 
 		
-		'<p class = block-text>So if you get the cue <b>TOP</b>, please <b>forget</b> the top '+numLetters/2+' letters.</p>'+
+		'<p class = instruct-text>So if you get the cue <b>TOP</b>, please <b>forget</b> the top '+numLetters/2+' letters.</p>'+
 	
-		'<p class = block-text>'+
+		'<p class = instruct-text>'+
 			'The '+numLetters/2+' remaining letters that you must remember are called your <b>memory set</b>. You should remember '+
 			'these '+numLetters/2+' letters while forgetting the other '+numLetters/2+'.</p>'+
 
-		'<p class = block-text>You will then be presented with a single '+
+		'<p class = instruct-text>You will then be presented with a single '+
 		'letter. Respond with your '+ getPossibleResponses()[0][0] + ' if it is in the memory set, and your ' + getPossibleResponses()[1][0]+
 		' if it was not in the memory set.</p>'+
 			
-		'<p class = block-text>We will start practice when you finish instructions. Please make sure you understand the instructions before moving on. During practice, you will receive a reminder of the rules.  <b>This reminder will be taken out for test</b>.</p>'+
-		'<p class = block-text> Please press any button to let the experimenters know when you are ready to begin practice. </p>' + 
+		'<p class = instruct-text>We will start practice when you finish instructions. Please make sure you understand the instructions before moving on. During practice, you will receive a reminder of the rules.  <b>This reminder will be taken out for test</b>.</p>'+
+		'<p class = instruct-text> Please press any button to let the experimenters know when you are ready to begin practice. </p>' + 
 	'</div>'
 	} else {
 		return '<div class = bigbox><div class = picture_box><p class = instruct-text><font color="white">' + refresh_feedback_text + '</font></p></div></div>'

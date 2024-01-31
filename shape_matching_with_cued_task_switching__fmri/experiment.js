@@ -217,7 +217,11 @@ var getTaskSwitches = function(event_designs){
 		} else if (event_designs[i].includes('tswitch_cstay')) {
 			task_switch = 'switch',
 			cue_switch = 'stay'
+		} else if (event_designs[i].includes('tswitch_cswitch')) {
+			task_switch = 'switch',
+			cue_switch = 'switch'
 		}
+
 
 		if (shape_matching_events[i].includes('DDD')) {
 			shape_matching_type = 'DDD'
