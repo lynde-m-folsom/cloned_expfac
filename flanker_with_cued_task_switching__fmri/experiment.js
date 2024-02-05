@@ -313,7 +313,7 @@ var setStims = function() {
 }
 
 var getCue = function() {
-  var cue_html = '<div class = upperbox><div class = "center-text" >' + curr_cue + '</div></div><div class = lowerbox><div class = fixation>+</div></div>'
+  var cue_html = '<div class = upperbox><div class = "center-text" style="font-size: 85px;" >' + curr_cue + '</div></div><div class = lowerbox><div class = fixation>+</div></div>'
   return cue_html
 }
 
@@ -322,7 +322,7 @@ var task_boards = [['<div class = bigbox><div class = centerbox><div class = fla
 
 var getStim = function() {
 
- var stim_html = '<div class = upperbox><div class = "center-text" >' + curr_cue + '</div></div>'+
+ var stim_html = '<div class = upperbox><div class = "center-text" style="font-size:85px;" >' + curr_cue + '</div></div>'+
   				  '<div class = lowerbox>'+
 					'<div class = flankerLeft_2><div class = cue-text>' + preFileType + flanking_number + fileTypePNG + '</div></div>'+
 					'<div class = flankerLeft_1><div class = cue-text>' + preFileType + flanking_number + fileTypePNG + '</div></div>'+
@@ -367,19 +367,19 @@ function getTimeoutMessage() {
   var getRefreshFeedback = function() {
 	  if (getRefreshTrialID()=='instructions') {
 		  return '<div class = centerbox>'+
-			'<p class = block-text>In this experiment you will see a cue, either <i>magnitude</i>, <i>high-low</i>, <i>odd-even</i>, or <i>parity</i>, followed by a row of numbers.</p> '+
+			'<p class = instruct-text>In this experiment you will see a cue, either <i>magnitude</i>, <i>high-low</i>, <i>odd-even</i>, or <i>parity</i>, followed by a row of numbers.</p> '+
 		
-			'<p class = block-text>You will be asked to judge the <i>center number </i>on magnitude (higher or lower than 5) or parity (odd or even), depending on which cue you saw.</p>'+
+			'<p class = instruct-text>You will be asked to judge the <i>center number </i>on magnitude (higher or lower than 5) or parity (odd or even), depending on which cue you saw.</p>'+
 
-			'<p class = block-text>If you see the cue, <i>magnitude</i> or <i>high-low</i>, please judge the number based on whether it is lower or higher than 5. Press the <i>'+getResponseKeys().key_name[0][0]+
+			'<p class = instruct-text>If you see the cue, <i>magnitude</i> or <i>high-low</i>, please judge the number based on whether it is lower or higher than 5. Press the <i>'+getResponseKeys().key_name[0][0]+
 				' key</i> if high, and the <i>'+getResponseKeys().key_name[0][1]+' key</i> if low.</p>'+
 		
-			'<p class = block-text>If you see the cue, <i>parity</i> or <i>odd-even</i>, please judge the number based on whether it is odd or even. Press the <i>'+getResponseKeys().key_name[1][0]+
+			'<p class = instruct-text>If you see the cue, <i>parity</i> or <i>odd-even</i>, please judge the number based on whether it is odd or even. Press the <i>'+getResponseKeys().key_name[1][0]+
 				' key</i> if even, and the <i>'+getResponseKeys().key_name[1][1]+' key</i> if odd.</p>'+
 				
-			'<p class = block-text>Please judge only the center number, you should ignore the other numbers.</p>'+
+			'<p class = instruct-text>Please judge only the center number, you should ignore the other numbers.</p>'+
 		
-			'<p class = block-text>During practice, you will receive a reminder of the rules.  <i>This reminder will not be available for test</i>.</p>'+
+			'<p class = instruct-text>During practice, you will receive a reminder of the rules.  <i>This reminder will not be available for test</i>.</p>'+
 
 		'</div>'
 	  } else {

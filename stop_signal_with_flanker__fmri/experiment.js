@@ -17,7 +17,6 @@ function getITI_stim() { //added for fMRI compatibility
 		currITI = 0.1
 	}
 	return currITI
-	return currITI
 }
 
 function getITI_resp() { //added for fMRI compatibility
@@ -165,24 +164,23 @@ var getCategorizeFeedback = function(){
 	trial_id = jsPsych.data.getDataByTrialIndex(curr_trial).trial_id
 	if ((trial_id == 'practice_trial') && (jsPsych.data.getDataByTrialIndex(curr_trial).stop_signal_condition != 'stop')){
 		if (jsPsych.data.getDataByTrialIndex(curr_trial).key_press == jsPsych.data.getDataByTrialIndex(curr_trial).correct_response){
-			
-			return '<div class = fb_box><div class = center-text><font size = 20>Correct!</font></div></div>' + getPromptText()
+			return '<div class = fb_box><div class = center-text><font size = 20>Correct!</font></div></div>' + getPromptTextList()
 		} else if ((jsPsych.data.getDataByTrialIndex(curr_trial).key_press != jsPsych.data.getDataByTrialIndex(curr_trial).correct_response) && (jsPsych.data.getDataByTrialIndex(curr_trial).key_press != -1)){
 			
 			
-			return '<div class = fb_box><div class = center-text><font size = 20>Incorrect</font></div></div>' + getPromptText()
+			return '<div class = fb_box><div class = center-text><font size = 20>Incorrect</font></div></div>' + getPromptTextList()
 	
 		} else if (jsPsych.data.getDataByTrialIndex(curr_trial).key_press == -1){
 			
 			
-			return '<div class = fb_box><div class = center-text><font size = 20>Respond Faster!</font></div></div>' + getPromptText()
+			return '<div class = fb_box><div class = center-text><font size = 20>Respond Faster!</font></div></div>' + getPromptTextList()
 	
 		}
 	} else if ((trial_id == 'practice_trial') && (jsPsych.data.getDataByTrialIndex(curr_trial).stop_signal_condition == 'stop')){
 		if (jsPsych.data.getDataByTrialIndex(curr_trial).rt == -1){
-			return '<div class = fb_box><div class = center-text><font size = 20>Correct!</font></div></div>' + getPromptText()
+			return '<div class = fb_box><div class = center-text><font size = 20>Correct!</font></div></div>' + getPromptTextList()
 		} else if (jsPsych.data.getDataByTrialIndex(curr_trial).rt != -1){
-			return '<div class = fb_box><div class = center-text><font size = 20>There was a star.</font></div></div>' + getPromptText()
+			return '<div class = fb_box><div class = center-text><font size = 20>There was a star.</font></div></div>' + getPromptTextList()
 		}
 	}
 }
@@ -381,6 +379,16 @@ var getPromptText = function(){
 			'</font></ul>'
 }
 
+var getPromptTextList = function(){
+	return '<ul style = "text-align:left;font-size:22px;"><font color=white>'+
+			'<li>Indicate the identity of the middle letter</li>' +
+			'<li>If the middle letter is H: '+getPossibleResponses()[0][0]+'.</li>'+
+		    '<li>If the middle letter is F, press your '+getPossibleResponses()[1][0]+'.</li>'+
+			'<li>Do not respond if you see a star around the letters!</li>' +
+			'<li>Do not slow down your responses to the letter to wait for the star.</li>' +
+			'</font></ul>'
+}
+
 var pathDesignSource = "/static/experiments/stop_signal_with_flanker__fmri/designs/" //ADDED FOR fMRI SEQUENCES
 
 var pathSource = "/static/experiments/stop_signal_with_flanker__fmri/images/"
@@ -557,7 +565,7 @@ for (i = 0; i < refresh_len; i++) {
 		},
 		timing_response: 500,
 		timing_post_trial: 0,
-		prompt: getPromptText,
+		prompt: getPromptTextList,
 		on_finish: shiftStim,
 	}
 
@@ -578,7 +586,7 @@ for (i = 0; i < refresh_len; i++) {
 		timing_SS: 500, //500
 		timing_post_trial: 0,
 		on_finish: appendData,
-		prompt: getPromptText,
+		prompt: getPromptTextList,
 		on_start: function(){
 			stoppingTracker = []
 			stoppingTimeTracker = []

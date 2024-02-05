@@ -452,16 +452,16 @@ function getRefreshFeedback() {
   if (getRefreshTrialID() == "instructions") {
     return (
       "<div class = centerbox>" +
-      "<p class = block-text>In this task, you will see a letter on the screen in one of 4 quadrants.</p>" +
-      "<p class = block-text>You will be asked to match the current letter to the letter that appeared either 1 or 2 trials ago depending on if the letter was on the top or bottom quadrants.</p> " +
-      "<p class = block-text>When in the top two quadrants, the rule is 1-back. Please respond if the current letter was the same as the letter that occurred 1 trial ago.</p> " +
-      "<p class = block-text>When in the bottom two quadrants, the rule is 2-back. Please respond if the current letter was the same as the letter that occurred 2 trials ago.</p> " +
-      "<p class = block-text>Press the " +
+      "<p class = instruct-text>In this task, you will see a letter on the screen in one of 4 quadrants.</p>" +
+      "<p class = instruct-text>You will be asked to match the current letter to the letter that appeared either 1 or 2 trials ago depending on if the letter was on the top or bottom quadrants.</p> " +
+      "<p class = instruct-text>When in the top two quadrants, the rule is 1-back. Please respond if the current letter was the same as the letter that occurred 1 trial ago.</p> " +
+      "<p class = instruct-text>When in the bottom two quadrants, the rule is 2-back. Please respond if the current letter was the same as the letter that occurred 2 trials ago.</p> " +
+      "<p class = instruct-text>Press the " +
       getPossibleResponses()[0][0] +
       " if the current letter matches the letter 1 or 2 trials ago, and the " +
       getPossibleResponses()[1][0] +
       " if they mismatch.</p> " +
-      '<p class = block-text>Capitalization does not matter, so "T" matches with "t".</p> '
+      '<p class = instruct-text>Capitalization does not matter, so "T" matches with "t".</p> '
     );
   } else {
     return (

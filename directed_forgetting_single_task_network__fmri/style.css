@@ -27,6 +27,16 @@
   color: white;
 }
 
+.instruct-text { 
+  width:100%;
+  text-align: left;
+  margin: 0 auto;
+  margin-bottom: 1em;
+  font-size: 36px;
+  line-height: 120%;
+  color: white;
+}
+
 ul {
   list-style-type: none;
   text-align: center;
@@ -41,7 +51,7 @@ ul {
   width: 50vw;
   height: 60vh;
   position:absolute;
-  top:40%;
+  top:50%;
   left:50%;
   margin-right:-50%;
   transform: translate(-50%,-50%);
