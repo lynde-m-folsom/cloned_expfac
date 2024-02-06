@@ -310,8 +310,6 @@ If "switch old", switch to the last task and randomly choose a cue.
 var setStims = function () {
   var tmp;
   var numbers = [1, 2, 3, 4, 6, 7, 8, 9];
-  console.log('task_switches: ', task_switches);
-  console.log('task switches [current_trial]: ', task_switches[current_trial]);
   switch (task_switches[current_trial].task_switch) {
     case 'stay':
       if (curr_task == 'na') {
@@ -511,7 +509,7 @@ var getRefreshResponseEnds = function () {
 var appendData = function () {
   var curr_trial = jsPsych.progress().current_trial_global;
   var trial_id = jsPsych.data.getDataByTrialIndex(curr_trial).trial_id;
-  var trial_num = current_trial - 1; //current_trial has already been updated with setStims, so subtract one to record data
+  var trial_num = current_trial - 1;
   var task_switch = task_switches[trial_num];
 
   jsPsych.data.addDataToLastTrial({
@@ -852,7 +850,6 @@ for (var i = 0; i < refresh_length + 1; i++) {
     timing_stim: 1000, //1000
     timing_post_trial: 0,
     prompt: getPromptTaskList,
-    on_finish: appendData,
     fixation_default: true,
     fixation_stim:
       '<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>',
@@ -860,6 +857,11 @@ for (var i = 0; i < refresh_length + 1; i++) {
       data.correct_response = getResponse();
       data.correct = getResponse() === data.key_press ? 1 : 0;
       data.flanker_condition = flanker_condition;
+      data.task = curr_task;
+      data.cue = curr_cue;
+      data.flanking_number = flanking_number;
+      data.center_number = curr_stim.number;
+      data.CTI = CTI;
       console.log(data);
     },
   };
@@ -990,10 +992,14 @@ for (i = 0; i < numTrialsPerBlock + 1; i++) {
     timing_stim: 1000, //1000
     response_ends_trial: false,
     on_finish: function (data) {
-      appendData();
       data.correct_response = getResponse();
       data.correct = getResponse() === data.key_press ? 1 : 0;
       data.flanker_condition = flanker_condition;
+      data.task = curr_task;
+      data.cue = curr_cue;
+      data.flanking_number = flanking_number;
+      data.center_number = curr_stim.number;
+      data.CTI = CTI;
       console.log(data);
     },
     fixation_default: true,
@@ -1062,7 +1068,17 @@ for (i = 0; i < numTrialsPerBlock + 1; i++) {
     timing_response: 2000, //2000
     timing_stim: 1000, //1000
     response_ends_trial: false,
-    on_finish: appendData,
+    on_finish: function (data) {
+      data.correct_response = getResponse();
+      data.correct = getResponse() === data.key_press ? 1 : 0;
+      data.flanker_condition = flanker_condition;
+      data.task = curr_task;
+      data.cue = curr_cue;
+      data.flanking_number = flanking_number;
+      data.center_number = curr_stim.number;
+      data.CTI = CTI;
+      console.log(data);
+    },
     fixation_default: true,
     fixation_stim:
       '<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>',
