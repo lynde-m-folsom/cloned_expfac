@@ -127,8 +127,8 @@ function getResponseKeys() {
   } else if (getMotorPerm() == 1) {
     return {
       key: [
-        [71, 89],
-        [89, 71],
+        [39, 37],
+        [37, 39],
       ],
       key_name: [
         ["middle finger", "index finger"],
@@ -138,8 +138,8 @@ function getResponseKeys() {
   } else if (getMotorPerm() == 2) {
     return {
       key: [
-        [89, 71],
-        [71, 89],
+        [39, 71],
+        [71, 39],
       ],
       key_name: [
         ["index finger", "middle finger"],
@@ -149,8 +149,8 @@ function getResponseKeys() {
   } else if (getMotorPerm() == 3) {
     return {
       key: [
-        [71, 89],
-        [71, 89],
+        [39, 37],
+        [39, 37],
       ],
       key_name: [
         ["middle finger", "index finger"],
