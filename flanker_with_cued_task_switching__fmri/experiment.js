@@ -138,7 +138,16 @@ function getCurrTask() {
 // returns dictionary with keys for and fingers for the two tasks. set [0] = magnitude, set [1] = parity
 function getResponseKeys() {
   if (getMotorPerm() == 0) {
-    return response_keys;
+    return {
+      key: [
+        [89, 71],
+        [89, 71],
+      ],
+      key_name: [
+        ['index finger', 'middle finger'],
+        ['index finger', 'middle finger'],
+      ],
+    };
   } else if (getMotorPerm() == 1) {
     return {
       key: [
@@ -426,18 +435,18 @@ var getResponse = function () {
   switch (curr_task) {
     case 'magnitude':
       if (curr_stim.number > 5) {
-        correct_response = response_keys.key[0][0];
+        correct_response = getResponseKeys().key[0][0];
         return correct_response;
       } else {
-        correct_response = response_keys.key[0][1];
+        correct_response = getResponseKeys().key[0][1];
         return correct_response;
       }
     case 'parity':
       if (curr_stim.number % 2 === 0) {
-        correct_response = response_keys.key[1][0];
+        correct_response = getResponseKeys().key[1][0];
         return correct_response;
       } else {
-        correct_response = response_keys.key[1][1];
+        correct_response = getResponseKeys().key[1][1];
         return correct_response;
       }
   }
@@ -538,17 +547,7 @@ var practice_thresh = 3;
 var lowestNumCond = 8;
 var CTI = 150;
 
-var response_keys = {
-  key: [
-    [89, 71],
-    [89, 71],
-  ],
-  key_name: [
-    ['index finger', 'middle finger'],
-    ['index finger', 'middle finger'],
-  ],
-};
-var choices = response_keys.key;
+var choices = [71, 89];
 var refresh_length = 8;
 var test_length = 240;
 var numTrialsPerBlock = 40;
@@ -605,12 +604,6 @@ var curr_cue = 'na'; //object that holds the current cue, set by setStims()
 var cue_i = randomDraw([0, 1]); //index for one of two cues of the current task
 var curr_stim = 'na'; //object that holds the current stim, set by setStims()
 var exp_stage = 'practice'; // defines the exp_stage, switched by start_test_block
-
-// var task_list = '<ul>'+
-// 					'<li><i>Parity</i> or <i>Odd-Even</i>: ' + response_keys.key_name[0] + ' if even and ' + response_keys.key_name[1] + ' if odd.</li>'+
-// 					'<li><i>Magnitude</i> or <i>High-Low</i>: ' + response_keys.key_name[0] + ' if >5 and ' + response_keys.key_name[1] + ' if <5.</li>'+
-// 					'<li>Only judge the center number!</li>'+
-// 				'</ul>'
 
 function getPromptTaskList() {
   return (
@@ -863,6 +856,12 @@ for (var i = 0; i < refresh_length + 1; i++) {
     fixation_default: true,
     fixation_stim:
       '<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>',
+    on_finish: function (data) {
+      data.correct_response = getResponse();
+      data.correct = getResponse() === data.key_press ? 1 : 0;
+      data.flanker_condition = flanker_condition;
+      console.log(data);
+    },
   };
 
   refreshTrials.push(setStims_block);
@@ -990,7 +989,13 @@ for (i = 0; i < numTrialsPerBlock + 1; i++) {
     timing_response: 2000, //2000
     timing_stim: 1000, //1000
     response_ends_trial: false,
-    on_finish: appendData,
+    on_finish: function (data) {
+      appendData();
+      data.correct_response = getResponse();
+      data.correct = getResponse() === data.key_press ? 1 : 0;
+      data.flanker_condition = flanker_condition;
+      console.log(data);
+    },
     fixation_default: true,
     fixation_stim:
       '<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>',
