@@ -3,14 +3,14 @@
 /* ************************************ */
 //FUNCTIONS FOR GETTING FMRI SEQUENCES
 function getdesignITIs(design_num) {
-  x = fetch(pathDesignSource + "design_" + design_num + "/ITIs_clean.txt")
+  x = fetch(pathDesignSource + 'design_' + design_num + '/ITIs_clean.txt')
     .then((res) => res.text())
     .then((res) => res)
     .then((text) => text.split(/\r?\n/));
   return x;
 }
 function getdesignEvents(design_num) {
-  x = fetch(pathDesignSource + "design_" + design_num + "/events_clean.txt")
+  x = fetch(pathDesignSource + 'design_' + design_num + '/events_clean.txt')
     .then((res) => res.text())
     .then((res) => res)
     .then((text) => text.split(/\r?\n/));
@@ -21,46 +21,46 @@ function makeDesignSwitches(design_events) {
   var task_switches_array = [];
   for (var i = 0; i < design_events.length; i++) {
     switch (design_events[i]) {
-      case "congruent_tstay_cstay":
+      case 'congruent_tstay_cstay':
         task_switches_array.push({
-          task_switch: "stay",
-          cue_switch: "stay",
-          flanker_condition: "congruent",
+          task_switch: 'stay',
+          cue_switch: 'stay',
+          flanker_condition: 'congruent',
         });
         break;
-      case "congruent_tstay_cswitch":
+      case 'congruent_tstay_cswitch':
         task_switches_array.push({
-          task_switch: "stay",
-          cue_switch: "switch",
-          flanker_condition: "congruent",
+          task_switch: 'stay',
+          cue_switch: 'switch',
+          flanker_condition: 'congruent',
         });
         break;
-      case "congruent_tswitch_cswitch":
+      case 'congruent_tswitch_cswitch':
         task_switches_array.push({
-          task_switch: "switch",
-          cue_switch: "switch",
-          flanker_condition: "congruent",
+          task_switch: 'switch',
+          cue_switch: 'switch',
+          flanker_condition: 'congruent',
         });
         break;
-      case "incongruent_tstay_cstay":
+      case 'incongruent_tstay_cstay':
         task_switches_array.push({
-          task_switch: "stay",
-          cue_switch: "stay",
-          flanker_condition: "incongruent",
+          task_switch: 'stay',
+          cue_switch: 'stay',
+          flanker_condition: 'incongruent',
         });
         break;
-      case "incongruent_tstay_cswitch":
+      case 'incongruent_tstay_cswitch':
         task_switches_array.push({
-          task_switch: "stay",
-          cue_switch: "switch",
-          flanker_condition: "incongruent",
+          task_switch: 'stay',
+          cue_switch: 'switch',
+          flanker_condition: 'incongruent',
         });
         break;
-      case "incongruent_tswitch_cswitch":
+      case 'incongruent_tswitch_cswitch':
         task_switches_array.push({
-          task_switch: "switch",
-          cue_switch: "switch",
-          flanker_condition: "incongruent",
+          task_switch: 'switch',
+          cue_switch: 'switch',
+          flanker_condition: 'incongruent',
         });
         break;
     }
@@ -85,7 +85,7 @@ function insertBufferITIs(design_ITIs) {
 }
 function addID() {
   jsPsych.data.addDataToLastTrial({
-    exp_id: "flanker_with_cued_task_switching",
+    exp_id: 'flanker_with_cued_task_switching',
   });
 }
 //Functions added for in-person sessions
@@ -138,7 +138,16 @@ function getCurrTask() {
 // returns dictionary with keys for and fingers for the two tasks. set [0] = magnitude, set [1] = parity
 function getResponseKeys() {
   if (getMotorPerm() == 0) {
-    return response_keys;
+    return {
+      key: [
+        [89, 71],
+        [89, 71],
+      ],
+      key_name: [
+        ['index finger', 'middle finger'],
+        ['index finger', 'middle finger'],
+      ],
+    };
   } else if (getMotorPerm() == 1) {
     return {
       key: [
@@ -146,8 +155,8 @@ function getResponseKeys() {
         [89, 71],
       ],
       key_name: [
-        ["middle finger", "index finger"],
-        ["index finger", "middle finger"],
+        ['middle finger', 'index finger'],
+        ['index finger', 'middle finger'],
       ],
     };
   } else if (getMotorPerm() == 2) {
@@ -157,8 +166,8 @@ function getResponseKeys() {
         [71, 89],
       ],
       key_name: [
-        ["index finger", "middle finger"],
-        ["middle finger", "index finger"],
+        ['index finger', 'middle finger'],
+        ['middle finger', 'index finger'],
       ],
     };
   } else if (getMotorPerm() == 3) {
@@ -168,23 +177,23 @@ function getResponseKeys() {
         [71, 89],
       ],
       key_name: [
-        ["middle finger", "index finger"],
-        ["middle finger", "index finger"],
+        ['middle finger', 'index finger'],
+        ['middle finger', 'index finger'],
       ],
     };
   }
 }
 
 function getChoices() {
-  if (getCurrTask() == "magnitude") {
+  if (getCurrTask() == 'magnitude') {
     return getResponseKeys().key[0];
-  } else if (getCurrTask() == "parity") {
+  } else if (getCurrTask() == 'parity') {
     return getResponseKeys().key[1];
   }
 }
 
 function assessPerformance() {
-  var experiment_data = jsPsych.data.getTrialsOfType("poldrack-single-stim");
+  var experiment_data = jsPsych.data.getTrialsOfType('poldrack-single-stim');
   var missed_count = 0;
   var trial_count = 0;
   var rt_array = [];
@@ -198,7 +207,7 @@ function assessPerformance() {
   choice_counts[90] = 0;
 
   for (var i = 0; i < experiment_data.length; i++) {
-    if (experiment_data[i].trial_id == "test_trial") {
+    if (experiment_data[i].trial_id == 'test_trial') {
       trial_count += 1;
       rt = experiment_data[i].rt;
       key = experiment_data[i].key_press;
@@ -247,9 +256,9 @@ var randomDraw = function (lst) {
 
 var getInstructFeedback = function () {
   return (
-    "<div class = centerbox><p class = center-block-text>" +
+    '<div class = centerbox><p class = center-block-text>' +
     feedback_instruct_text +
-    "</p></div>"
+    '</p></div>'
   );
 };
 
@@ -265,8 +274,8 @@ var getKeys = function (obj) {
 var genStims = function (n) {
   stims = [];
   for (var i = 0; i < n; i++) {
-    var number = randomDraw("12346789");
-    var color = "white";
+    var number = randomDraw('12346789');
+    var color = 'white';
     var stim = {
       number: parseInt(number),
       color: color,
@@ -289,7 +298,7 @@ var getFeedback = function () {
   return (
     '<div class = bigbox><div class = picture_box><p class = block-text><font color="white">' +
     feedback_text +
-    "</font></p></div></div>"
+    '</font></p></div></div>'
   );
 };
 
@@ -301,22 +310,20 @@ If "switch old", switch to the last task and randomly choose a cue.
 var setStims = function () {
   var tmp;
   var numbers = [1, 2, 3, 4, 6, 7, 8, 9];
-  console.log("task_switches: ", task_switches);
-  console.log("task switches [current_trial]: ", task_switches[current_trial]);
   switch (task_switches[current_trial].task_switch) {
-    case "stay":
-      if (curr_task == "na") {
+    case 'stay':
+      if (curr_task == 'na') {
         tmp = curr_task;
         curr_task = randomDraw(getKeys(tasks));
       }
-      if (task_switches[current_trial].cue_switch == "switch") {
+      if (task_switches[current_trial].cue_switch == 'switch') {
         cue_i = 1 - cue_i;
       }
       break;
-    case "switch_new":
-      task_switches[current_trial].cue_switch = "switch";
+    case 'switch':
+      task_switches[current_trial].cue_switch = 'switch';
       cue_i = randomDraw([0, 1]);
-      if (last_task == "na") {
+      if (last_task == 'na') {
         tmp = curr_task;
         curr_task = randomDraw(
           getKeys(tasks).filter(function (x) {
@@ -332,10 +339,10 @@ var setStims = function () {
         last_task = tmp;
       }
       break;
-    case "switch_old":
-      task_switches[current_trial].cue_switch = "switch";
+    case 'switch_old':
+      task_switches[current_trial].cue_switch = 'switch';
       cue_i = randomDraw([0, 1]);
-      if (last_task == "na") {
+      if (last_task == 'na') {
         tmp = curr_task;
         curr_task = randomDraw(
           getKeys(tasks).filter(function (x) {
@@ -352,8 +359,8 @@ var setStims = function () {
   }
   curr_cue = tasks[curr_task].cues[cue_i];
   curr_stim = stims[current_trial];
-  flanker_condition = task_switches[current_trial].flanker_type;
-  if (flanker_condition == "congruent") {
+  flanker_condition = task_switches[current_trial].flanker_condition;
+  if (flanker_condition == 'congruent') {
     flanking_number = curr_stim.number;
   } else {
     flanking_number = randomDraw(
@@ -370,53 +377,53 @@ var getCue = function () {
   var cue_html =
     '<div class = upperbox><div class = "center-text" style="font-size: 85px;" >' +
     curr_cue +
-    "</div></div><div class = lowerbox><div class = fixation>+</div></div>";
+    '</div></div><div class = lowerbox><div class = fixation>+</div></div>';
   return cue_html;
 };
 
 var task_boards = [
   [
-    "<div class = bigbox><div class = centerbox><div class = flankerLeft_2><div class = cue-text>",
+    '<div class = bigbox><div class = centerbox><div class = flankerLeft_2><div class = cue-text>',
   ],
-  ["</div></div><div class = flankerLeft_1><div class = cue-text>"],
-  ["</div></div><div class = flankerMiddle><div class = cue-text>"],
-  ["</div></div><div class = flankerRight_1><div class = cue-text>"],
-  ["</div></div><div class = flankerRight_2><div class = cue-text>"],
-  ["</div></div></div></div>"],
+  ['</div></div><div class = flankerLeft_1><div class = cue-text>'],
+  ['</div></div><div class = flankerMiddle><div class = cue-text>'],
+  ['</div></div><div class = flankerRight_1><div class = cue-text>'],
+  ['</div></div><div class = flankerRight_2><div class = cue-text>'],
+  ['</div></div></div></div>'],
 ];
 
 var getStim = function () {
   var stim_html =
     '<div class = upperbox><div class = "center-text" style="font-size:85px;" >' +
     curr_cue +
-    "</div></div>" +
-    "<div class = lowerbox>" +
-    "<div class = flankerLeft_2><div class = cue-text>" +
+    '</div></div>' +
+    '<div class = lowerbox>' +
+    '<div class = flankerLeft_2><div class = cue-text>' +
     preFileType +
     flanking_number +
     fileTypePNG +
-    "</div></div>" +
-    "<div class = flankerLeft_1><div class = cue-text>" +
+    '</div></div>' +
+    '<div class = flankerLeft_1><div class = cue-text>' +
     preFileType +
     flanking_number +
     fileTypePNG +
-    "</div></div>" +
-    "<div class = flankerMiddle><div class = cue-text>" +
+    '</div></div>' +
+    '<div class = flankerMiddle><div class = cue-text>' +
     preFileType +
     curr_stim.number +
     fileTypePNG +
-    "</div></div>" +
-    "<div class = flankerRight_1><div class = cue-text>" +
+    '</div></div>' +
+    '<div class = flankerRight_1><div class = cue-text>' +
     preFileType +
     flanking_number +
     fileTypePNG +
-    "</div></div>" +
-    "<div class = flankerRight_2><div class = cue-text>" +
+    '</div></div>' +
+    '<div class = flankerRight_2><div class = cue-text>' +
     preFileType +
     flanking_number +
     fileTypePNG +
-    "</div></div>" +
-    "</div>";
+    '</div></div>' +
+    '</div>';
   return stim_html;
 };
 
@@ -424,21 +431,20 @@ var getStim = function () {
 // task and stim
 var getResponse = function () {
   switch (curr_task) {
-    case "magnitude":
+    case 'magnitude':
       if (curr_stim.number > 5) {
-        correct_response = response_keys.key[0][0];
+        correct_response = getResponseKeys().key[0][0];
         return correct_response;
       } else {
-        correct_response = response_keys.key[0][1];
+        correct_response = getResponseKeys().key[0][1];
         return correct_response;
       }
-      break;
-    case "parity":
+    case 'parity':
       if (curr_stim.number % 2 === 0) {
-        correct_response = response_keys.key[1][0];
+        correct_response = getResponseKeys().key[1][0];
         return correct_response;
       } else {
-        correct_response = response_keys.key[1][1];
+        correct_response = getResponseKeys().key[1][1];
         return correct_response;
       }
   }
@@ -446,43 +452,43 @@ var getResponse = function () {
 
 function getTimeoutMessage() {
   return (
-    "<div class = upperbox><div class = center-text>Respond Faster!</div></div>" +
+    '<div class = upperbox><div class = center-text>Respond Faster!</div></div>' +
     getPromptTaskList()
   );
 }
 
 function getTaskList() {
   return (
-    "<p class = instruct-text>If you see the cue, <i>magnitude</i> or <i>high-low</i>, please judge the number based on whether it is lower or higher than 5. Press the <i>" +
+    '<p class = instruct-text>If you see the cue, <i>magnitude</i> or <i>high-low</i>, please judge the number based on whether it is lower or higher than 5. Press the <i>' +
     getResponseKeys().key_name[0][0] +
-    " key</i> if high, and the <i>" +
+    ' key</i> if high, and the <i>' +
     getResponseKeys().key_name[0][1] +
-    " key</i> if low.</p>" +
-    "<p class = instruct-text>If you see the cue, <i>parity</i> or <i>odd-even</i>, please judge the number based on whether it is odd or even. Press the <i>" +
+    ' key</i> if low.</p>' +
+    '<p class = instruct-text>If you see the cue, <i>parity</i> or <i>odd-even</i>, please judge the number based on whether it is odd or even. Press the <i>' +
     getResponseKeys().key_name[1][0] +
-    " key</i> if even, and the <i>" +
+    ' key</i> if even, and the <i>' +
     getResponseKeys().key_name[1][1] +
-    " key</i> if odd.</p>"
+    ' key</i> if odd.</p>'
   );
 }
 
 //feedback functions added for in-person version
 var getRefreshFeedback = function () {
-  if (getRefreshTrialID() == "instructions") {
+  if (getRefreshTrialID() == 'instructions') {
     return (
-      "<div class = centerbox>" +
-      "<p class = instruct-text>In this experiment you will see a cue, either <i>magnitude</i>, <i>high-low</i>, <i>odd-even</i>, or <i>parity</i>, followed by a row of numbers.</p> " +
-      "<p class = instruct-text>You will be asked to judge the <i>center number </i>on magnitude (higher or lower than 5) or parity (odd or even), depending on which cue you saw.</p>" +
+      '<div class = centerbox>' +
+      '<p class = instruct-text>In this experiment you will see a cue, either <i>magnitude</i>, <i>high-low</i>, <i>odd-even</i>, or <i>parity</i>, followed by a row of numbers.</p> ' +
+      '<p class = instruct-text>You will be asked to judge the <i>center number </i>on magnitude (higher or lower than 5) or parity (odd or even), depending on which cue you saw.</p>' +
       getTaskList() +
-      "<p class = instruct-text>Please judge only the center number, you should ignore the other numbers.</p>" +
-      "<p class = instruct-text>During practice, you will receive a reminder of the rules.  <i>This reminder will not be available for test</i>.</p>" +
-      "</div>"
+      '<p class = instruct-text>Please judge only the center number, you should ignore the other numbers.</p>' +
+      '<p class = instruct-text>During practice, you will receive a reminder of the rules.  <i>This reminder will not be available for test</i>.</p>' +
+      '</div>'
     );
   } else {
     return (
       '<div class = bigbox><div class = picture_box><p class = block-text><font color="white">' +
       refresh_feedback_text +
-      "</font></p></div></div>"
+      '</font></p></div></div>'
     );
   }
 };
@@ -503,7 +509,7 @@ var getRefreshResponseEnds = function () {
 var appendData = function () {
   var curr_trial = jsPsych.progress().current_trial_global;
   var trial_id = jsPsych.data.getDataByTrialIndex(curr_trial).trial_id;
-  var trial_num = current_trial - 1; //current_trial has already been updated with setStims, so subtract one to record data
+  var trial_num = current_trial - 1;
   var task_switch = task_switches[trial_num];
 
   jsPsych.data.addDataToLastTrial({
@@ -539,33 +545,23 @@ var practice_thresh = 3;
 var lowestNumCond = 8;
 var CTI = 150;
 
-var response_keys = {
-  key: [
-    [89, 71],
-    [89, 71],
-  ],
-  key_name: [
-    ["index finger", "middle finger"],
-    ["index finger", "middle finger"],
-  ],
-};
-var choices = response_keys.key;
+var choices = [71, 89];
 var refresh_length = 8;
 var test_length = 240;
 var numTrialsPerBlock = 40;
 var numTestBlocks = test_length / numTrialsPerBlock;
 
-var flanker_styles = ["solid", "outlined"];
+var flanker_styles = ['solid', 'outlined'];
 
 //set up block stim. correct_responses indexed by [block][stim][type]
 var tasks = {
   parity: {
-    task: "parity",
-    cues: ["Parity", "Odd-Even"],
+    task: 'parity',
+    cues: ['Parity', 'Odd-Even'],
   },
   magnitude: {
-    task: "magnitude",
-    cues: ["Magnitude", "High-Low"],
+    task: 'magnitude',
+    cues: ['Magnitude', 'High-Low'],
   },
 };
 /*
@@ -575,9 +571,9 @@ color: {
   },
 */
 var current_trial = 0;
-var task_switch_types = ["stay", "switch_new"];
-var cue_switch_types = ["stay", "switch"];
-var flanker_types = ["congruent", "incongruent"];
+var task_switch_types = ['stay', 'switch'];
+var cue_switch_types = ['stay', 'switch'];
+var flanker_types = ['congruent', 'incongruent'];
 var task_switches_array = [];
 for (var t = 0; t < task_switch_types.length; t++) {
   for (var c = 0; c < cue_switch_types.length; c++) {
@@ -585,7 +581,7 @@ for (var t = 0; t < task_switch_types.length; t++) {
       task_switches_array.push({
         task_switch: task_switch_types[t],
         cue_switch: cue_switch_types[c],
-        flanker_type: flanker_types[s],
+        flanker_condition: flanker_types[s],
       });
     }
   }
@@ -595,51 +591,45 @@ var task_switches = jsPsych.randomization.repeat(
   refresh_length / lowestNumCond
 );
 task_switches.unshift({
-  task_switch: "na",
-  cue_switch: "na",
-  flanker: jsPsych.randomization.repeat(flanker_types, 1).pop(),
+  task_switch: 'na',
+  cue_switch: 'na',
+  flanker_condition: jsPsych.randomization.repeat(flanker_types, 1).pop(),
 });
 
 var curr_task = randomDraw(getKeys(tasks));
-var last_task = "na"; //object that holds the last task, set by setStims()
-var curr_cue = "na"; //object that holds the current cue, set by setStims()
+var last_task = 'na'; //object that holds the last task, set by setStims()
+var curr_cue = 'na'; //object that holds the current cue, set by setStims()
 var cue_i = randomDraw([0, 1]); //index for one of two cues of the current task
-var curr_stim = "na"; //object that holds the current stim, set by setStims()
-var exp_stage = "practice"; // defines the exp_stage, switched by start_test_block
-
-// var task_list = '<ul>'+
-// 					'<li><i>Parity</i> or <i>Odd-Even</i>: ' + response_keys.key_name[0] + ' if even and ' + response_keys.key_name[1] + ' if odd.</li>'+
-// 					'<li><i>Magnitude</i> or <i>High-Low</i>: ' + response_keys.key_name[0] + ' if >5 and ' + response_keys.key_name[1] + ' if <5.</li>'+
-// 					'<li>Only judge the center number!</li>'+
-// 				'</ul>'
+var curr_stim = 'na'; //object that holds the current stim, set by setStims()
+var exp_stage = 'practice'; // defines the exp_stage, switched by start_test_block
 
 function getPromptTaskList() {
   return (
     '<ul style="text-align:left;"><font color="white">' +
-    "<li><i>Magnitude</i> or <i>High-Low</i>: " +
+    '<li><i>Magnitude</i> or <i>High-Low</i>: ' +
     getResponseKeys().key_name[0][0] +
-    " if >5 and " +
+    ' if >5 and ' +
     getResponseKeys().key_name[0][1] +
-    " if <5.</li>" +
-    "<li><i>Parity</i> or <i>Odd-Even</i>: " +
+    ' if <5.</li>' +
+    '<li><i>Parity</i> or <i>Odd-Even</i>: ' +
     getResponseKeys().key_name[1][0] +
-    " if even and " +
+    ' if even and ' +
     getResponseKeys().key_name[1][1] +
-    " if odd.</li>" +
-    "<li>Only judge the center number!</li>" +
-    "</ul>"
+    ' if odd.</li>' +
+    '<li>Only judge the center number!</li>' +
+    '</ul>'
   );
 }
 
 //PRE LOAD IMAGES HERE
 var pathSource =
-  "/static/experiments/flanker_with_cued_task_switching__fmri/images/";
+  '/static/experiments/flanker_with_cued_task_switching__fmri/images/';
 var pathDesignSource =
-  "/static/experiments/flanker_with_cued_task_switching__fmri/designs/"; //ADDED FOR fMRI SEQUENCES
-var numbersPreload = ["1", "2", "3", "4", "6", "7", "8", "9"];
+  '/static/experiments/flanker_with_cued_task_switching__fmri/designs/'; //ADDED FOR fMRI SEQUENCES
+var numbersPreload = ['1', '2', '3', '4', '6', '7', '8', '9'];
 var images = [];
 for (i = 0; i < numbersPreload.length; i++) {
-  images.push(pathSource + numbersPreload[i] + ".png");
+  images.push(pathSource + numbersPreload[i] + '.png');
 }
 
 jsPsych.pluginAPI.preloadImages(images);
@@ -648,7 +638,7 @@ jsPsych.pluginAPI.preloadImages(images);
 //fmri variables
 var ITIs_stim = [];
 var ITIs_resp = [];
-var refresh_trial_id = "instructions";
+var refresh_trial_id = 'instructions';
 var refresh_feedback_timing = -1;
 var refresh_response_ends = true;
 var refreshStims = [];
@@ -661,7 +651,7 @@ var motor_perm = 0;
 /* ************************************ */
 
 var refresh_intro_block = {
-  type: "poldrack-single-stim",
+  type: 'poldrack-single-stim',
   stimulus: getRefreshFeedback,
   data: {
     trial_id: getRefreshTrialID,
@@ -673,7 +663,7 @@ var refresh_intro_block = {
   timing_stim: getRefreshFeedbackTiming,
   response_ends_trial: getRefreshResponseEnds,
   on_finish: function () {
-    refresh_trial_id = "practice-no-stop-feedback";
+    refresh_trial_id = 'practice-no-stop-feedback';
     refresh_feedback_timing = 10000;
     refresh_response_ends = false;
     // if (ITIs_stim.length===0) { //if ITIs haven't been generated, generate them!
@@ -685,9 +675,9 @@ var refresh_intro_block = {
       refresh_length / 4
     );
     task_switches.unshift({
-      task_switch: "na",
-      cue_switch: "na",
-      flanker_type: jsPsych.randomization.repeat(flanker_types, 1).pop(),
+      task_switch: 'na',
+      cue_switch: 'na',
+      flanker_condition: jsPsych.randomization.repeat(flanker_types, 1).pop(),
     }); //changed pop to shift
     var refreshStims = genStims(refresh_length + 1);
     stims = refreshStims;
@@ -695,7 +685,7 @@ var refresh_intro_block = {
 };
 
 var refresh_feedback_block = {
-  type: "poldrack-single-stim",
+  type: 'poldrack-single-stim',
   stimulus: getRefreshFeedback,
   data: {
     trial_id: getRefreshTrialID,
@@ -707,7 +697,7 @@ var refresh_feedback_block = {
   timing_stim: getRefreshFeedbackTiming,
   response_ends_trial: getRefreshResponseEnds,
   on_finish: function () {
-    refresh_trial_id = "practice-no-stop-feedback";
+    refresh_trial_id = 'practice-no-stop-feedback';
     refresh_feedback_timing = 10000;
     refresh_response_ends = false;
     // if (ITIs_stim.length===0) { //if ITIs haven't been generated, generate them!
@@ -718,11 +708,11 @@ var refresh_feedback_block = {
 };
 
 var end_block = {
-  type: "poldrack-text",
+  type: 'poldrack-text',
   data: {
-    trial_id: "end",
+    trial_id: 'end',
   },
-  text: "<div class = centerbox><p class = center-block-text>Thanks for completing this task!</p>",
+  text: '<div class = centerbox><p class = center-block-text>Thanks for completing this task!</p>',
   cont_key: [13],
   timing_response: 10000,
   on_finish: function () {
@@ -732,20 +722,20 @@ var end_block = {
 
 /* define practice and test blocks */
 var setStims_block = {
-  type: "call-function",
+  type: 'call-function',
   data: {
-    trial_id: "set_stims",
+    trial_id: 'set_stims',
   },
   func: setStims,
   timing_post_trial: 0,
 };
 
 var feedback_block = {
-  type: "poldrack-single-stim",
+  type: 'poldrack-single-stim',
   data: {
-    trial_id: "practice-stop-feedback",
+    trial_id: 'practice-stop-feedback',
   },
-  choices: "none",
+  choices: 'none',
   stimulus: getFeedback,
   timing_post_trial: 0,
   is_html: true,
@@ -762,11 +752,11 @@ var des_events = [];
 var des_task_switches = [];
 
 var design_setup_block = {
-  type: "survey-text",
+  type: 'survey-text',
   data: {
-    trial_id: "design_setup",
+    trial_id: 'design_setup',
   },
-  questions: [["<p class = center-block-text>Design permutation (0-1):</p>"]],
+  questions: [['<p class = center-block-text>Design permutation (0-1):</p>']],
   on_finish: async function (data) {
     design_perm = parseInt(data.responses.slice(7, 10));
     des_ITIs = await getdesignITIs(design_perm);
@@ -782,16 +772,17 @@ var design_setup_block = {
 };
 
 var motor_setup_block = {
-  type: "survey-text",
+  type: 'survey-text',
   data: {
-    trial_id: "motor_setup",
+    trial_id: 'motor_setup',
   },
-  questions: [["<p class = center-block-text>motor permutation (0-3):</p>"]],
+  questions: [['<p class = center-block-text>motor permutation (0-3):</p>']],
   on_finish: function (data) {
     motor_perm = parseInt(data.responses.slice(7, 10));
     practiceStims = genStims(refresh_length + 1);
     testStims = genStims(numTrialsPerBlock + 1);
     stims = practiceStims;
+    console.log(stims);
   },
 };
 
@@ -800,13 +791,13 @@ var refreshTrials = [];
 refreshTrials.push(refresh_intro_block);
 for (var i = 0; i < refresh_length + 1; i++) {
   var refresh_fixation_block = {
-    type: "poldrack-single-stim",
+    type: 'poldrack-single-stim',
     stimulus:
-      "<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>",
+      '<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>',
     is_html: true,
-    choices: "none",
+    choices: 'none',
     data: {
-      trial_id: "practice_fixation",
+      trial_id: 'practice_fixation',
     },
     timing_post_trial: 0,
     timing_stim: 500, //500
@@ -820,12 +811,12 @@ for (var i = 0; i < refresh_length + 1; i++) {
   };
 
   var refresh_cue_block = {
-    type: "poldrack-single-stim",
+    type: 'poldrack-single-stim',
     stimulus: getCue,
     is_html: true,
-    choices: "none",
+    choices: 'none',
     data: {
-      trial_id: "practice_cue",
+      trial_id: 'practice_cue',
     },
     timing_response: getCTI, //getCTI
     timing_stim: getCTI, //getCTI
@@ -840,18 +831,18 @@ for (var i = 0; i < refresh_length + 1; i++) {
   };
 
   var refresh_block = {
-    type: "poldrack-categorize",
+    type: 'poldrack-categorize',
     stimulus: getStim,
     is_html: true,
     key_answer: getResponse,
     correct_text:
-      "<div class = upperbox><div class = center-text>Correct!</font></div></div>",
+      '<div class = upperbox><div class = center-text>Correct!</font></div></div>',
     incorrect_text:
-      "<div class = upperbox><div class = center-text>Incorrect</font></div></div>",
+      '<div class = upperbox><div class = center-text>Incorrect</font></div></div>',
     timeout_message: getTimeoutMessage,
     choices: getChoices,
     data: {
-      trial_id: "practice_trial",
+      trial_id: 'practice_trial',
     },
     timing_feedback_duration: 500, //500
     show_stim_with_feedback: false,
@@ -859,10 +850,20 @@ for (var i = 0; i < refresh_length + 1; i++) {
     timing_stim: 1000, //1000
     timing_post_trial: 0,
     prompt: getPromptTaskList,
-    on_finish: appendData,
     fixation_default: true,
     fixation_stim:
-      "<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>",
+      '<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>',
+    on_finish: function (data) {
+      data.correct_response = getResponse();
+      data.correct = getResponse() === data.key_press ? 1 : 0;
+      data.flanker_condition = flanker_condition;
+      data.task = curr_task;
+      data.cue = curr_cue;
+      data.flanking_number = flanking_number;
+      data.center_number = curr_stim.number;
+      data.CTI = CTI;
+      console.log(data);
+    },
   };
 
   refreshTrials.push(setStims_block);
@@ -882,7 +883,7 @@ var refreshNode = {
     var total_trials = 0;
 
     for (var i = 0; i < data.length; i++) {
-      if (data[i].trial_id == "practice_trial") {
+      if (data[i].trial_id == 'practice_trial') {
         total_trials += 1;
         if (data[i].rt != -1) {
           sum_rt += data[i].rt;
@@ -899,36 +900,38 @@ var refreshNode = {
     var ave_rt = sum_rt / sum_responses;
 
     refresh_feedback_text =
-      "<br><p class = block-text>Please take this time to read your feedback and to take a short break!";
+      '<br><p class = block-text>Please take this time to read your feedback and to take a short break!';
 
     if (accuracy < accuracy_thresh) {
       refresh_feedback_text +=
-        "</p><p class = block-text>  Remember: <br>" + getPromptTaskList();
+        '</p><p class = block-text>  Remember: <br>' + getPromptTaskList();
       if (missed_responses > missed_response_thresh) {
         refresh_feedback_text +=
-          "</p><p class = block-text>You have been responding too slowly. Please respond as quickly and as accurately as possible.";
+          '</p><p class = block-text>You have been responding too slowly. Please respond as quickly and as accurately as possible.';
       }
 
       if (ave_rt > rt_thresh) {
         refresh_feedback_text +=
-          "</p><p class = block-text>You have been responding too slowly.";
+          '</p><p class = block-text>You have been responding too slowly.';
       }
     }
 
     refresh_feedback_text +=
-      "</p><p class = block-text>Done with this practice.";
+      '</p><p class = block-text>Done with this practice.';
 
     // task_switches = jsPsych.randomization.repeat(task_switches_arr, numTrialsPerBlock / 4) //TO BE CHANGED OUT w/ DES_EVENTS
     task_switches = des_task_switches.slice(0, numTrialsPerBlock); //GRAB NEWEST BLOCKS WORTH OF TRIALS
     des_task_switches = des_task_switches.slice(numTrialsPerBlock); //SHAVE OFF THIS BLOCK FROM des_task_switches
     task_switches.unshift({
-      task_switch: "na",
-      cue_switch: "na",
-      go_no_go_type: jsPsych.randomization.repeat(["go", "nogo"], 1).pop(),
+      task_switch: 'na',
+      cue_switch: 'na',
+      flanker_condition: jsPsych.randomization.repeat(flanker_types, 1).pop(),
     });
     stims = genStims(numTrialsPerBlock + 1);
-    exp_stage = "test";
+    exp_stage = 'test';
 
+    console.log(task_switches);
+    console.log(des_task_switches);
     return false;
   },
 };
@@ -938,13 +941,13 @@ var refreshNode = {
 var testTrials0 = [];
 for (i = 0; i < numTrialsPerBlock + 1; i++) {
   var fixation_block = {
-    type: "poldrack-single-stim",
+    type: 'poldrack-single-stim',
     stimulus:
-      "<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>",
+      '<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>',
     is_html: true,
-    choices: "none",
+    choices: 'none',
     data: {
-      trial_id: "test_fixation",
+      trial_id: 'test_fixation',
     },
     timing_post_trial: 0,
     timing_stim: getITI_stim, //500
@@ -957,12 +960,12 @@ for (i = 0; i < numTrialsPerBlock + 1; i++) {
   };
 
   var cue_block = {
-    type: "poldrack-single-stim",
+    type: 'poldrack-single-stim',
     stimulus: getCue,
     is_html: true,
-    choices: "none",
+    choices: 'none',
     data: {
-      trial_id: "test_cue",
+      trial_id: 'test_cue',
     },
     timing_response: getCTI, //getCTI
     timing_stim: getCTI, //getCTI
@@ -976,22 +979,32 @@ for (i = 0; i < numTrialsPerBlock + 1; i++) {
   };
 
   var test_block = {
-    type: "poldrack-single-stim",
+    type: 'poldrack-single-stim',
     stimulus: getStim,
     is_html: true,
     choices: getChoices,
     data: {
-      trial_id: "test_trial",
-      exp_stage: "test",
+      trial_id: 'test_trial',
+      exp_stage: 'test',
     },
     timing_post_trial: 0,
     timing_response: 2000, //2000
     timing_stim: 1000, //1000
     response_ends_trial: false,
-    on_finish: appendData,
+    on_finish: function (data) {
+      data.correct_response = getResponse();
+      data.correct = getResponse() === data.key_press ? 1 : 0;
+      data.flanker_condition = flanker_condition;
+      data.task = curr_task;
+      data.cue = curr_cue;
+      data.flanking_number = flanking_number;
+      data.center_number = curr_stim.number;
+      data.CTI = CTI;
+      console.log(data);
+    },
     fixation_default: true,
     fixation_stim:
-      "<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>",
+      '<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>',
   };
 
   testTrials0.push(setStims_block);
@@ -1005,13 +1018,13 @@ var testTrials = [];
 testTrials.push(feedback_block);
 for (i = 0; i < numTrialsPerBlock + 1; i++) {
   var fixation_block = {
-    type: "poldrack-single-stim",
+    type: 'poldrack-single-stim',
     stimulus:
-      "<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>",
+      '<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>',
     is_html: true,
-    choices: "none",
+    choices: 'none',
     data: {
-      trial_id: "test_fixation",
+      trial_id: 'test_fixation',
     },
     timing_post_trial: 0,
     timing_stim: getITI_stim, //500
@@ -1024,12 +1037,12 @@ for (i = 0; i < numTrialsPerBlock + 1; i++) {
   };
 
   var cue_block = {
-    type: "poldrack-single-stim",
+    type: 'poldrack-single-stim',
     stimulus: getCue,
     is_html: true,
-    choices: "none",
+    choices: 'none',
     data: {
-      trial_id: "test_cue",
+      trial_id: 'test_cue',
     },
     timing_response: getCTI, //getCTI
     timing_stim: getCTI, //getCTI
@@ -1043,22 +1056,32 @@ for (i = 0; i < numTrialsPerBlock + 1; i++) {
   };
 
   var test_block = {
-    type: "poldrack-single-stim",
+    type: 'poldrack-single-stim',
     stimulus: getStim,
     is_html: true,
     choices: getChoices,
     data: {
-      trial_id: "test_trial",
-      exp_stage: "test",
+      trial_id: 'test_trial',
+      exp_stage: 'test',
     },
     timing_post_trial: 0,
     timing_response: 2000, //2000
     timing_stim: 1000, //1000
     response_ends_trial: false,
-    on_finish: appendData,
+    on_finish: function (data) {
+      data.correct_response = getResponse();
+      data.correct = getResponse() === data.key_press ? 1 : 0;
+      data.flanker_condition = flanker_condition;
+      data.task = curr_task;
+      data.cue = curr_cue;
+      data.flanking_number = flanking_number;
+      data.center_number = curr_stim.number;
+      data.CTI = CTI;
+      console.log(data);
+    },
     fixation_default: true,
     fixation_stim:
-      "<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>",
+      '<div class = upperbox><div class = fixation>+</div></div><div class = lowerbox><div class = fixation>+</div></div>',
   };
 
   testTrials.push(setStims_block);
@@ -1079,9 +1102,9 @@ var testNode0 = {
     des_task_switches = des_task_switches.slice(numTrialsPerBlock); //SHAVE OFF THIS BLOCK FROM des_task_switches
     // task_switches = jsPsych.randomization.repeat(task_switches_arr, numTrialsPerBlock / 4) //TO BE CHANGED OUT W/ DES_EVENTS
     task_switches.unshift({
-      task_switch: "na",
-      cue_switch: "na",
-      go_no_go_type: jsPsych.randomization.repeat(["go", "nogo"], 1).pop(),
+      task_switch: 'na',
+      cue_switch: 'na',
+      flanker_condition: jsPsych.randomization.repeat(flanker_types, 1).pop(),
     });
     stims = genStims(numTrialsPerBlock + 1);
     //stims.reverse() //reverse the order of trial types to match designs
@@ -1092,7 +1115,7 @@ var testNode0 = {
     var total_trials = 0;
 
     for (var i = 0; i < data.length; i++) {
-      if (data[i].trial_id == "test_trial") {
+      if (data[i].trial_id == 'test_trial') {
         total_trials += 1;
         if (data[i].rt != -1) {
           sum_rt += data[i].rt;
@@ -1109,27 +1132,27 @@ var testNode0 = {
     var ave_rt = sum_rt / sum_responses;
 
     feedback_text =
-      "<br><p class = block-text>Please take this time to read your feedback and to take a short break!";
+      '<br><p class = block-text>Please take this time to read your feedback and to take a short break!';
     feedback_text +=
-      "</p><p class = block-text>You have completed: " +
+      '</p><p class = block-text>You have completed: ' +
       testCount +
-      " out of " +
+      ' out of ' +
       numTestBlocks +
-      " blocks of trials.";
+      ' blocks of trials.';
 
     if (accuracy < accuracy_thresh) {
       feedback_text +=
-        "</p><p class = block-text>Your accuracy is too low.  Remember: <br>" +
+        '</p><p class = block-text>Your accuracy is too low.  Remember: <br>' +
         getPromptTaskList();
     }
     if (missed_responses > missed_response_thresh) {
       feedback_text +=
-        "</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.";
+        '</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.';
     }
 
     if (ave_rt > rt_thresh) {
       feedback_text +=
-        "</p><p class = block-text>You have been responding too slowly.";
+        '</p><p class = block-text>You have been responding too slowly.';
     }
 
     return false;
@@ -1146,9 +1169,9 @@ var testNode = {
     des_task_switches = des_task_switches.slice(numTrialsPerBlock); //SHAVE OFF THIS BLOCK FROM des_task_switches
     // task_switches = jsPsych.randomization.repeat(task_switches_arr, numTrialsPerBlock / 4) //TO BE CHANGED OUT W/ DES_EVENTS
     task_switches.unshift({
-      task_switch: "na",
-      cue_switch: "na",
-      go_no_go_type: jsPsych.randomization.repeat(["go", "nogo"], 1).pop(),
+      task_switch: 'na',
+      cue_switch: 'na',
+      flanker_condition: jsPsych.randomization.repeat(flanker_types, 1).pop(),
     });
     stims = genStims(numTrialsPerBlock + 1);
     //stims.reverse() //reverse the order of trial types to match designs
@@ -1159,7 +1182,7 @@ var testNode = {
     var total_trials = 0;
 
     for (var i = 0; i < data.length; i++) {
-      if (data[i].trial_id == "test_trial") {
+      if (data[i].trial_id == 'test_trial') {
         total_trials += 1;
         if (data[i].rt != -1) {
           sum_rt += data[i].rt;
@@ -1176,31 +1199,31 @@ var testNode = {
     var ave_rt = sum_rt / sum_responses;
 
     feedback_text =
-      "<br><p class = block-text>Please take this time to read your feedback and to take a short break!";
+      '<br><p class = block-text>Please take this time to read your feedback and to take a short break!';
     feedback_text +=
-      "</p><p class = block-text>You have completed: " +
+      '</p><p class = block-text>You have completed: ' +
       testCount +
-      " out of " +
+      ' out of ' +
       numTestBlocks +
-      " blocks of trials.";
+      ' blocks of trials.';
 
     if (accuracy < accuracy_thresh) {
       feedback_text +=
-        "</p><p class = block-text>Your accuracy is too low.  Remember: <br>" +
+        '</p><p class = block-text>Your accuracy is too low.  Remember: <br>' +
         getPromptTaskList();
     }
     if (missed_responses > missed_response_thresh) {
       feedback_text +=
-        "</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.";
+        '</p><p class = block-text>You have not been responding to some trials.  Please respond on every trial that requires a response.';
     }
 
     if (ave_rt > rt_thresh) {
       feedback_text +=
-        "</p><p class = block-text>You have been responding too slowly.";
+        '</p><p class = block-text>You have been responding too slowly.';
     }
 
     if (testCount == numTestBlocks) {
-      feedback_text += "</p><p class = block-text>Done with this test.";
+      feedback_text += '</p><p class = block-text>Done with this test.';
       return false;
     } else {
       return true;
