@@ -281,7 +281,42 @@ var getPTD = function (shape_matching_condition, flanker_condition) {
   return [probe_i, target_i, distractor_i, correct_response, flankers];
 };
 
+var getShapeMatchingCondition = function (sm_condition) {
+  function getRandomInt(n) {
+    return Math.floor(Math.random() * n);
+  }
+
+  switch (sm_condition) {
+    case 'td_same':
+      possible_events = ['SSS', 'DSD'];
+      idx = getRandomInt(2);
+      return possible_events[idx];
+    case 'td_diff':
+      possible_events = ['SDD', 'DDD', 'DDS'];
+      idx = getRandomInt(3);
+      return possible_events[idx];
+    case 'td_na':
+      possible_events = ['SNN', 'DNN'];
+      idx = getRandomInt(2);
+      return possible_events[idx];
+    default:
+      break;
+  }
+};
+
 var createTrialTypes = function (trials_len) {
+  function splitValue(value) {
+    // Find the last index of underscore
+    const lastIndex = value.lastIndexOf('_');
+
+    // Split the string into two parts based on the last underscore
+    const shapeMatch = value.substring(0, lastIndex);
+    const congruency = value.substring(lastIndex + 1);
+
+    // Return both parts as an object
+    return { shapeMatch, congruency };
+  }
+
   if (trials_len !== practice_len) {
     var curr_des_events = des_events.slice(0, trials_len);
     des_events = des_events.slice(trials_len);
@@ -302,9 +337,11 @@ var createTrialTypes = function (trials_len) {
 
   for (var i = 0; i < trials_len; i++) {
     if (trials_len !== practice_len) {
-      let separatedValues = curr_des_events[i].split('_');
-      let shape_matching_label = separatedValues[0];
-      let flanker_label = separatedValues[1];
+      let separatedValues = splitValue(curr_des_events[i]);
+      let shape_matching_label = getShapeMatchingCondition(
+        separatedValues.shapeMatch
+      );
+      let flanker_label = separatedValues.congruency;
       shape_matching_condition = shape_matching_label;
       flanker_condition = flanker_label;
     } else {
@@ -761,9 +798,9 @@ for (i = 0; i < refresh_len; i++) {
       trial_id: 'practice_trial',
     },
     correct_text:
-      '<div class = upperbox><div class = center-text>Correct!</font></div></div>', // + getPromptTextList,
+      '<div class = upperbox><div class = feedback-text>Correct!</font></div></div>', // + getPromptTextList,
     incorrect_text:
-      '<div class = upperbox><div class = center-text>Incorrect</font></div></div>', // + getPromptTextList,
+      '<div class = upperbox><div class = feedback-text>Incorrect</font></div></div>', // + getPromptTextList,
     timeout_message: getTimeoutMessage,
     timing_stim: 1000, //1000
     timing_response: 2000, //2000

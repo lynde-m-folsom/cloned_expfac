@@ -21,10 +21,10 @@ var getPromptTextList = function () {
   return (
     '<ul style="text-align:left;"><font color="white">' +
     '<li>Same: ' +
-    getPossibleResponses()[1][0] +
+    getPossibleResponses()[0][0] +
     '</li>' +
     '<li>Different: ' +
-    getPossibleResponses()[0][0] +
+    getPossibleResponses()[1][0] +
     '</li>' +
     '</font></ul>'
   );
@@ -34,11 +34,11 @@ function getPossibleResponses() {
   mperm = getMotorPerm();
   var stim1, stim2;
   if (mperm == 0) {
-    stim1 = ['index finger', 89];
-    stim2 = ['middle finger', 71];
+    stim1 = ['index finger', 37];
+    stim2 = ['middle finger', 39];
   } else {
-    stim1 = ['middle finger', 71];
-    stim2 = ['index finger', 89];
+    stim1 = ['middle finger', 39];
+    stim2 = ['index finger', 37];
   }
   return [stim1, stim2];
 }
@@ -344,8 +344,6 @@ var getMask = function () {
   distractor = stim.distractor;
   flankers = stim.flankers;
 
-  //console.log('shape condition = '+shape_matching_condition+', flanker_condition: '+ flanker_condition+', correct_response: '+correct_response+', probe: '+probe+', target: '+target+', distractor: '+distractor+', flankers: '+flankers)
-
   return (
     task_boards[0] +
     preFileType +
@@ -529,7 +527,7 @@ var getPracticeFeedback = function () {
       '<p class = block-text>You will be asked to judge whether the green shape on the left matches the <i>middle</i> white shape on the right.</p>' +
       '<p class = block-text>If the shapes are the same, please press the ' +
       getPossibleResponses()[0][0] +
-      '.  If the shapes are different, press the ' +
+      '. If the shapes are different, press the ' +
       getPossibleResponses()[1][0] +
       '.</p>' +
       '<p class = block-text>You will always see multiple white shapes. Please match the green shape only to the <i>middle</i> white shape. Ignore the other white shapes.</p>' +
