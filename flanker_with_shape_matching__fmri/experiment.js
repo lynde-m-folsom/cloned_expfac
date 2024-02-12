@@ -337,13 +337,18 @@ var createTrialTypes = function (trials_len) {
 
   for (var i = 0; i < trials_len; i++) {
     if (trials_len !== practice_len) {
-      let separatedValues = splitValue(curr_des_events[i]);
-      let shape_matching_label = getShapeMatchingCondition(
-        separatedValues.shapeMatch
-      );
-      let flanker_label = separatedValues.congruency;
-      shape_matching_condition = shape_matching_label;
-      flanker_condition = flanker_label;
+      console.log('###################');
+
+      let { shapeMatch, congruency } = splitValue(curr_des_events[i]);
+
+      console.log('shape match');
+      console.log(shapeMatch);
+
+      shape_matching_condition = getShapeMatchingCondition(shapeMatch);
+      flanker_condition = congruency;
+
+      console.log(shape_matching_condition);
+      console.log(flanker_condition);
     } else {
       const randomIndex1 = Math.floor(Math.random() * 6);
       const randomIndex2 = Math.random() < 0.5 ? 0 : 1;

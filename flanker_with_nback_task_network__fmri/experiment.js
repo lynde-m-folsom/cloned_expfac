@@ -261,10 +261,8 @@ function gen_testTrials_1back() {
         trial_id: 'test_trial',
       },
       choices: [getPossibleResponses()[0][1], getPossibleResponses()[1][1]],
-      // timing_stim: 1000, //1000
-      // timing_response: 2000, //2000
-      timing_stim: 100, //1000
-      timing_response: 100, //2000
+      timing_stim: 1000, //1000
+      timing_response: 2000, //2000
       timing_post_trial: 0,
       response_ends_trial: false,
       on_finish: appendData,
@@ -291,10 +289,8 @@ function gen_testTrials_2back() {
         trial_id: 'test_trial',
       },
       choices: [getPossibleResponses()[0][1], getPossibleResponses()[1][1]],
-      // timing_stim: 1000, //1000
-      // timing_response: 2000, //2000
-      timing_stim: 100, //1000
-      timing_response: 100, //2000
+      timing_stim: 1000, //1000
+      timing_response: 2000, //2000
       timing_post_trial: 0,
       response_ends_trial: false,
       on_finish: appendData,
@@ -810,8 +806,7 @@ var fixation_block = {
   data: {
     trial_id: 'fixation',
   },
-  // timing_response: 500, //500
-  timing_response: 100, //500
+  timing_response: 500, //500
   timing_post_trial: 0,
 };
 
@@ -842,8 +837,7 @@ for (i = 0; i < practice_len + 2; i++) {
     data: {
       trial_id: 'practice_fixation',
     },
-    // timing_response: 500, //500
-    timing_response: 100, //500
+    timing_response: 500, //500
     timing_post_trial: 0,
     prompt: getPromptText,
   };
@@ -862,10 +856,8 @@ for (i = 0; i < practice_len + 2; i++) {
     incorrect_text:
       '<div class = fb_box><div class = center-text><font size = 20>Incorrect</font></div></div>',
     timeout_message: getTimeoutMessage,
-    // timing_stim: 1000, //1000
-    // timing_response: 2000, //2000
-    timing_stim: 100, //1000
-    timing_response: 100, //2000
+    timing_stim: 1000, //1000
+    timing_response: 2000, //2000
     timing_feedback_duration: 500,
     show_stim_with_feedback: false,
     timing_post_trial: 0,
