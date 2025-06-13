@@ -1,2 +1,3 @@
-# Base_stats
-This is the repo for the anagram project specifically the base statitics used in the subsequent experiments.
+# Clone of Experiment Factory
+"I just want things to be displayed in a way that I can understand!" - Joshua Buckholtz
+
